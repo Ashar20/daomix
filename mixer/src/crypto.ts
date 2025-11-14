@@ -33,6 +33,13 @@ export function fromHex(hex: HexString): Uint8Array {
   return new Uint8Array(Buffer.from(normalized, "hex"));
 }
 
+export async function publicKeyFromSecret(
+  secretKey: Uint8Array,
+): Promise<Uint8Array> {
+  await initCrypto();
+  return sodium.crypto_scalarmult_base(secretKey);
+}
+
 function deriveKey(shared: Uint8Array): Uint8Array {
   const context = sodium.from_string("DaoMix-layer");
   return sodium.crypto_generichash(32, shared, context);

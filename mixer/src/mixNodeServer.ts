@@ -8,6 +8,7 @@ import {
   toHex,
   fromHex,
   decryptLayer,
+  publicKeyFromSecret,
 } from "./crypto";
 import { MixRequest, MixResponse, HexString } from "./shared";
 
@@ -19,7 +20,17 @@ let nodePublicKeyHex: string;
 async function main() {
   await initCrypto();
 
-  nodeKeypair = generateKeypair();
+  const secretHex = process.env.MIX_NODE_SECRET_KEY as HexString | undefined;
+  if (secretHex) {
+    const secretKey = fromHex(secretHex);
+    const publicKey = await publicKeyFromSecret(secretKey);
+    nodeKeypair = {
+      publicKey,
+      secretKey,
+    };
+  } else {
+    nodeKeypair = generateKeypair();
+  }
   nodePublicKeyHex = toHex(nodeKeypair.publicKey);
 
   console.log("[DaoMix] Mix-node starting...");
