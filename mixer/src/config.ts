@@ -14,6 +14,7 @@ export interface DaoMixConfig {
 
 export interface OnionConfig {
   tallyPublicKey: HexString;
+  tallySecretKey: HexString;
   senderSecretKey: HexString;
   senderPublicKey: HexString;
 }
@@ -35,11 +36,15 @@ export function loadDaoMixConfig(): DaoMixConfig {
 
 export function loadOnionConfig(): OnionConfig {
   const tallyPublicKey = process.env.DAOMIX_TALLY_PUBLIC_KEY as HexString;
+  const tallySecretKey = process.env.DAOMIX_TALLY_SECRET_KEY as HexString;
   const senderSecretKey = process.env.DAOMIX_SENDER_SECRET_KEY as HexString;
   const senderPublicKey = process.env.DAOMIX_SENDER_PUBLIC_KEY as HexString;
 
   if (!tallyPublicKey) {
     throw new Error("DAOMIX_TALLY_PUBLIC_KEY is not set");
+  }
+  if (!tallySecretKey) {
+    throw new Error("DAOMIX_TALLY_SECRET_KEY is not set");
   }
   if (!senderSecretKey) {
     throw new Error("DAOMIX_SENDER_SECRET_KEY is not set");
@@ -48,7 +53,7 @@ export function loadOnionConfig(): OnionConfig {
     throw new Error("DAOMIX_SENDER_PUBLIC_KEY is not set");
   }
 
-  return { tallyPublicKey, senderSecretKey, senderPublicKey };
+  return { tallyPublicKey, tallySecretKey, senderSecretKey, senderPublicKey };
 }
 
 export function loadMixNodes(): MixNodeConfig[] {

@@ -5,6 +5,15 @@ import MerkleTree from "merkletreejs";
 import keccak256 from "keccak256";
 
 import { MixRequest, MixResponse, HexString } from "./shared";
+import {
+  loadDaoMixConfig,
+  loadOnionConfig,
+  loadMixNodes,
+  MixNodeConfig,
+} from "./config";
+import { decryptFinalForTally } from "./onion";
+import { fromHex, Keypair } from "./crypto";
+import { TextDecoder } from "util";
 
 const DAO_MIX_VOTING_ABI = [
   "function getBallots(uint256 electionId) view returns (bytes[] memory)",
@@ -29,20 +38,9 @@ export function buildMerkleRoot(values: HexString[]): HexString {
 }
 
 function getProviderAndContract() {
-  const rpcUrl = process.env.DAOMIX_RPC_URL || "http://127.0.0.1:8545";
-  const contractAddress = process.env.DAOMIX_CONTRACT_ADDRESS;
-  const adminPrivKey = process.env.DAOMIX_ADMIN_PRIVATE_KEY;
-
-  if (!contractAddress) {
-    throw new Error("DAOMIX_CONTRACT_ADDRESS is not set");
-  }
-
-  if (!adminPrivKey) {
-    throw new Error("DAOMIX_ADMIN_PRIVATE_KEY is not set");
-  }
-
+  const { rpcUrl, contractAddress, adminPrivateKey } = loadDaoMixConfig();
   const provider = new ethers.JsonRpcProvider(rpcUrl);
-  const wallet = new ethers.Wallet(adminPrivKey, provider);
+  const wallet = new ethers.Wallet(adminPrivateKey, provider);
   const contract = new ethers.Contract(
     contractAddress,
     DAO_MIX_VOTING_ABI,
@@ -52,39 +50,34 @@ function getProviderAndContract() {
   return { provider, wallet, contract };
 }
 
-async function runMixChain(ciphertexts: HexString[]): Promise<HexString[]> {
-  const urlsEnv = process.env.MIX_NODE_URLS;
-  if (!urlsEnv) {
-    throw new Error("MIX_NODE_URLS is not set");
+async function runMixChain(
+  ciphertexts: HexString[],
+  senderPublicKey: HexString,
+  mixNodes: MixNodeConfig[]
+): Promise<HexString[]> {
+  if (mixNodes.length === 0) {
+    throw new Error("No mix-nodes configured");
   }
-
-  const urls = urlsEnv.split(",").map((u) => u.trim()).filter(Boolean);
-  if (urls.length === 0) {
-    throw new Error("MIX_NODE_URLS is empty");
-  }
-
-  const senderPublicKey =
-    (process.env.DAOMIX_SENDER_PUBLIC_KEY as HexString) || "0x";
 
   let current = ciphertexts;
 
-  for (const url of urls) {
+  for (const node of mixNodes) {
     const reqBody: MixRequest = {
       ciphertexts: current,
       senderPublicKey,
     };
 
-    const { data } = await axios.post<MixResponse>(`${url}/mix`, reqBody, {
+    const { data } = await axios.post<MixResponse>(`${node.url}/mix`, reqBody, {
       timeout: 30_000,
     });
 
     if (!data || !Array.isArray(data.ciphertexts)) {
-      throw new Error(`Invalid response from mix-node at ${url}`);
+      throw new Error(`Invalid response from mix-node at ${node.url}`);
     }
 
     current = data.ciphertexts;
     console.log(
-      `[DaoMix] Mixed via ${url}, permutationCommitment=${data.permutationCommitment}`
+      `[DaoMix] Mixed via ${node.url}, permutationCommitment=${data.permutationCommitment}`
     );
   }
 
@@ -93,6 +86,17 @@ async function runMixChain(ciphertexts: HexString[]): Promise<HexString[]> {
 
 export async function runDaoMixForElection(electionId: number): Promise<void> {
   const { contract } = getProviderAndContract();
+  const onionCfg = loadOnionConfig();
+  const mixNodes = loadMixNodes();
+
+  const senderPublicKeyHex = onionCfg.senderPublicKey;
+  const senderPublicBytes = fromHex(senderPublicKeyHex);
+
+  const tallyKeypair: Keypair = {
+    secretKey: fromHex(onionCfg.tallySecretKey),
+    publicKey: fromHex(onionCfg.tallyPublicKey),
+  };
+  const decoder = new TextDecoder();
 
   console.log(`[DaoMix] Fetching ballots for election ${electionId}...`);
   const ballots: HexString[] = await contract.getBallots(electionId);
@@ -105,10 +109,31 @@ export async function runDaoMixForElection(electionId: number): Promise<void> {
   console.log("[DaoMix] Input root:", inputRoot);
 
   console.log("[DaoMix] Sending through mix-nodes chain...");
-  const finalCiphertexts = await runMixChain(ballots);
+  const finalCiphertexts = await runMixChain(
+    ballots,
+    senderPublicKeyHex,
+    mixNodes
+  );
 
   const outputRoot = buildMerkleRoot(finalCiphertexts);
   console.log("[DaoMix] Output root:", outputRoot);
+
+  const decryptedVotes: string[] = [];
+  const counts: Record<string, number> = {};
+
+  for (const cipher of finalCiphertexts) {
+    const plainBytes = await decryptFinalForTally(
+      cipher,
+      tallyKeypair,
+      senderPublicBytes
+    );
+    const vote = decoder.decode(plainBytes);
+    decryptedVotes.push(vote);
+    counts[vote] = (counts[vote] || 0) + 1;
+  }
+
+  console.log("[DaoMix] Decrypted votes:", decryptedVotes);
+  console.log("[DaoMix] Tally counts:", counts);
 
   const resultUri =
     process.env.DAOMIX_RESULT_URI || `ipfs://daomix-demo/${electionId}`;
@@ -117,6 +142,8 @@ export async function runDaoMixForElection(electionId: number): Promise<void> {
     inputRoot,
     outputRoot,
     ballotCount: ballots.length,
+    decryptedVotes,
+    counts,
   };
   const resultHash =
     "0x" + keccak256(Buffer.from(JSON.stringify(resultPayload))).toString("hex");

@@ -11,6 +11,7 @@ async function main() {
 
   console.log(`\n[DaoMix] Orchestrator demo for election ${electionId}\n`);
   await runDaoMixForElection(electionId);
+  console.log("\n[DaoMix] Orchestrator demo finished.\n");
 }
 
 main().catch((err) => {
