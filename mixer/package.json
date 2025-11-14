@@ -6,14 +6,25 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "test": "vitest"
+    "test": "vitest run",
+    "dev:mix-node": "ts-node src/mixNodeServer.ts",
+    "demo:orchestrator": "ts-node src/orchestratorDemo.ts"
   },
   "dependencies": {
-    "libsodium-wrappers": "^0.7.13"
+    "libsodium-wrappers": "^0.7.13",
+    "express": "^4.19.0",
+    "dotenv": "^16.4.0",
+    "keccak256": "^1.0.6",
+    "axios": "^1.7.0",
+    "ethers": "^6.13.0",
+    "merkletreejs": "^1.2.0"
   },
   "devDependencies": {
     "typescript": "^5.5.0",
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "ts-node": "^10.9.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0"
   }
 }
 
