@@ -5,7 +5,7 @@ import { DotMixProvider } from '@polokol/dotmix-provider';
 
 type Status = 'idle' | 'loading' | 'ok' | 'error';
 
-const DEFAULT_UPSTREAM_RPC_URL = 'https://polkadot.api.onfinality.io/public';
+const DEFAULT_POLKOL_RPC_URL = 'http://127.0.0.1:9296/polkadot/mainnet';
 
 export default function Home() {
   const [status, setStatus] = useState<Status>('idle');
@@ -21,7 +21,7 @@ export default function Home() {
 
       try {
         const provider = new DotMixProvider({
-          mixnodeUrl: 'http://127.0.0.1:9000/rpc',
+          mixnodeUrl: DEFAULT_POLKOL_RPC_URL,
         });
 
         const result = await provider.request('chain_getBlock', []);
@@ -90,9 +90,9 @@ export default function Home() {
           </span>
         </p>
         <p style={{ marginTop: '0.5rem', fontSize: '0.95rem' }}>
-          <strong>Upstream RPC (via Mixnode):</strong>{' '}
+          <strong>Polokol cMix proxy URL:</strong>{' '}
           <code style={{ backgroundColor: '#f0f0f0', padding: '2px 6px', borderRadius: '3px', fontSize: '0.875rem' }}>
-            {DEFAULT_UPSTREAM_RPC_URL}
+            {DEFAULT_POLKOL_RPC_URL}
           </code>
         </p>
         {status === 'ok' && latestBlockLabel && (
@@ -126,9 +126,9 @@ export default function Home() {
               <div style={{ marginTop: '1rem', padding: '0.75rem', backgroundColor: '#fff', borderRadius: '4px' }}>
                 <strong>💡 Troubleshooting:</strong>
                 <ol style={{ margin: '0.5rem 0 0 1rem', paddingLeft: '1rem', fontSize: '0.875rem' }}>
-                  <li>Make sure the mixnode is running: <code style={{ backgroundColor: '#f0f0f0', padding: '2px 4px', borderRadius: '2px' }}>npm run dev:mixnode</code></li>
-                  <li>Check that it's accessible: <code style={{ backgroundColor: '#f0f0f0', padding: '2px 4px', borderRadius: '2px' }}>curl http://localhost:9000/health</code></li>
-                  <li>Refresh this page after the mixnode starts</li>
+                  <li>Make sure the Polokol cMix client proxy is running on port 9296.</li>
+                  <li>Verify the relay/client stack started correctly by curling <code style={{ backgroundColor: '#f0f0f0', padding: '2px 4px', borderRadius: '2px' }}>{DEFAULT_POLKOL_RPC_URL}</code>.</li>
+                  <li>Refresh this page after the proxy is reachable.</li>
                 </ol>
               </div>
             )}
@@ -145,7 +145,7 @@ export default function Home() {
                     <li>Check that the mixnode can reach the upstream endpoint</li>
                   </ol>
                   <br />
-                  Default upstream URL: <code style={{ backgroundColor: '#f0f0f0', padding: '2px 4px', borderRadius: '2px' }}>{DEFAULT_UPSTREAM_RPC_URL}</code>
+                  Default upstream URL: <code style={{ backgroundColor: '#f0f0f0', padding: '2px 4px', borderRadius: '2px' }}>{DEFAULT_POLKOL_RPC_URL}</code>
                 </p>
               </div>
             )}

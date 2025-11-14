@@ -1,0 +1,12 @@
+{
+  "name": "@polokol/chain",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Placeholder Substrate chain for future DaoMix integration (currently unused)",
+  "scripts": {
+    "dev": "cargo run -- --dev",
+    "build": "cargo build --release",
+    "test": "cargo test"
+  }
+}
+

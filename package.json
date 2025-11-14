@@ -6,14 +6,17 @@
   "workspaces": [
     "mixnode",
     "sdk",
-    "dapp"
+    "dapp",
+    "polokol-chain",
+    "contracts"
   ],
   "scripts": {
-    "dev:mixnode": "npm run dev -w mixnode",
-    "dev:dapp": "npm run dev -w dapp",
-    "dev:all": "npm run dev:mixnode & npm run dev:dapp",
-    "build": "npm run build --workspaces",
-    "build:sdk": "npm run build -w sdk"
+    "dev": "pnpm --parallel --filter \"@polokol/mixnode\" --filter \"@polokol/dapp\" run dev",
+    "dev:mixnode": "pnpm --filter @polokol/mixnode dev",
+    "dev:dapp": "pnpm --filter @polokol/dapp dev",
+    "build": "pnpm -r build",
+    "build:sdk": "pnpm --filter @polokol/dotmix-provider build",
+    "test": "pnpm -r test --if-present"
   },
   "packageManager": "pnpm@8.0.0"
 }

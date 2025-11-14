@@ -1,5 +1,5 @@
 {
-  "name": "polokol-dapp",
+  "name": "@polokol/dapp",
   "version": "0.1.0",
   "private": true,
   "description": "Polokol SafeDAO Demo dApp",
@@ -7,10 +7,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "next lint"
   },
   "dependencies": {
-    "@polokol/dotmix-provider": "*",
+    "@polokol/dotmix-provider": "file:../sdk",
     "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
