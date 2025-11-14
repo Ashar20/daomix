@@ -8,7 +8,8 @@
     "sdk",
     "dapp",
     "polokol-chain",
-    "contracts"
+    "contracts",
+    "mixer"
   ],
   "scripts": {
     "dev": "pnpm --parallel --filter \"@polokol/mixnode\" --filter \"@polokol/dapp\" run dev",
