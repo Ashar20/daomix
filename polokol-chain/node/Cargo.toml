@@ -1,0 +1,40 @@
+[package]
+name = "polokol-node"
+version = "4.0.0-dev"
+edition = "2021"
+authors = ["Polokol Developers"]
+
+[build-dependencies]
+substrate-build-script-utils = "5.0.0"
+
+[dependencies]
+log = "0.4.20"
+sc-cli = { version = "0.11.0", default-features = false }
+sc-client-api = "4.0.0-dev"
+sc-consensus-aura = "0.11.0"
+sc-executor = { version = "0.11.0", default-features = false }
+sc-finality-grandpa = "0.11.0"
+sc-keystore = "0.11.0"
+sc-network = "0.11.0"
+sc-service = { version = "0.11.0", default-features = false }
+sc-transaction-pool = "4.0.0-dev"
+serde = { version = "1.0", features = ["derive"], optional = true }
+sp-api = "4.0.0-dev"
+sp-block-builder = "4.0.0-dev"
+sp-blockchain = "4.0.0-dev"
+sp-consensus-aura = "0.11.0"
+sp-core = "7.0.0-dev"
+sp-inherents = "4.0.0-dev"
+sp-runtime = "7.0.0-dev"
+sp-transaction-pool = "4.0.0-dev"
+structopt = { version = "0.3", default-features = false }
+tokio = { version = "1.35", features = ["full"] }
+
+polokol-runtime = { path = "../runtime", default-features = false }
+
+[dev-dependencies]
+sc-block-builder = "4.0.0-dev"
+
+[features]
+default = ["runtime-benchmarks"]
+runtime-benchmarks = ["polokol-runtime/runtime-benchmarks"]

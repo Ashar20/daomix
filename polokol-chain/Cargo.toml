@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "node",
+    "runtime",
+    "pallets/dao-voting",
+    "pallets/mixnet-registry",
+]
+resolver = "2"
+
+[profile.release]
+panic = "unwind"

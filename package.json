@@ -1,0 +1,19 @@
+{
+  "name": "polokol-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Polokol = Polkadot SDK DAO chain + DotMix mixer stack",
+  "workspaces": [
+    "mixnode",
+    "sdk",
+    "dapp"
+  ],
+  "scripts": {
+    "dev:mixnode": "npm run dev -w mixnode",
+    "dev:dapp": "npm run dev -w dapp",
+    "dev:all": "npm run dev:mixnode & npm run dev:dapp",
+    "build": "npm run build --workspaces",
+    "build:sdk": "npm run build -w sdk"
+  },
+  "packageManager": "pnpm@8.0.0"
+}
