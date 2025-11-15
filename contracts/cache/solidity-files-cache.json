@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/silas/daomix/contracts/contracts/DaoMixVoting.sol": {
-      "lastModificationDate": 1763124639234,
+    "/home/philix/Documents/GitHub/daomix/contracts/contracts/DaoMixVoting.sol": {
+      "lastModificationDate": 1763204174000,
       "contentHash": "3f121ad365b48a70ef7c13686b3b99c0",
       "sourceName": "contracts/DaoMixVoting.sol",
       "solcConfig": {

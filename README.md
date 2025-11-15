@@ -3,8 +3,7 @@
 > **DaoMix Direction**  
 > This repository is evolving into **DaoMix**, a Chaum-style mixnet for on-chain voting.  
 > The current `mixnode` + `sdk` + `dapp` stack is a generic JSON-RPC path that we will
-> repurpose for DaoMix flows. Any cMix/xxDK integration is optional and treated as an
-> external add-on, not a core dependency.
+> repurpose for DaoMix flows.
 
 Polokol = Polkadot SDK DAO chain + DotMix mixer stack
 
@@ -110,19 +109,55 @@ To run the node in development mode:
 
 Note: The pallets (`pallet-dao-voting` and `pallet-mixnet-registry`) are currently stubs with minimal functionality.
 
-## Optional: cMix Relay/Client (External)
+## Full End-to-End Flow Command
 
-The polokol-monorepo can optionally connect to a cMix-based RPC endpoint by running the
-xx foundation [`blockchain-cmix-relay`](https://github.com/xxfoundation/blockchain-cmix-relay) repo
-locally. This integration is **experimental** and **not required** for core DaoMix development.
+Run the complete DaoMix pipeline on DaoChain:
 
-High-level steps:
+### Prerequisites
 
-1. Clone `xxfoundation/blockchain-cmix-relay`.
-2. Build `polokol-relay` and `polokol-client` (`go build` inside `blockchain/relay` and `blockchain/client`).
-3. Copy `relay/networks-polkadot.example.json` to `networks.json` and configure RPC endpoints.
-4. Run the relay (`./polokol-relay -p "<STATE_PASSWORD>" -n ./networks.json`) and client
-   (`./polokol-client -p "<STATE_PASSWORD>" -r ../relay/relay.xxc`).
-5. Point the Polokol dApp/mixnode at `http://127.0.0.1:9296/polkadot/mainnet` instead of the default upstream.
+1. **Start DaoChain node** (see [DaoChain Dev Guide](../polkadot-sdk/docs/daochain-dev.md)):
+   ```bash
+   cd polkadot-sdk
+   ./target/release/parachain-template-node --dev --ws-port 9944 --rpc-port 9933
+   ```
 
-Treat this as an external dependency—use it only if you specifically need to test against the xx network mix infrastructure.
+2. **Start at least one mix-node**:
+   ```bash
+   npm run dev:mix-node --workspace @polokol/mixer
+   ```
+
+3. **Configure environment variables**:
+   ```bash
+   export DAOCHAIN_WS_URL=ws://127.0.0.1:9944
+   export DAOCHAIN_ADMIN_SEED=//Alice
+   export DAOCHAIN_TALLY_SEED=//Alice
+   export DAOCHAIN_VOTER_SEEDS=//Bob,//Charlie,//Dave
+   export DAOCHAIN_VOTER_VOTES=ALICE,BOB,ALICE
+   export DAOCHAIN_ELECTION_ID=1
+   export DAOCHAIN_REG_DEADLINE_OFFSET=20
+   export DAOCHAIN_VOTE_DEADLINE_OFFSET=40
+   ```
+
+### Run the Pipeline
+
+Execute the full DaoMix flow:
+
+```bash
+npm run run:daochain-pipeline --workspace @polokol/mixer
+```
+
+This will:
+
+1. ✅ Create an election on DaoChain (if it doesn't exist)
+2. ✅ Register voters from `DAOCHAIN_VOTER_SEEDS`
+3. ✅ Build onion-encrypted ballots and cast them to DaoChain
+4. ✅ Fetch ballots from DaoChain storage
+5. ✅ Send ballots through mix-nodes (`/mix` endpoints)
+6. ✅ Decrypt final ciphertexts and tally votes
+7. ✅ Commit mix commitments (input/output Merkle roots) to DaoChain
+8. ✅ Submit final tally results to DaoChain
+
+The pipeline completes when you see:
+```
+🎯 DaoMix pipeline complete for election 1
+```
