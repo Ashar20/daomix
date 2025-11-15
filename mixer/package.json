@@ -9,7 +9,8 @@
     "test": "vitest run",
     "dev:mix-node": "TS_NODE_FILES=true ts-node src/mixNodeServer.ts",
     "demo:orchestrator": "TS_NODE_FILES=true ts-node src/orchestratorDemo.ts",
-    "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts"
+    "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts",
+    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts"
   },
   "dependencies": {
     "libsodium-wrappers": "^0.7.13",
