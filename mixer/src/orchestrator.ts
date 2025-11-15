@@ -13,7 +13,13 @@ import {
 } from "./config";
 import { decryptFinalForTally } from "./onion";
 import { fromHex, toHex, Keypair } from "./crypto";
-import { connectDaoChain, setMixCommitmentsTx, submitTallyTx } from "./substrateClient";
+import {
+	connectDaoChain,
+	setMixCommitmentsTx,
+	submitTallyTx,
+	loadTransportConfig,
+	type TransportConfig,
+} from "./substrateClient";
 import { TextDecoder, TextEncoder } from "util";
 import {
   shardCiphertext,
@@ -258,6 +264,7 @@ async function runShardedMixChain(
  */
 export async function runDaoMixForElectionOnDaoChain(
   electionId: number,
+  transportConfig?: TransportConfig,
 ): Promise<void> {
   // 1) Connect to DaoChain
   const clients = await connectDaoChain();
@@ -267,6 +274,7 @@ export async function runDaoMixForElectionOnDaoChain(
     // 2) Load config for onion/mix operations
     const onionCfg = loadOnionConfig();
     const mixNodes = loadMixNodes();
+    const transportCfg = transportConfig ?? loadTransportConfig();
 
     const senderPublicKeyHex = onionCfg.senderPublicKey;
     const senderPublicBytes = fromHex(senderPublicKeyHex);
@@ -429,8 +437,11 @@ export async function runDaoMixForElectionOnDaoChain(
       electionId,
       inputRootBytes,
       outputRootBytes,
+      transportCfg,
     );
-    console.log("[DaoChain] setMixCommitments submitted, hash:", commitmentHash);
+    console.log(
+      `[DaoChain] setMixCommitments submitted via ${transportCfg.enabled ? "transport mix" : "direct RPC"}, hash: ${commitmentHash}`,
+    );
 
     // 12) Submit tally to DaoChain
     console.log("[DaoChain] Sending submitTally...");
@@ -440,8 +451,11 @@ export async function runDaoMixForElectionOnDaoChain(
       electionId,
       resultUriBytes,
       resultHashBytes,
+      transportCfg,
     );
-    console.log("[DaoChain] submitTally submitted, hash:", tallyHash);
+    console.log(
+      `[DaoChain] submitTally submitted via ${transportCfg.enabled ? "transport mix" : "direct RPC"}, hash: ${tallyHash}`,
+    );
 
     console.log("[DaoChain] Election finalized on-chain.");
   } finally {

@@ -1,6 +1,10 @@
 import "dotenv/config";
 import { ApiPromise, WsProvider } from "@polkadot/api";
+import type { SubmittableExtrinsic } from "@polkadot/api/types";
 import { Keyring } from "@polkadot/keyring";
+import type { KeyringPair } from "@polkadot/keyring/types";
+import { sendRpcOverTransportMix, type TransportNode } from "./transportClient";
+import type { HexString } from "./shared";
 
 export interface DaoChainClients {
 	api: ApiPromise;
@@ -9,6 +13,116 @@ export interface DaoChainClients {
 }
 
 const DEFAULT_WS = "ws://127.0.0.1:9944";
+
+export interface TransportConfig {
+	enabled: boolean;
+	entryNodeUrl: string;
+	rpcUrl: string; // DaoChain HTTP endpoint the exit node will talk to (e.g., http://127.0.0.1:9933)
+	nodes: TransportNode[]; // in hop order: [entry, middle?, exit]
+	senderSecretKeyHex?: string;
+}
+
+export function loadTransportConfig(): TransportConfig {
+	const enabled = process.env.DAOCHAIN_TRANSPORT_ENABLED === "true";
+
+	const entryNodeUrl = process.env.DAOCHAIN_TRANSPORT_ENTRY_URL || "";
+	const rpcUrl = process.env.DAOCHAIN_HTTP_URL || "http://127.0.0.1:9933";
+
+	const nodeUrls = (process.env.DAOCHAIN_TRANSPORT_NODE_URLS || "")
+		.split(",")
+		.map((s) => s.trim())
+		.filter(Boolean);
+	const nodePks = (process.env.DAOCHAIN_TRANSPORT_NODE_PUBKEYS || "")
+		.split(",")
+		.map((s) => s.trim())
+		.filter(Boolean);
+
+	const nodes: TransportNode[] = [];
+	for (let i = 0; i < nodeUrls.length && i < nodePks.length; i++) {
+		nodes.push({ url: nodeUrls[i], publicKey: nodePks[i] as HexString });
+	}
+
+	return {
+		enabled,
+		entryNodeUrl,
+		rpcUrl,
+		nodes,
+		senderSecretKeyHex: process.env.DAOCHAIN_TRANSPORT_SENDER_SK || undefined,
+	};
+}
+
+/**
+ * Submit an extrinsic, optionally over transport mix.
+ *
+ * @param api - ApiPromise instance
+ * @param signer - KeyringPair to sign the extrinsic
+ * @param extrinsic - SubmittableExtrinsic to submit
+ * @param transportConfig - Optional transport config (if not provided, loads from env)
+ * @returns Transaction hash (hex string)
+ */
+export async function submitExtrinsic(
+	api: ApiPromise,
+	signer: KeyringPair,
+	extrinsic: SubmittableExtrinsic<"promise">,
+	transportConfig?: TransportConfig,
+): Promise<string> {
+	// If transport is not enabled or misconfigured, fall back to direct signAndSend
+	const cfg = transportConfig ?? loadTransportConfig();
+	const useTransport =
+		cfg.enabled && cfg.entryNodeUrl && cfg.nodes.length > 0;
+
+	if (!useTransport) {
+		return new Promise<string>((resolve, reject) => {
+			let resolved = false;
+			extrinsic
+				.signAndSend(signer, ({ status, dispatchError }) => {
+					if (resolved) {
+						return;
+					}
+					if (dispatchError) {
+						resolved = true;
+						reject(new Error(dispatchError.toString()));
+					} else if (status.isInBlock) {
+						resolved = true;
+						resolve(status.asInBlock.toHex());
+					}
+				})
+				.catch((err) => {
+					if (!resolved) {
+						resolved = true;
+						reject(err);
+					}
+				});
+		});
+	}
+
+	// Transport mix path: sign locally, get hex, then submit via author_submitExtrinsic over onion
+	const signed = await extrinsic.signAsync(signer);
+	const txHex = signed.toHex();
+
+	const result = await sendRpcOverTransportMix({
+		entryNodeUrl: cfg.entryNodeUrl,
+		rpcUrl: cfg.rpcUrl,
+		method: "author_submitExtrinsic",
+		params: [txHex],
+		transportNodes: cfg.nodes,
+		senderSecretKeyHex: cfg.senderSecretKeyHex,
+	});
+
+	// result should be the tx hash as a hex string
+	if (typeof result === "string") {
+		return result;
+	}
+
+	// If the RPC returns { result: "0x..." } style, handle that too
+	if (result && typeof (result as any).result === "string") {
+		return (result as any).result;
+	}
+
+	throw new Error(
+		`Unexpected author_submitExtrinsic response over transport: ${JSON.stringify(result)}`,
+	);
+}
 
 export async function connectDaoChain(): Promise<DaoChainClients> {
 	const endpoint = process.env.DAOCHAIN_WS_URL || DEFAULT_WS;
@@ -52,6 +166,7 @@ export async function createElectionTx(
 	electionId: number,
 	registrationDeadline: number,
 	votingDeadline: number,
+	transportConfig?: TransportConfig,
 ): Promise<string> {
 	const { api, admin, tally } = clients;
 
@@ -62,9 +177,9 @@ export async function createElectionTx(
 		votingDeadline,
 	);
 
-	const hash = await tx.signAndSend(admin);
-	console.log(`✅ createElection submitted, hash: ${hash.toString()}`);
-	return hash.toString();
+	const hash = await submitExtrinsic(api, admin, tx, transportConfig);
+	console.log(`✅ createElection submitted, hash: ${hash}`);
+	return hash;
 }
 
 /**
@@ -74,13 +189,14 @@ export async function registerVoterTx(
 	clients: DaoChainClients,
 	electionId: number,
 	voterAddress: string,
+	transportConfig?: TransportConfig,
 ): Promise<string> {
 	const { api, admin } = clients;
 
 	const tx = api.tx.daomixVoting.registerVoter(electionId, voterAddress);
-	const hash = await tx.signAndSend(admin);
-	console.log(`✅ registerVoter submitted, hash: ${hash.toString()}`);
-	return hash.toString();
+	const hash = await submitExtrinsic(api, admin, tx, transportConfig);
+	console.log(`✅ registerVoter submitted, hash: ${hash}`);
+	return hash;
 }
 
 /**
@@ -91,17 +207,16 @@ export async function castVoteTx(
 	voterSuri: string,
 	electionId: number,
 	ciphertext: Uint8Array,
+	transportConfig?: TransportConfig,
 ): Promise<string> {
 	const keyring = new Keyring({ type: "sr25519" });
 	const voter = keyring.addFromUri(voterSuri);
 
 	const tx = api.tx.daomixVoting.castVote(electionId, ciphertext);
 
-	const hash = await tx.signAndSend(voter);
-	console.log(
-		`✅ castVote submitted by ${voter.address}, hash: ${hash.toString()}`,
-	);
-	return hash.toString();
+	const hash = await submitExtrinsic(api, voter, tx, transportConfig);
+	console.log(`✅ castVote submitted by ${voter.address}, hash: ${hash}`);
+	return hash;
 }
 
 /**
@@ -112,6 +227,7 @@ export async function setMixCommitmentsTx(
 	electionId: number,
 	inputRoot: Uint8Array,
 	outputRoot: Uint8Array,
+	transportConfig?: TransportConfig,
 ): Promise<string> {
 	const { api, tally } = clients;
 
@@ -121,9 +237,9 @@ export async function setMixCommitmentsTx(
 		outputRoot,
 	);
 
-	const hash = await tx.signAndSend(tally);
-	console.log(`✅ setMixCommitments submitted, hash: ${hash.toString()}`);
-	return hash.toString();
+	const hash = await submitExtrinsic(api, tally, tx, transportConfig);
+	console.log(`✅ setMixCommitments submitted, hash: ${hash}`);
+	return hash;
 }
 
 /**
@@ -134,13 +250,14 @@ export async function submitTallyTx(
 	electionId: number,
 	resultUri: Uint8Array,
 	resultHash: Uint8Array,
+	transportConfig?: TransportConfig,
 ): Promise<string> {
 	const { api, tally } = clients;
 
 	const tx = api.tx.daomixVoting.submitTally(electionId, resultUri, resultHash);
 
-	const hash = await tx.signAndSend(tally);
-	console.log(`✅ submitTally submitted, hash: ${hash.toString()}`);
-	return hash.toString();
+	const hash = await submitExtrinsic(api, tally, tx, transportConfig);
+	console.log(`✅ submitTally submitted, hash: ${hash}`);
+	return hash;
 }
 

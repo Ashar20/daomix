@@ -1,5 +1,97 @@
+/**
+ * DaoMix Full Pipeline Runner (with optional transport mix)
+ *
+ * This script runs the complete DaoMix pipeline:
+ * 1. Creates/verifies election on DaoChain
+ * 2. Registers voters
+ * 3. Casts onion-encrypted ballots
+ * 4. Runs mix-chain (with optional sharding) and tally
+ * 5. Commits mix commitments and tally results
+ *
+ * SETUP (with transport mix enabled):
+ *
+ * 1. Start DaoChain dev (with relay) as per DaoChain README:
+ *    - HTTP: http://127.0.0.1:9933
+ *    - WS:   ws://127.0.0.1:9944
+ *
+ * 2. Start 3 transport nodes (in separate terminals), all using transportNodeServer.ts:
+ *
+ *    Exit node (Terminal 1):
+ *      TRANSPORT_ROLE=exit TRANSPORT_PORT=9102 TRANSPORT_RPC_URL=http://127.0.0.1:9933
+ *      npm run dev:transport-node --workspace @polokol/mixer
+ *
+ *    Middle node (Terminal 2):
+ *      TRANSPORT_ROLE=middle TRANSPORT_PORT=9101 TRANSPORT_NEXT_HOP=http://127.0.0.1:9102
+ *      npm run dev:transport-node --workspace @polokol/mixer
+ *
+ *    Entry node (Terminal 3):
+ *      TRANSPORT_ROLE=entry TRANSPORT_PORT=9100 TRANSPORT_NEXT_HOP=http://127.0.0.1:9101
+ *      npm run dev:transport-node --workspace @polokol/mixer
+ *
+ * 3. Export environment variables:
+ *
+ *    # DaoChain connection
+ *    export DAOCHAIN_WS_URL=ws://127.0.0.1:9944
+ *    export DAOCHAIN_HTTP_URL=http://127.0.0.1:9933
+ *
+ *    # Election setup
+ *    export DAOCHAIN_ADMIN_SEED=//Alice
+ *    export DAOCHAIN_TALLY_SEED=//Alice
+ *    export DAOCHAIN_VOTER_SEEDS=//Bob,//Charlie,//Dave
+ *    export DAOCHAIN_VOTER_VOTES=ALICE,BOB,ALICE
+ *    export DAOCHAIN_ELECTION_ID=1
+ *
+ *    # Transport mix settings
+ *    export DAOCHAIN_TRANSPORT_ENABLED=true
+ *    export DAOCHAIN_TRANSPORT_ENTRY_URL=http://127.0.0.1:9100
+ *    export DAOCHAIN_TRANSPORT_NODE_URLS=http://127.0.0.1:9100,http://127.0.0.1:9101,http://127.0.0.1:9102
+ *    export DAOCHAIN_TRANSPORT_NODE_PUBKEYS=<comma-separated hex pubkeys from /health of each node, in same order>
+ *
+ *    # Optional: static sender secret key for transport layer (hex)
+ *    export DAOCHAIN_TRANSPORT_SENDER_SK=<0x...>
+ *
+ * RUN:
+ *
+ *    npm run run:daochain-pipeline-transport --workspace @polokol/mixer
+ *
+ * EXPECTED RESULT (log-level test case):
+ *
+ *    In the pipeline terminal:
+ *      - Log line at start: [DaoMix] Transport mix ENABLED
+ *      - Standard DaoMix logs:
+ *        * "Election created tx hash = 0x..."
+ *        * "Registered N voters"
+ *        * "Cast onion ballots"
+ *        * "Sharded + mixed ballots" (if sharding enabled)
+ *        * "Submitted tally with counts { ALICE: 2, BOB: 1 }" (or similar)
+ *
+ *    In the exit transport node logs:
+ *      - Decrypted JSON-RPC bodies such as:
+ *        * method: "author_submitExtrinsic"
+ *        * params: ["0x<scale-encoded-extrinsic>"]
+ *
+ *    In the entry/middle transport node logs:
+ *      - Only ciphertext sizes / onion payloads (no JSON-RPC visible)
+ *
+ *    In the DaoChain node logs:
+ *      - Normal Substrate logs indicating extrinsics included in blocks from daomixVoting
+ *
+ *    In Polkadot.js Apps (optional check):
+ *      - Connect to DaoChain WS (ws://127.0.0.1:9944)
+ *      - Inspect storage:
+ *        * daomixVoting.elections(1) exists
+ *        * daomixVoting.ballotCount(1) equals number of ballots cast
+ *        * daomixVoting.tallyResults(1) is populated after the run
+ */
+
 import "dotenv/config";
-import { connectDaoChain, createElectionTx, registerVoterTx } from "./substrateClient";
+import {
+	connectDaoChain,
+	createElectionTx,
+	registerVoterTx,
+	loadTransportConfig,
+	type TransportConfig,
+} from "./substrateClient";
 import { castOnionBallotsOnDaoChain, type DaoChainBallot } from "./castOnionBallots";
 import { runDaoMixForElectionOnDaoChain } from "./orchestrator";
 import { Keyring } from "@polkadot/keyring";
@@ -55,11 +147,26 @@ async function main() {
 		console.log(`⏰ Registration deadline offset: ${regOffset} blocks`);
 		console.log(`⏰ Voting deadline offset: ${voteOffset} blocks\n`);
 
-		// 2) Connect to DaoChain
+		// 2) Load transport config and log mode
+		const transportCfg = loadTransportConfig();
+		console.log(
+			`[DaoMix] Transport mix ${transportCfg.enabled ? "ENABLED" : "DISABLED"}`,
+		);
+		if (transportCfg.enabled) {
+			console.log(
+				`[DaoMix] Entry node: ${transportCfg.entryNodeUrl}, RPC: ${transportCfg.rpcUrl}`,
+			);
+			console.log(
+				`[DaoMix] Transport nodes: ${transportCfg.nodes.length} hop(s)`,
+			);
+		}
+		console.log();
+
+		// 3) Connect to DaoChain
 		const clients = await connectDaoChain();
 		api = clients.api;
 
-		// 3) Compute deadlines from current block
+		// 4) Compute deadlines from current block
 		const header = await api.rpc.chain.getHeader();
 		const now = header.number.toNumber();
 		const regDeadline = now + regOffset;
@@ -75,7 +182,7 @@ async function main() {
 		console.log(`📅 Registration deadline: ${regDeadline}`);
 		console.log(`📅 Voting deadline: ${voteDeadline}\n`);
 
-		// 4) Create election if needed
+		// 5) Create election if needed
 		const electionStorage = await api.query.daomixVoting.elections(electionId);
 		const electionExists =
 			(electionStorage as any).isSome === true ||
@@ -90,13 +197,16 @@ async function main() {
 				electionId,
 				regDeadline,
 				voteDeadline,
+				transportCfg,
 			);
-			console.log(`✅ Election created, hash: ${hash}\n`);
+			console.log(
+				`✅ Election created via ${transportCfg.enabled ? "transport mix" : "direct RPC"}, hash: ${hash}\n`,
+			);
 		} else {
 			console.log(`✅ Election ${electionId} already exists, reusing it\n`);
 		}
 
-		// 5) Derive voter accounts and register them
+		// 6) Derive voter accounts and register them
 		console.log(`👥 Registering ${voterSeeds.length} voters...`);
 		const keyring = new Keyring({ type: "sr25519" });
 
@@ -109,6 +219,7 @@ async function main() {
 					clients,
 					electionId,
 					voter.address,
+					transportCfg,
 				);
 				console.log(
 					`  ✅ Registered voter ${index + 1}/${voterSeeds.length}: ${voter.address} (will vote: ${vote}), hash: ${hash}`,
@@ -129,19 +240,19 @@ async function main() {
 		}
 		console.log();
 
-		// 6) Build DaoChainBallot[] and cast onion ballots
+		// 7) Build DaoChainBallot[] and cast onion ballots
 		console.log(`🗳️  Casting ${voterSeeds.length} onion-encrypted ballots...`);
 		const ballots: DaoChainBallot[] = voterSeeds.map((suri, idx) => ({
 			voterSuri: suri,
 			plaintext: voterVotes[idx],
 		}));
 
-		await castOnionBallotsOnDaoChain(electionId, ballots);
+		await castOnionBallotsOnDaoChain(electionId, ballots, transportCfg);
 		console.log();
 
-		// 7) Run mix + tally on DaoChain
+		// 8) Run mix + tally on DaoChain
 		console.log(`🔄 Running mix-chain and tally for election ${electionId}...`);
-		await runDaoMixForElectionOnDaoChain(electionId);
+		await runDaoMixForElectionOnDaoChain(electionId, transportCfg);
 		console.log();
 
 		// 8) Final logging

@@ -79,3 +79,107 @@ If sharding is enabled, the final result JSON will include a `sharding` section 
 - Bundle commitments (Merkle roots) for verification
 - Bundle IDs for tracking
 
+## Transport Mix (3-hop JSON-RPC over onion routing)
+
+The transport mix provides network-level privacy by routing JSON-RPC traffic through multiple onion-encrypted hops before reaching the DaoChain RPC endpoint. This ensures that only the exit node sees the final destination and cleartext RPC payload.
+
+### Prerequisites
+
+#### 1. Start DaoChain / Substrate node (RPC target)
+
+From the `polkadot-sdk` repo root, build and run the node:
+
+```bash
+cd polkadot-sdk
+cargo build -p parachain-template-node --release
+
+./target/release/parachain-template-node --dev --ws-port 9944 --rpc-port 9933
+```
+
+The node should expose:
+- HTTP RPC: `http://127.0.0.1:9933`
+- WebSocket RPC: `ws://127.0.0.1:9944`
+
+**Sanity check** (optional): Verify the base RPC works:
+
+```bash
+curl -X POST http://127.0.0.1:9933 \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"chain_getBlock","params":[]}'
+```
+
+If this returns a block, the base RPC is working correctly.
+
+#### 2. Start the 3 transport mix nodes
+
+Start each transport node in a separate terminal from the monorepo root or `mixer` directory. The nodes must be started in this order:
+
+**Exit node** (Terminal 1 - talks to DaoChain RPC at 9933):
+
+```bash
+cd mixer
+
+TRANSPORT_ROLE=exit \
+TRANSPORT_PORT=9102 \
+TRANSPORT_RPC_URL=http://127.0.0.1:9933 \
+npm run dev:transport-node --workspace @polokol/mixer
+```
+
+**Middle node** (Terminal 2):
+
+```bash
+cd mixer
+
+TRANSPORT_ROLE=middle \
+TRANSPORT_PORT=9101 \
+TRANSPORT_NEXT_HOP=http://127.0.0.1:9102 \
+npm run dev:transport-node --workspace @polokol/mixer
+```
+
+**Entry node** (Terminal 3):
+
+```bash
+cd mixer
+
+TRANSPORT_ROLE=entry \
+TRANSPORT_PORT=9100 \
+TRANSPORT_NEXT_HOP=http://127.0.0.1:9101 \
+npm run dev:transport-node --workspace @polokol/mixer
+```
+
+**Health check** (verify all nodes are running):
+
+```bash
+curl http://127.0.0.1:9100/health
+curl http://127.0.0.1:9101/health
+curl http://127.0.0.1:9102/health
+```
+
+Each should return JSON with `role`, `publicKey`, `nextHop`, and `rpcUrl` fields. The entry and middle nodes should show their `nextHop`, while the exit node should show the `rpcUrl`.
+
+### Run a real JSON-RPC call over the transport mix
+
+The test script `src/runTransportRpc.ts` is already wired and can be executed from the monorepo root:
+
+```bash
+cd mixer
+npm run run:transport-rpc --workspace @polokol/mixer
+```
+
+This script:
+- Fetches public keys from `/health` endpoints of all three transport nodes
+- Builds a 3-hop onion (exit → middle → entry) using those public keys and libsodium encryption
+- Sends a real `chain_getBlock` JSON-RPC request over `/rpc-mix` on the entry node
+- The exit node peels the last layer, decodes the RPC payload, and forwards to `http://127.0.0.1:9933`
+- The JSON-RPC response is returned through the same path and printed
+
+**Expected output**: The script prints the JSON-RPC response containing block data from the DaoChain node.
+
+### What this proves
+
+- **Real libsodium-based multi-layer onion encryption** on transport messages (same crypto as ballot onions)
+- **Real 3-hop network path** (entry → middle → exit) before hitting DaoChain RPC
+- **Exit node is the only component** that sees the cleartext JSON-RPC URL and body
+- **No mocks**: This is a live `chain_getBlock` against a running Substrate node with real encryption and routing
+- **Privacy guarantee**: Entry and middle nodes only see encrypted blobs and next-hop URLs, not the final destination or payload
+

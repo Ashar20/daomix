@@ -10,7 +10,11 @@ import {
   loadMixNodes,
   loadOnionConfig,
 } from "./config";
-import { connectDaoChain, castVoteTx } from "./substrateClient";
+import {
+	connectDaoChain,
+	castVoteTx,
+	type TransportConfig,
+} from "./substrateClient";
 
 const encoder = new TextEncoder();
 
@@ -27,10 +31,12 @@ export interface DaoChainBallot {
  * 
  * @param electionId - The election ID on DaoChain
  * @param ballots - Array of ballots with voter SURI and plaintext vote
+ * @param transportConfig - Optional transport config for routing over transport mix
  */
 export async function castOnionBallotsOnDaoChain(
 	electionId: number,
 	ballots: DaoChainBallot[],
+	transportConfig?: TransportConfig,
 ): Promise<void> {
 	await initCrypto();
 
@@ -78,6 +84,7 @@ export async function castOnionBallotsOnDaoChain(
 				ballot.voterSuri,
 				electionId,
 				onionCiphertext,
+				transportConfig,
 			);
 
 			console.log(
