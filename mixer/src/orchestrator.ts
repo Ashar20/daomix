@@ -20,6 +20,8 @@ import {
   createBundles,
   Shard,
   ShardBundle,
+  ShardWithMeta,
+  reconstructFromShards,
 } from "./sharding";
 
 export function buildMerkleRoot(values: HexString[]): HexString {
@@ -76,6 +78,9 @@ async function fetchBallotsFromDaoChain(
   return ballots;
 }
 
+/**
+ * @deprecated Use runShardedMixChain instead. This function is kept for backward compatibility.
+ */
 async function runMixChain(
   ciphertexts: HexString[],
   senderPublicKey: HexString,
@@ -108,6 +113,137 @@ async function runMixChain(
   }
 
   return current;
+}
+
+/**
+ * Get shard count from environment or return default.
+ */
+function getShardCount(): number {
+  const env = process.env.DAOMIX_SHARD_COUNT;
+  const parsed = env ? parseInt(env, 10) : NaN;
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return 3; // sensible default
+  }
+  return parsed;
+}
+
+/**
+ * Run the mix chain over shards instead of whole ballots.
+ * 
+ * This function:
+ * 1. Shards each ballot ciphertext into k shards
+ * 2. Sends all shards through each mix node in sequence
+ * 3. Tracks which shard belongs to which original ballot through all permutations
+ * 4. Reconstructs final ciphertexts per ballot from the mixed shards
+ * 
+ * @param ciphertexts - Array of ballot ciphertexts (HexString[])
+ * @param senderPublicKey - Public key for onion encryption
+ * @param mixNodes - Array of mix node configurations
+ * @param shardCount - Number of shards per ballot
+ * @returns Array of mixed ciphertexts (one per original ballot, same order)
+ */
+async function runShardedMixChain(
+  ciphertexts: HexString[],
+  senderPublicKey: HexString,
+  mixNodes: MixNodeConfig[],
+  shardCount: number,
+): Promise<HexString[]> {
+  if (mixNodes.length === 0) {
+    throw new Error("No mix-nodes configured");
+  }
+
+  if (ciphertexts.length === 0) {
+    return [];
+  }
+
+  // 1) Build ShardWithMeta[] for all ballots
+  const shardsWithMeta: ShardWithMeta[] = [];
+  for (let messageIndex = 0; messageIndex < ciphertexts.length; messageIndex++) {
+    const ct = ciphertexts[messageIndex];
+    const shards = shardCiphertext(ct, shardCount);
+    for (const shard of shards) {
+      shardsWithMeta.push({
+        ...shard,
+        messageIndex,
+      });
+    }
+  }
+
+  if (shardsWithMeta.length === 0) {
+    return [];
+  }
+
+  // 2) Extract the shard ciphertexts as our working batch
+  let currentCiphertexts: HexString[] = shardsWithMeta.map((s) => s.data);
+
+  // 3) For each mix node, call /mix and update both ciphertexts and shard metadata
+  for (const node of mixNodes) {
+    const url = node.url.endsWith("/mix") ? node.url : `${node.url}/mix`;
+
+    const reqBody: MixRequest = {
+      ciphertexts: currentCiphertexts,
+      senderPublicKey,
+    };
+
+    const { data } = await axios.post<MixResponse>(url, reqBody, {
+      timeout: 60_000,
+    });
+
+    if (!Array.isArray(data.ciphertexts) || !Array.isArray(data.permutation)) {
+      throw new Error(`Invalid /mix response from ${url}`);
+    }
+    if (data.ciphertexts.length !== currentCiphertexts.length) {
+      throw new Error(`/mix response size mismatch from ${url}`);
+    }
+    if (data.permutation.length !== currentCiphertexts.length) {
+      throw new Error(`/mix permutation size mismatch from ${url}`);
+    }
+
+    // Apply permutation to shard metadata
+    const newShardsWithMeta: ShardWithMeta[] = new Array(shardsWithMeta.length);
+    const newCiphertexts: HexString[] = new Array(shardsWithMeta.length);
+
+    for (let i = 0; i < data.ciphertexts.length; i++) {
+      const srcIndex = data.permutation[i];
+      newCiphertexts[i] = data.ciphertexts[i];
+      newShardsWithMeta[i] = {
+        ...shardsWithMeta[srcIndex],
+        data: data.ciphertexts[i],
+      };
+    }
+
+    shardsWithMeta.splice(0, shardsWithMeta.length, ...newShardsWithMeta);
+    currentCiphertexts = newCiphertexts;
+
+    console.log(
+      `[DaoMix] Sharded mix via ${node.url}, permutationCommitment=${data.permutationCommitment}, totalShards=${shardsWithMeta.length}`
+    );
+  }
+
+  // 4) Group shards back by messageIndex and reconstruct each ballot ciphertext
+  const shardsByMessage = new Map<number, Shard[]>();
+  for (const shard of shardsWithMeta) {
+    const arr = shardsByMessage.get(shard.messageIndex) ?? [];
+    arr.push({
+      shardId: shard.shardId,
+      shardIndex: shard.shardIndex,
+      totalShards: shard.totalShards,
+      data: shard.data,
+    });
+    shardsByMessage.set(shard.messageIndex, arr);
+  }
+
+  const finalCiphertexts: HexString[] = [];
+  for (let messageIndex = 0; messageIndex < ciphertexts.length; messageIndex++) {
+    const shards = shardsByMessage.get(messageIndex) ?? [];
+    if (shards.length === 0) {
+      throw new Error(`Missing shards for messageIndex=${messageIndex}`);
+    }
+    const reconstructed = reconstructFromShards(shards);
+    finalCiphertexts.push(reconstructed);
+  }
+
+  return finalCiphertexts;
 }
 
 /**
@@ -221,13 +357,22 @@ export async function runDaoMixForElectionOnDaoChain(
     const inputRoot = buildMerkleRoot(ballotsHex);
     console.log("[DaoChain] Input root:", inputRoot);
 
-    // 6) Send ballots through mix-node chain
-    console.log("[DaoChain] Sending through mix-nodes chain...");
-    const finalCiphertextsHex = await runMixChain(
+    // 6) Send ballots through mix-node chain (sharded)
+    const shardCount = getShardCount();
+    console.log(`[DaoChain] Sending through mix-nodes chain (sharded, ${shardCount} shards per ballot)...`);
+    const finalCiphertextsHex = await runShardedMixChain(
       ballotsHex,
       senderPublicKeyHex,
       mixNodes,
+      shardCount,
     );
+
+    // Sanity check: should have same number of ciphertexts as input
+    if (finalCiphertextsHex.length !== ballotsHex.length) {
+      throw new Error(
+        `Sharded mix chain returned ${finalCiphertextsHex.length} ciphertexts, expected ${ballotsHex.length}`
+      );
+    }
 
     // 7) Compute output Merkle root
     const outputRoot = buildMerkleRoot(finalCiphertextsHex);

@@ -14,6 +14,11 @@ export interface Shard {
 	data: HexString;
 }
 
+export interface ShardWithMeta extends Shard {
+	/** Index of the original ballot in the ballots array */
+	messageIndex: number;
+}
+
 /**
  * Split a hex-encoded ciphertext into multiple shards.
  *
