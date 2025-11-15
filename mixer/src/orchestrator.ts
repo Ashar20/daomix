@@ -9,11 +9,18 @@ import {
   loadOnionConfig,
   loadMixNodes,
   MixNodeConfig,
+  loadShardingConfig,
 } from "./config";
 import { decryptFinalForTally } from "./onion";
 import { fromHex, toHex, Keypair } from "./crypto";
 import { connectDaoChain, setMixCommitmentsTx, submitTallyTx } from "./substrateClient";
 import { TextDecoder, TextEncoder } from "util";
+import {
+  shardCiphertext,
+  createBundles,
+  Shard,
+  ShardBundle,
+} from "./sharding";
 
 export function buildMerkleRoot(values: HexString[]): HexString {
   if (values.length === 0) {
@@ -148,6 +155,68 @@ export async function runDaoMixForElectionOnDaoChain(
     // 4) Convert ballots to HexString[] for mix chain processing
     const ballotsHex: HexString[] = ballotsBytes.map((bytes) => toHex(bytes));
 
+    // 4a) Load sharding config and compute metrics if enabled
+    const shardingConfig = loadShardingConfig();
+
+    let shardingMetrics: any = null;
+
+    if (shardingConfig.enableSharding && ballotsHex.length > 0) {
+      const { shardCount, bundleSize } = shardingConfig;
+
+      // 1) Shard every ciphertext
+      const allShards: Shard[] = [];
+      ballotsHex.forEach((hex, idx) => {
+        const shardsForCipher = shardCiphertext(hex, shardCount);
+        // Keep shardIndex as produced by shardCiphertext (local order).
+        // We don't need ballot index for metrics-only usage.
+        allShards.push(...shardsForCipher);
+      });
+
+      // 2) Bundle shards
+      const bundles: ShardBundle[] = createBundles(allShards, bundleSize);
+
+      // 3) Compute some real metrics
+      const bundleSizes = bundles.map((b) => b.shards.length);
+      const totalShards = allShards.length;
+      const bundleCount = bundles.length;
+      const minBundleSize = bundleSizes.length ? Math.min(...bundleSizes) : 0;
+      const maxBundleSize = bundleSizes.length ? Math.max(...bundleSizes) : 0;
+      const avgBundleSize =
+        bundleSizes.length && totalShards > 0
+          ? totalShards / bundleSizes.length
+          : 0;
+
+      // 4) Record shard-level commitments (bundle IDs + roots)
+      const bundleSummaries = bundles.map((b) => ({
+        bundleId: b.bundleId,
+        bundleCommitment: b.bundleCommitment,
+        shardCount: b.shards.length,
+      }));
+
+      shardingMetrics = {
+        enabled: true,
+        shardCount,
+        bundleSize,
+        totalCiphertexts: ballotsHex.length,
+        totalShards,
+        bundleCount,
+        minBundleSize,
+        maxBundleSize,
+        avgBundleSize,
+        bundles: bundleSummaries,
+      };
+
+      console.log("[DaoMix] Sharding metrics:", JSON.stringify(shardingMetrics));
+    } else {
+      shardingMetrics = {
+        enabled: false,
+        reason:
+          ballotsHex.length === 0
+            ? "no ciphertexts for election"
+            : "DAOMIX_ENABLE_SHARDING not set",
+      };
+    }
+
     // 5) Compute input Merkle root
     const inputRoot = buildMerkleRoot(ballotsHex);
     console.log("[DaoChain] Input root:", inputRoot);
@@ -192,6 +261,7 @@ export async function runDaoMixForElectionOnDaoChain(
       ballotCount: ballotsBytes.length,
       decryptedVotes,
       counts,
+      sharding: shardingMetrics,
     };
     const resultHashHex: HexString =
       ("0x" +

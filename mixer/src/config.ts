@@ -80,3 +80,33 @@ export function loadMixNodes(): MixNodeConfig[] {
   }));
 }
 
+export interface ShardingConfig {
+  enableSharding: boolean;
+  shardCount: number; // shards per ciphertext
+  bundleSize: number; // shards per bundle
+}
+
+export function loadShardingConfig(): ShardingConfig {
+  const enable =
+    process.env.DAOMIX_ENABLE_SHARDING === "true" ||
+    process.env.DAOMIX_ENABLE_SHARDING === "1";
+
+  const shardCount = (() => {
+    const raw = process.env.DAOMIX_SHARD_COUNT;
+    const n = raw ? parseInt(raw, 10) : 3;
+    return Number.isFinite(n) && n > 0 ? n : 3;
+  })();
+
+  const bundleSize = (() => {
+    const raw = process.env.DAOMIX_BUNDLE_SIZE;
+    const n = raw ? parseInt(raw, 10) : 4;
+    return Number.isFinite(n) && n > 0 ? n : 4;
+  })();
+
+  return {
+    enableSharding: enable,
+    shardCount,
+    bundleSize,
+  };
+}
+
