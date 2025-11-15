@@ -13,7 +13,9 @@
     "run:daochain-pipeline-transport": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
     "demo:orchestrator": "TS_NODE_FILES=true ts-node src/orchestratorDemo.ts",
     "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts",
-    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts"
+    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
+    "run:ethereum-contract-voting": "TS_NODE_FILES=true ts-node src/runEthereumContractVoting.ts",
+    "run:ethereum-contract-voting-scale-test": "TS_NODE_FILES=true ts-node src/runEthereumContractVotingScaleTest.ts"
   },
   "dependencies": {
     "libsodium-wrappers": "^0.7.13",
