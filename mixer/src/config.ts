@@ -4,6 +4,7 @@ import { HexString } from "./shared";
 export interface MixNodeConfig {
   url: string;
   publicKey: HexString;
+  pqPublicKey?: Uint8Array; // Optional ML-KEM public key
 }
 
 export interface DaoMixConfig {
@@ -74,9 +75,39 @@ export function loadMixNodes(): MixNodeConfig[] {
     throw new Error("MIX_NODE_URLS and MIX_NODE_PUBLIC_KEYS length mismatch");
   }
 
+  // Optional PQ public keys
+  const pqPubKeysEnv = process.env.MIX_NODE_PQ_PUBLIC_KEYS;
+  let pqPubKeys: (Uint8Array | undefined)[] = [];
+
+  if (pqPubKeysEnv && isPqEnabled()) {
+    const pqHexStrings = pqPubKeysEnv
+      .split(",")
+      .map((p) => p.trim())
+      .filter(Boolean);
+
+    if (pqHexStrings.length !== urls.length) {
+      console.warn(
+        `MIX_NODE_PQ_PUBLIC_KEYS length (${pqHexStrings.length}) does not match MIX_NODE_URLS (${urls.length}). PQ will be disabled for nodes without PQ keys.`,
+      );
+    }
+
+    pqPubKeys = pqHexStrings.map((hex) => {
+      if (!hex) return undefined;
+      // Remove 0x prefix if present
+      const normalized = hex.startsWith("0x") ? hex.slice(2) : hex;
+      return new Uint8Array(Buffer.from(normalized, "hex"));
+    });
+
+    // Pad to match urls length if needed
+    while (pqPubKeys.length < urls.length) {
+      pqPubKeys.push(undefined);
+    }
+  }
+
   return urls.map((url, index) => ({
     url,
     publicKey: pubKeys[index] as HexString,
+    pqPublicKey: pqPubKeys[index],
   }));
 }
 
@@ -84,6 +115,13 @@ export interface ShardingConfig {
   enableSharding: boolean;
   shardCount: number; // shards per ciphertext
   bundleSize: number; // shards per bundle
+}
+
+/**
+ * Check if post-quantum / hybrid mode is enabled.
+ */
+export function isPqEnabled(): boolean {
+  return process.env.DAOMIX_PQ_ENABLED === "true";
 }
 
 export function loadShardingConfig(): ShardingConfig {

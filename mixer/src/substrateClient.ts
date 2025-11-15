@@ -3,7 +3,13 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { SubmittableExtrinsic } from "@polkadot/api/types";
 import { Keyring } from "@polkadot/keyring";
 import type { KeyringPair } from "@polkadot/keyring/types";
-import { sendRpcOverTransportMix, type TransportNode } from "./transportClient";
+import {
+	sendRpcOverTransportMix,
+	type TransportNode,
+} from "./transportClient";
+
+// Re-export TransportNode with PQ support
+export type { TransportNode };
 import type { HexString } from "./shared";
 
 export interface DaoChainClients {
@@ -40,6 +46,29 @@ export function loadTransportConfig(): TransportConfig {
 	const nodes: TransportNode[] = [];
 	for (let i = 0; i < nodeUrls.length && i < nodePks.length; i++) {
 		nodes.push({ url: nodeUrls[i], publicKey: nodePks[i] as HexString });
+	}
+
+	// Optional PQ public keys for transport nodes
+	const pqPubKeysEnv = process.env.DAOCHAIN_TRANSPORT_NODE_PQ_PUBKEYS;
+	if (pqPubKeysEnv && enabled) {
+		const pqHexStrings = pqPubKeysEnv
+			.split(",")
+			.map((s) => s.trim())
+			.filter(Boolean);
+
+		if (pqHexStrings.length !== nodes.length) {
+			console.warn(
+				`DAOCHAIN_TRANSPORT_NODE_PQ_PUBKEYS length (${pqHexStrings.length}) does not match transport nodes (${nodes.length}). PQ will be disabled for nodes without PQ keys.`,
+			);
+		}
+
+		for (let i = 0; i < nodes.length && i < pqHexStrings.length; i++) {
+			const hex = pqHexStrings[i];
+			if (hex) {
+				const normalized = hex.startsWith("0x") ? hex.slice(2) : hex;
+				nodes[i].pqPublicKey = new Uint8Array(Buffer.from(normalized, "hex"));
+			}
+		}
 	}
 
 	return {

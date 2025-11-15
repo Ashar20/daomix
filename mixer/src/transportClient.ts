@@ -13,6 +13,7 @@ import {
 export interface TransportNode {
 	url: string;
 	publicKey: HexString;
+	pqPublicKey?: Uint8Array; // Optional ML-KEM public key
 }
 
 export interface TransportClientConfig {
@@ -66,6 +67,7 @@ export async function sendRpcOverTransportMix(params: {
 		(node, idx) => ({
 			id: `node_${idx}`,
 			publicKey: node.publicKey,
+			pqPublicKey: node.pqPublicKey ? toHex(node.pqPublicKey) : undefined,
 		}),
 	);
 

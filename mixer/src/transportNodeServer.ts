@@ -112,11 +112,28 @@ async function main() {
 
 			const senderPubBytes = fromHex(body.senderPublicKey);
 
+			// Load optional PQ secret key from env (if PQ enabled)
+			// TODO: For full PQ support, nodes need TRANSPORT_PQ_SECRET_KEY env var
+			const pqSecretKeyHex = process.env.TRANSPORT_PQ_SECRET_KEY;
+			const nodePqSecretKey = pqSecretKeyHex
+				? fromHex(pqSecretKeyHex as HexString)
+				: undefined;
+
+			if (
+				process.env.DAOMIX_PQ_ENABLED === "true" &&
+				!nodePqSecretKey
+			) {
+				console.warn(
+					`[TransportNode] PQ enabled but TRANSPORT_PQ_SECRET_KEY not set for ${role} node. Falling back to classical-only decryption.`,
+				);
+			}
+
 			// Peel one layer
 			const peeledBytes = await peelTransportLayer({
 				ciphertext: body.ciphertext,
 				nodeSecretKey: nodeKeypair.secretKey,
 				senderPublicKey: senderPubBytes,
+				nodePqSecretKey,
 			});
 
 			// Branch by role

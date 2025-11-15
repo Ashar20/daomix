@@ -1,13 +1,17 @@
 import { describe, it, expect, beforeAll } from "vitest";
 import {
-  initCrypto,
-  generateKeypair,
+	initCrypto,
+	generateKeypair,
 } from "../src/crypto";
 import {
-  buildOnion,
-  peelOnionForNode,
-  decryptFinalForTally,
+	buildOnion,
+	peelOnionForNode,
+	decryptFinalForTally,
 } from "../src/onion";
+import {
+	initPq,
+	generatePqKeypair,
+} from "../src/pqCrypto";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -52,24 +56,91 @@ describe("DaoMix onion ballots", () => {
     expect(decoded).toBe(voteText);
   });
 
-  it("fails to peel with wrong node key", async () => {
-    const tally = generateKeypair();
-    const m1 = generateKeypair();
-    const sender = generateKeypair();
-    const wrongNode = generateKeypair();
+	it("fails to peel with wrong node key", async () => {
+		const tally = generateKeypair();
+		const m1 = generateKeypair();
+		const sender = generateKeypair();
+		const wrongNode = generateKeypair();
 
-    const voteBytes = encoder.encode("TEST");
+		const voteBytes = encoder.encode("TEST");
 
-    const onion = await buildOnion({
-      vote: voteBytes,
-      mixNodes: [{ publicKey: m1.publicKey }],
-      tally: { publicKey: tally.publicKey },
-      senderKeypair: sender,
-    });
+		const onion = await buildOnion({
+			vote: voteBytes,
+			mixNodes: [{ publicKey: m1.publicKey }],
+			tally: { publicKey: tally.publicKey },
+			senderKeypair: sender,
+		});
 
-    await expect(
-      peelOnionForNode(onion, wrongNode, sender.publicKey),
-    ).rejects.toThrow();
-  });
+		await expect(
+			peelOnionForNode(onion, wrongNode, sender.publicKey),
+		).rejects.toThrow();
+	});
+
+	it("works with PQ enabled (hybrid mode)", async () => {
+		// Temporarily enable PQ
+		const originalPqEnabled = process.env.DAOMIX_PQ_ENABLED;
+		process.env.DAOMIX_PQ_ENABLED = "true";
+
+		try {
+			await initPq();
+
+			const tally = generateKeypair();
+			const tallyPq = await generatePqKeypair();
+			const m1 = generateKeypair();
+			const m1Pq = await generatePqKeypair();
+			const sender = generateKeypair();
+
+			const voteText = "CANDIDATE_B_PQ";
+			const voteBytes = encoder.encode(voteText);
+
+			// Build onion with PQ public keys
+			const onion = await buildOnion({
+				vote: voteBytes,
+				mixNodes: [
+					{ publicKey: m1.publicKey, pqPublicKey: m1Pq.publicKey },
+				],
+				tally: {
+					publicKey: tally.publicKey,
+					pqPublicKey: tallyPq.publicKey,
+				},
+				senderKeypair: sender,
+			});
+
+			expect(onion).toBeTruthy();
+			expect(onion.length).toBeGreaterThan(0);
+
+			// The onion should be longer when PQ is enabled (includes PQ ciphertext)
+			// PQ ciphertext is 1088 bytes = 2176 hex chars, so onion should be noticeably longer
+			expect(onion.length).toBeGreaterThan(500); // Basic sanity check
+
+			// Peel at mix node (with PQ SK for hybrid decryption)
+			const peeledHex = await peelOnionForNode(
+				onion,
+				m1, // Use correct mix node keypair
+				sender.publicKey,
+				m1Pq.secretKey, // Provide PQ SK for hybrid decryption
+			);
+
+			expect(peeledHex).toBeTruthy();
+
+			// Final decrypt at tally (with PQ SK)
+			const final = await decryptFinalForTally(
+				peeledHex,
+				tally, // Use correct tally keypair
+				sender.publicKey,
+				tallyPq.secretKey, // Provide PQ SK for hybrid decryption
+			);
+
+			const decoded = decoder.decode(final);
+			expect(decoded).toBe(voteText);
+		} finally {
+			// Restore original PQ setting
+			if (originalPqEnabled !== undefined) {
+				process.env.DAOMIX_PQ_ENABLED = originalPqEnabled;
+			} else {
+				delete process.env.DAOMIX_PQ_ENABLED;
+			}
+		}
+	});
 });
 
