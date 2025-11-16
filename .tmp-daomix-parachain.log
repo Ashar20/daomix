@@ -1,0 +1,8 @@
+error: unexpected argument '--ws-port' found
+
+  tip: a similar argument exists: '--rpc-port'
+  tip: to pass '--ws-port' as a value, use '-- --ws-port'
+
+Usage: parachain-template-node <--chain <CHAIN_SPEC>|--dev|--base-path <PATH>|--log <LOG_PATTERN>...|--detailed-log-output|--disable-log-color|--enable-log-reloading|--tracing-targets <TARGETS>|--tracing-receiver <RECEIVER>> <--rpc-external|--unsafe-rpc-external|--rpc-methods <METHOD SET>|--rpc-rate-limit <RPC_RATE_LIMIT>|--rpc-rate-limit-whitelisted-ips <RPC_RATE_LIMIT_WHITELISTED_IPS>...|--rpc-rate-limit-trust-proxy-headers|--rpc-max-request-size <RPC_MAX_REQUEST_SIZE>|--rpc-max-response-size <RPC_MAX_RESPONSE_SIZE>|--rpc-max-subscriptions-per-connection <RPC_MAX_SUBSCRIPTIONS_PER_CONNECTION>|--rpc-port <PORT>|--experimental-rpc-endpoint <EXPERIMENTAL_RPC_ENDPOINT>...|--rpc-max-connections <COUNT>|--rpc-message-buffer-capacity-per-connection <RPC_MESSAGE_BUFFER_CAPACITY_PER_CONNECTION>|--rpc-disable-batch-requests|--rpc-max-batch-request-len <LEN>|--rpc-cors <ORIGINS>> [-- <RELAY_CHAIN_ARGS>...]
+
+For more information, try '--help'.

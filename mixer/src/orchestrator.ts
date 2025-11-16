@@ -77,8 +77,10 @@ async function fetchBallotsFromDaoChain(
     }
 
     // Unwrap Option and convert BoundedVec<u8> to Uint8Array
-    const bytes = (storage as any).unwrap ? (storage as any).unwrap() : storage;
-    ballots.push((bytes as any).toU8a ? (bytes as any).toU8a() : new Uint8Array(bytes as any));
+    // Note: toHex() returns the raw hex without SCALE encoding, toU8a() includes SCALE prefix
+    const bounded = (storage as any).unwrap ? (storage as any).unwrap() : storage;
+    const hexStr = (bounded as any).toHex ? (bounded as any).toHex() : toHex(bounded);
+    ballots.push(fromHex(hexStr));
   }
 
   return ballots;
@@ -162,32 +164,54 @@ async function runShardedMixChain(
     return [];
   }
 
-  // 1) Build ShardWithMeta[] for all ballots
-  const shardsWithMeta: ShardWithMeta[] = [];
-  for (let messageIndex = 0; messageIndex < ciphertexts.length; messageIndex++) {
-    const ct = ciphertexts[messageIndex];
-    const shards = shardCiphertext(ct, shardCount);
-    for (const shard of shards) {
-      shardsWithMeta.push({
-        ...shard,
-        messageIndex,
-      });
+  // Start with full onions (no sharding yet)
+  let currentCiphertexts = ciphertexts;
+  let shardsWithMeta: ShardWithMeta[] | null = null;
+
+  console.log(`[DaoMix] runShardedMixChain: starting with ${ciphertexts.length} full onions`);
+  console.log(`[DaoMix] First onion (truncated): ${ciphertexts[0]?.substring(0, 100)}...`);
+
+  // For each mix node: peel → shard → (next iteration reconstructs)
+  for (let nodeIdx = 0; nodeIdx < mixNodes.length; nodeIdx++) {
+    const node = mixNodes[nodeIdx];
+
+    // If we have shards from previous iteration, reconstruct first
+    let inputCiphertexts: HexString[];
+    if (shardsWithMeta !== null) {
+      const shardsByMessage = new Map<number, Shard[]>();
+      for (const shard of shardsWithMeta) {
+        const arr = shardsByMessage.get(shard.messageIndex) ?? [];
+        arr.push({
+          shardId: shard.shardId,
+          shardIndex: shard.shardIndex,
+          totalShards: shard.totalShards,
+          data: shard.data,
+        });
+        shardsByMessage.set(shard.messageIndex, arr);
+      }
+
+      inputCiphertexts = [];
+      for (let messageIndex = 0; messageIndex < currentCiphertexts.length; messageIndex++) {
+        const shards = shardsByMessage.get(messageIndex) ?? [];
+        if (shards.length === 0) {
+          throw new Error(`Missing shards for messageIndex=${messageIndex} before mix node ${node.url}`);
+        }
+        const reconstructed = reconstructFromShards(shards);
+        inputCiphertexts.push(reconstructed);
+      }
+    } else {
+      // First iteration: use original full onions
+      inputCiphertexts = currentCiphertexts;
     }
-  }
 
-  if (shardsWithMeta.length === 0) {
-    return [];
-  }
-
-  // 2) Extract the shard ciphertexts as our working batch
-  let currentCiphertexts: HexString[] = shardsWithMeta.map((s) => s.data);
-
-  // 3) For each mix node, call /mix and update both ciphertexts and shard metadata
-  for (const node of mixNodes) {
+    // Send full ciphertexts to /mix for onion peeling and shuffling
     const url = node.url.endsWith("/mix") ? node.url : `${node.url}/mix`;
 
+    console.log(`[DaoMix] Sending to ${url}: ${inputCiphertexts.length} ciphertexts`);
+    console.log(`[DaoMix] First input ciphertext (truncated): ${inputCiphertexts[0]?.substring(0, 100)}...`);
+
     const reqBody: MixRequest = {
-      ciphertexts: currentCiphertexts,
+      ciphertexts: inputCiphertexts,
       senderPublicKey,
     };
 
@@ -198,58 +222,48 @@ async function runShardedMixChain(
     if (!Array.isArray(data.ciphertexts) || !Array.isArray(data.permutation)) {
       throw new Error(`Invalid /mix response from ${url}`);
     }
-    if (data.ciphertexts.length !== currentCiphertexts.length) {
+    if (data.ciphertexts.length !== inputCiphertexts.length) {
       throw new Error(`/mix response size mismatch from ${url}`);
     }
-    if (data.permutation.length !== currentCiphertexts.length) {
+    if (data.permutation.length !== inputCiphertexts.length) {
       throw new Error(`/mix permutation size mismatch from ${url}`);
     }
 
-    // Apply permutation to shard metadata
-    const newShardsWithMeta: ShardWithMeta[] = new Array(shardsWithMeta.length);
-    const newCiphertexts: HexString[] = new Array(shardsWithMeta.length);
-
-    for (let i = 0; i < data.ciphertexts.length; i++) {
-      const srcIndex = data.permutation[i];
-      newCiphertexts[i] = data.ciphertexts[i];
-      newShardsWithMeta[i] = {
-        ...shardsWithMeta[srcIndex],
-        data: data.ciphertexts[i],
-      };
+    // Update current ciphertexts with peeled results
+    currentCiphertexts = [];
+    for (let permutedIdx = 0; permutedIdx < data.ciphertexts.length; permutedIdx++) {
+      const originalMessageIndex = data.permutation[permutedIdx];
+      currentCiphertexts[originalMessageIndex] = data.ciphertexts[permutedIdx];
     }
 
-    shardsWithMeta.splice(0, shardsWithMeta.length, ...newShardsWithMeta);
-    currentCiphertexts = newCiphertexts;
+    // Shard the peeled ciphertexts for next iteration (if not last node)
+    if (nodeIdx < mixNodes.length - 1) {
+      const newShardsWithMeta: ShardWithMeta[] = [];
+      for (let messageIndex = 0; messageIndex < currentCiphertexts.length; messageIndex++) {
+        const peeledCiphertext = currentCiphertexts[messageIndex];
+        const shards = shardCiphertext(peeledCiphertext, shardCount);
+        for (const shard of shards) {
+          newShardsWithMeta.push({
+            ...shard,
+            messageIndex,
+          });
+        }
+      }
+      shardsWithMeta = newShardsWithMeta;
 
-    console.log(
-      `[DaoMix] Sharded mix via ${node.url}, permutationCommitment=${data.permutationCommitment}, totalShards=${shardsWithMeta.length}`
-    );
-  }
-
-  // 4) Group shards back by messageIndex and reconstruct each ballot ciphertext
-  const shardsByMessage = new Map<number, Shard[]>();
-  for (const shard of shardsWithMeta) {
-    const arr = shardsByMessage.get(shard.messageIndex) ?? [];
-    arr.push({
-      shardId: shard.shardId,
-      shardIndex: shard.shardIndex,
-      totalShards: shard.totalShards,
-      data: shard.data,
-    });
-    shardsByMessage.set(shard.messageIndex, arr);
-  }
-
-  const finalCiphertexts: HexString[] = [];
-  for (let messageIndex = 0; messageIndex < ciphertexts.length; messageIndex++) {
-    const shards = shardsByMessage.get(messageIndex) ?? [];
-    if (shards.length === 0) {
-      throw new Error(`Missing shards for messageIndex=${messageIndex}`);
+      console.log(
+        `[DaoMix] Sharded mix via ${node.url}, permutationCommitment=${data.permutationCommitment}, totalShards=${shardsWithMeta.length}`
+      );
+    } else {
+      // Last node: don't shard, just return final ciphertexts
+      console.log(
+        `[DaoMix] Final mix via ${node.url}, permutationCommitment=${data.permutationCommitment}`
+      );
     }
-    const reconstructed = reconstructFromShards(shards);
-    finalCiphertexts.push(reconstructed);
   }
 
-  return finalCiphertexts;
+  // Return final ciphertexts (already in correct order by messageIndex)
+  return currentCiphertexts;
 }
 
 /**
@@ -273,7 +287,7 @@ export async function runDaoMixForElectionOnDaoChain(
   try {
     // 2) Load config for onion/mix operations
     const onionCfg = loadOnionConfig();
-    const mixNodes = loadMixNodes();
+    const mixNodes = await loadMixNodes();
     const transportCfg = transportConfig ?? loadTransportConfig();
 
     const senderPublicKeyHex = onionCfg.senderPublicKey;
@@ -298,6 +312,7 @@ export async function runDaoMixForElectionOnDaoChain(
 
     // 4) Convert ballots to HexString[] for mix chain processing
     const ballotsHex: HexString[] = ballotsBytes.map((bytes) => toHex(bytes));
+    console.log(`[DaoMix] First ballot from chain (truncated): ${ballotsHex[0]?.substring(0, 100)}...`);
 
     // 4a) Load sharding config and compute metrics if enabled
     const shardingConfig = loadShardingConfig();

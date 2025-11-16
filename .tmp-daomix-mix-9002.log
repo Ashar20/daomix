@@ -1,0 +1,19 @@
+[DaoMix] Mix-node starting...
+[DaoMix] Public key: 0x0ad3bade03bd0ed971d472a8f6673a6f0385fe8b0197a221a5ee407f43a5bd2a
+[DaoMix] Mix-node listening on http://localhost:9002
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x0ad3bade03bd0ed971d472a8f6673a6f0385fe8b0197a221a5ee407f43a5bd2a
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x0a5ab844007c5e14c3d422b0d56456b79007b847c3b4f1c290b9f34373285e0878b30542ac658b4646ab8a09a4fe60f3b2...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x0ad3bade03bd0ed971d472a8f6673a6f0385fe8b0197a221a5ee407f43a5bd2a
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x48335bda97085bb2faa95ec286bcd103cadbcd5641007171c495c8904f53a30d46eeecde8d27028b61f171f257a8b27af5...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x0ad3bade03bd0ed971d472a8f6673a6f0385fe8b0197a221a5ee407f43a5bd2a
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0xf534ebbd4744ecc798f11eb7a24af85cad25f1ebcf9ed5c57abf17c60ff33d415393de386b01b4394160f1b4cad206f4d9...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x0ad3bade03bd0ed971d472a8f6673a6f0385fe8b0197a221a5ee407f43a5bd2a
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0xa4db6b4ecffff55b07384e77c13e10b6047e9a00ce33bf6b4a5103fe72d41e19d5507cc1a2ff9ebbf564e08937a2e64c63...

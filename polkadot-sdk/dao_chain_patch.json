@@ -1,0 +1,35 @@
+{
+  "aura": {
+    "authorities": ["5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"]
+  },
+  "session": {
+    "keys": [
+      [
+        "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+        "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+        {
+          "aura": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+        }
+      ]
+    ],
+    "nonAuthorityKeys": []
+  },
+  "collatorSelection": {
+    "invulnerables": [
+      "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+    ],
+    "candidacyBond": 1000000000000,
+    "desiredCandidates": 1
+  },
+  "parachainInfo": {
+    "parachainId": 2000
+  },
+  "sudo": {
+    "key": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+  },
+  "balances": {
+    "balances": [["5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", 1000000000000000]],
+    "devAccounts": null
+  }
+}
+

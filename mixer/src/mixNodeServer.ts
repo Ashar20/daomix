@@ -7,9 +7,9 @@ import {
   Keypair,
   toHex,
   fromHex,
-  decryptLayer,
   publicKeyFromSecret,
 } from "./crypto";
+import { peelOnionForNode } from "./onion";
 import { MixRequest, MixResponse, HexString } from "./shared";
 
 dotenv.config();
@@ -64,13 +64,26 @@ async function main() {
       const senderPubBytes = fromHex(body.senderPublicKey);
       const innerCiphertexts: HexString[] = [];
 
-      for (const outerHex of body.ciphertexts) {
-        const innerBytes = decryptLayer(
-          nodeKeypair.secretKey,
-          senderPubBytes,
-          outerHex,
-        );
-        innerCiphertexts.push(toHex(innerBytes));
+      console.log(`[DaoMix] /mix: Peeling ${body.ciphertexts.length} ciphertexts`);
+      console.log(`[DaoMix] /mix: Node public key: ${nodePublicKeyHex}`);
+      console.log(`[DaoMix] /mix: Sender public key: ${body.senderPublicKey}`);
+      console.log(`[DaoMix] /mix: First ciphertext (truncated): ${body.ciphertexts[0]?.substring(0, 100)}...`);
+
+      for (let idx = 0; idx < body.ciphertexts.length; idx++) {
+        const outerHex = body.ciphertexts[idx];
+        try {
+          // Use hybrid peeling (supports both classical and PQ)
+          const innerHex = await peelOnionForNode(
+            outerHex,
+            nodeKeypair,
+            senderPubBytes,
+            undefined, // No PQ secret key for classical mode
+          );
+          innerCiphertexts.push(innerHex);
+        } catch (err) {
+          console.error(`[DaoMix] /mix: Failed to peel ciphertext ${idx}:`, err);
+          throw err;
+        }
       }
 
       const permutation: number[] = [];

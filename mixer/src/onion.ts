@@ -29,7 +29,7 @@ function packHybridCiphertext(
 	pqCiphertext: Uint8Array | undefined,
 	regularCiphertext: Uint8Array,
 ): Uint8Array {
-	if (!pqCiphertext) {
+	if (!pqCiphertext || pqCiphertext.length === 0) {
 		// No PQ: return regular ciphertext as-is (backward compatible)
 		return regularCiphertext;
 	}

@@ -1,0 +1,89 @@
+[DaoMix] Mix-node starting...
+[DaoMix] Public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] Mix-node listening on http://localhost:9000
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x95021c0bc2f3fff8329d77882e0d8ea13e0bf81f6415a63655d81b3f4d23a10a391bb45aea844ee87e9173d492e29c7d5e...
+[DaoMix] /mix: Failed to peel ciphertext 0: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix error: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x95020e7077d716205eeae21b803a0c77e408ae1b019ff3358f2e3f4b75c78868605610c94b3cb3d3c2edbef77b85c14823...
+[DaoMix] /mix: Failed to peel ciphertext 0: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix error: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x95028250c70a62e0e4c22a638314ceffb2407bd29af6fe1820627ad5aa7bdc7a5129ff4573bd1471f6b00529f527682e2f...
+[DaoMix] /mix: Failed to peel ciphertext 0: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix error: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x9502cd3b4141d63516aa13d9ab04d92c2979e0313439acf674270c49a6f8be66777ed7f702873f57527007d7836d35911e...
+[DaoMix] /mix: Failed to peel ciphertext 0: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix error: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x95022d992f425948ed0a4524924d592b0804c651cdbbb1a11cf0387d049bfc9fde94ae0f0916aff88e225783f5c2bfae53...
+[DaoMix] /mix: Failed to peel ciphertext 0: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix error: Error: DaoMix: failed to decrypt layer
+    at decryptLayerHybrid (/Users/silas/daomix/mixer/dist/src/onion.js:96:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async peelOnionForNode (/Users/silas/daomix/mixer/dist/src/onion.js:101:19)
+    at async /Users/silas/daomix/mixer/dist/src/mixNodeServer.js:60:38
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0xde9b0e115b3b7acc5ec23be8d9233fa1069e96e75c1d7ebca18652bff3f8a9714a910a9336f48380e467928330d7575fa0...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x50db754fdf3f2d4306324806547be85fcd8128211393d976adcba1c779ad106a45a03d7492f22cdfbc1a8a1ad9a8564386...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x0b36aee1c2508058230a9cf0d49cfb66e91912e0b2ef210d13a46484cf7f206d057c224b2dcececc9ec6587859f64c7c17...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x8ec242542bad2fab363ae294e98de5299fb23d6d04a7b69c42d7b21baa2a8ac886c950d00e73d5484c8822e49f65f1b7c6...

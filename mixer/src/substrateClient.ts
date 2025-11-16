@@ -3,10 +3,12 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { SubmittableExtrinsic } from "@polkadot/api/types";
 import { Keyring } from "@polkadot/keyring";
 import type { KeyringPair } from "@polkadot/keyring/types";
+import { hexToU8a } from "@polkadot/util";
 import {
 	sendRpcOverTransportMix,
 	type TransportNode,
 } from "./transportClient";
+import { toHex } from "./crypto";
 
 // Re-export TransportNode with PQ support
 export type { TransportNode };
@@ -103,22 +105,119 @@ export async function submitExtrinsic(
 	if (!useTransport) {
 		return new Promise<string>((resolve, reject) => {
 			let resolved = false;
+			const txHash = extrinsic.hash;
 			extrinsic
-				.signAndSend(signer, ({ status, dispatchError }) => {
+				.signAndSend(signer, (result) => {
+					const { status, dispatchError } = result as any;
+					if (!resolved) {
+						if (status?.isReady) {
+							console.log("[DaoChain] tx status: Ready");
+						} else if (status?.isBroadcast) {
+							console.log("[DaoChain] tx status: Broadcast");
+						} else if (status?.isInBlock) {
+							(async () => {
+								const blockHash = status.asInBlock;
+								console.log("[DaoChain] tx included in block:", blockHash?.toString?.());
+								// Decode events for this block (log any failures; we don't try to map index precisely)
+								try {
+									const allEvents = await api.query.system.events.at(blockHash);
+									const eventsList = (allEvents as unknown as any[]) || [];
+									for (const rec of eventsList) {
+										const event = rec.event;
+										const phase = rec.phase;
+										if (phase.isApplyExtrinsic && event.section === "system" && event.method === "ExtrinsicFailed") {
+											// Decode module error if present
+											const dispatchErrorInner = (event as unknown as { data: any[] }).data?.[0];
+											if (dispatchErrorInner?.isModule) {
+												const mod = dispatchErrorInner.asModule;
+												const meta = api.registry.findMetaError({ index: mod.index, error: mod.error });
+												const docs = (meta as any).docs ?? (meta as any).documentation ?? [];
+												const docStr = Array.isArray(docs) ? docs.join(" ") : String(docs);
+												console.error("[DaoChain] ExtrinsicFailed:", `${(meta as any).section}.${(meta as any).name}`, docStr);
+											} else {
+												console.error("[DaoChain] ExtrinsicFailed (non-module):", dispatchErrorInner?.toString?.() ?? String(dispatchErrorInner));
+											}
+											console.error("[DaoChain] Failed extrinsic hash (maybe):", txHash.toHex(), "method:", extrinsic.method?.toHuman?.());
+										} else if (phase.isApplyExtrinsic && event.section === "system" && event.method === "ExtrinsicSuccess") {
+											console.log("[DaoChain] ExtrinsicSuccess (some tx in block):", txHash.toHex());
+										}
+									}
+								} catch (e) {
+									console.warn("[DaoChain] Failed to decode events:", (e as Error).message);
+								}
+								if (!resolved) {
+									resolved = true;
+									resolve(blockHash.toHex());
+								}
+							})().catch((e) => {
+								console.warn("[DaoChain] Event processing error:", (e as Error).message);
+								if (!resolved) {
+									resolved = true;
+									resolve(status.asInBlock.toHex());
+								}
+							});
+							return;
+						} else if (status?.isFinalized) {
+							(async () => {
+								const blockHash = status.asFinalized;
+								console.log("[DaoChain] tx finalized at:", blockHash?.toString?.());
+								// Check for extrinsic failures in the finalized block
+								try {
+									const allEvents = await api.query.system.events.at(blockHash);
+									const eventsList = (allEvents as unknown as any[]) || [];
+									for (const rec of eventsList) {
+										const event = rec.event;
+										const phase = rec.phase;
+										if (phase.isApplyExtrinsic && event.section === "system" && event.method === "ExtrinsicFailed") {
+											// Decode module error if present
+											const dispatchErrorInner = (event as unknown as { data: any[] }).data?.[0];
+											if (dispatchErrorInner?.isModule) {
+												const mod = dispatchErrorInner.asModule;
+												const meta = api.registry.findMetaError({ index: mod.index, error: mod.error });
+												const docs = (meta as any).docs ?? (meta as any).documentation ?? [];
+												const docStr = Array.isArray(docs) ? docs.join(" ") : String(docs);
+												console.error("[DaoChain] ExtrinsicFailed:", `${(meta as any).section}.${(meta as any).name}`, docStr);
+											} else {
+												console.error("[DaoChain] ExtrinsicFailed (non-module):", dispatchErrorInner?.toString?.() ?? String(dispatchErrorInner));
+											}
+											console.error("[DaoChain] Failed extrinsic hash (maybe):", txHash.toHex(), "method:", extrinsic.method?.toHuman?.());
+										} else if (phase.isApplyExtrinsic && event.section === "system" && event.method === "ExtrinsicSuccess") {
+											console.log("[DaoChain] ExtrinsicSuccess:", txHash.toHex());
+										}
+									}
+								} catch (e) {
+									console.warn("[DaoChain] Failed to decode events:", (e as Error).message);
+								}
+								if (!resolved) {
+									resolved = true;
+									resolve(blockHash.toHex());
+								}
+							})().catch((e) => {
+								console.warn("[DaoChain] Event processing error:", (e as Error).message);
+								if (!resolved) {
+									resolved = true;
+									resolve(status.asFinalized.toHex());
+								}
+							});
+							return;
+						}
+					}
 					if (resolved) {
 						return;
 					}
 					if (dispatchError) {
-						resolved = true;
-						reject(new Error(dispatchError.toString()));
-					} else if (status.isInBlock) {
-						resolved = true;
-						resolve(status.asInBlock.toHex());
+						// Log but do not reject; allow caller to continue and inspect storage
+						console.error("[DaoChain] dispatchError:", dispatchError.toString());
 					}
 				})
 				.catch((err) => {
 					if (!resolved) {
 						resolved = true;
+						// Check if this is a priority/nonce error that we can retry
+						const errMsg = String(err?.message || err).toLowerCase();
+						if (errMsg.includes("priority is too low") || errMsg.includes("stale")) {
+							console.warn("[DaoChain] Transaction pool error (will not retry):", err?.message || err);
+						}
 						reject(err);
 					}
 				});
@@ -233,18 +332,15 @@ export async function registerVoterTx(
  */
 export async function castVoteTx(
 	api: ApiPromise,
-	voterSuri: string,
+	signer: KeyringPair,
 	electionId: number,
-	ciphertext: Uint8Array,
+	ciphertextHex: HexString,
 	transportConfig?: TransportConfig,
 ): Promise<string> {
-	const keyring = new Keyring({ type: "sr25519" });
-	const voter = keyring.addFromUri(voterSuri);
-
-	const tx = api.tx.daomixVoting.castVote(electionId, ciphertext);
-
-	const hash = await submitExtrinsic(api, voter, tx, transportConfig);
-	console.log(`✅ castVote submitted by ${voter.address}, hash: ${hash}`);
+	// Pass as hex (0x...) so the registry treats it as Bytes without mis-sizing
+	const tx = api.tx.daomixVoting.castVote(electionId, ciphertextHex);
+	const hash = await submitExtrinsic(api, signer, tx, transportConfig);
+	console.log(`✅ castVote submitted by ${signer.address}, hash: ${hash}`);
 	return hash;
 }
 
@@ -283,7 +379,11 @@ export async function submitTallyTx(
 ): Promise<string> {
 	const { api, tally } = clients;
 
-	const tx = api.tx.daomixVoting.submitTally(electionId, resultUri, resultHash);
+	// Convert to hex strings so Polkadot.js handles SCALE encoding correctly
+	const resultUriHex = toHex(resultUri);
+	const resultHashHex = toHex(resultHash);
+
+	const tx = api.tx.daomixVoting.submitTally(electionId, resultUriHex, resultHashHex);
 
 	const hash = await submitExtrinsic(api, tally, tx, transportConfig);
 	console.log(`✅ submitTally submitted, hash: ${hash}`);

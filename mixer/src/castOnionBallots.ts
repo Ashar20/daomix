@@ -15,6 +15,7 @@ import {
 	castVoteTx,
 	type TransportConfig,
 } from "./substrateClient";
+import { Keyring } from "@polkadot/keyring";
 
 const encoder = new TextEncoder();
 
@@ -42,11 +43,12 @@ export async function castOnionBallotsOnDaoChain(
 
 	// 1) Connect to DaoChain
 	const { api } = await connectDaoChain();
+	const keyring = new Keyring({ type: "sr25519" });
 
 	try {
 		// 2) Load mix-node and tally public keys for onion building
 		const onionCfg = loadOnionConfig();
-		const mixNodes = loadMixNodes();
+		const mixNodes = await loadMixNodes();
 
 		const senderSecretBytes = fromHex(onionCfg.senderSecretKey);
 		const senderPublicBytes = fromHex(onionCfg.senderPublicKey);
@@ -56,7 +58,7 @@ export async function castOnionBallotsOnDaoChain(
 		};
 
 		const tallyPublicBytes = fromHex(onionCfg.tallyPublicKey);
-		const mixNodePublics = mixNodes.map((n) => ({
+		const mixNodePublics = (mixNodes || []).map((n) => ({
 			publicKey: fromHex(n.publicKey),
 		}));
 
@@ -75,21 +77,56 @@ export async function castOnionBallotsOnDaoChain(
 				senderKeypair,
 			});
 
-			// Convert HexString to Uint8Array for Substrate
-			const onionCiphertext = fromHex(onionHex);
-
 			// Cast vote on DaoChain
-			const hash = await castVoteTx(
-				api,
-				ballot.voterSuri,
-				electionId,
-				onionCiphertext,
-				transportConfig,
-			);
+			const signer = keyring.addFromUri(ballot.voterSuri);
+			const hash = await castVoteTx(api, signer, electionId, onionHex, transportConfig);
 
 			console.log(
 				`✅ [DaoChain] castVote for election ${electionId}, ballot #${index} ("${ballot.plaintext}"), hash=${hash}`,
 			);
+			// Debug: observe storage after each cast
+			try {
+				const count = await (api.query as any).daomixVoting.ballotCount(electionId);
+				console.log(
+					"[DaoChain][Debug] ballotCount after cast from",
+					signer.address,
+					"is",
+					count?.toString?.() ?? String(count),
+				);
+				const first = await (api.query as any).daomixVoting.ballots(electionId, 0);
+				console.log("[DaoChain][Debug] ballots(eid, 0):", first?.toHuman?.() ?? String(first));
+			} catch {
+				// Also try snake_case pallet path if runtime exposes it that way
+				try {
+					// @ts-ignore
+					const count = await (api.query as any).daomix_voting.ballotCount(electionId);
+					console.log(
+						"[DaoChain][Debug:snake] ballotCount after cast from",
+						signer.address,
+						"is",
+						count?.toString?.() ?? String(count),
+					);
+					// @ts-ignore
+					const first = await (api.query as any).daomix_voting.ballots(electionId, 0);
+					console.log("[DaoChain][Debug:snake] ballots(eid, 0):", first?.toHuman?.() ?? String(first));
+				} catch (e) {
+					console.warn("[DaoChain][Debug] Failed to query ballotCount/ballots:", (e as Error).message);
+				}
+			}
+		}
+
+		// After all casts, dump any DaoMix-related events in the latest block for visibility
+		try {
+			const events: any[] = (await api.query.system.events()) as any;
+			for (const rec of events) {
+				const ev = rec.event;
+				const section = ev.section?.toString?.() ?? "";
+				if (section === "daomixVoting" || section === "daomix_voting") {
+					console.log("[DaoChain][Events] daomixVoting:", ev.method?.toString?.(), ev.toHuman?.());
+				}
+			}
+		} catch (e) {
+			console.warn("[DaoChain][Events] Failed to read system.events:", (e as Error).message);
 		}
 
 		console.log(

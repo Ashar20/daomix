@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { HexString } from "./shared";
+import axios from "axios";
 
 export interface MixNodeConfig {
   url: string;
@@ -57,22 +58,33 @@ export function loadOnionConfig(): OnionConfig {
   return { tallyPublicKey, tallySecretKey, senderSecretKey, senderPublicKey };
 }
 
-export function loadMixNodes(): MixNodeConfig[] {
+export async function loadMixNodes(): Promise<MixNodeConfig[]> {
   const urlsEnv = process.env.MIX_NODE_URLS;
-  const pubKeysEnv = process.env.MIX_NODE_PUBLIC_KEYS;
 
   if (!urlsEnv) {
     throw new Error("MIX_NODE_URLS is not set");
   }
-  if (!pubKeysEnv) {
-    throw new Error("MIX_NODE_PUBLIC_KEYS is not set");
-  }
 
   const urls = urlsEnv.split(",").map((u) => u.trim()).filter(Boolean);
-  const pubKeys = pubKeysEnv.split(",").map((p) => p.trim()).filter(Boolean);
 
-  if (urls.length !== pubKeys.length) {
-    throw new Error("MIX_NODE_URLS and MIX_NODE_PUBLIC_KEYS length mismatch");
+  // Autodiscover X25519 public keys from /health for each mix node
+  const nodes: MixNodeConfig[] = [];
+  for (const url of urls) {
+    const base = url.replace(/\/+$/, "");
+    const healthUrl = `${base}/health`;
+    try {
+      const { data } = await axios.get(healthUrl, { timeout: 5000 });
+      const nodePublicKey = (data?.nodePublicKey || data?.publicKey) as string | undefined;
+      if (!nodePublicKey || typeof nodePublicKey !== "string") {
+        throw new Error(`Invalid /health response, missing nodePublicKey at ${url}`);
+      }
+      nodes.push({
+        url: base,
+        publicKey: nodePublicKey as HexString,
+      });
+    } catch (err) {
+      throw new Error(`Failed to fetch mix-node /health from ${url}: ${String((err as any)?.message || err)}`);
+    }
   }
 
   // Optional PQ public keys
@@ -104,11 +116,14 @@ export function loadMixNodes(): MixNodeConfig[] {
     }
   }
 
-  return urls.map((url, index) => ({
-    url,
-    publicKey: pubKeys[index] as HexString,
-    pqPublicKey: pqPubKeys[index],
-  }));
+  // Attach optional PQ keys by index if provided
+  if (pqPubKeys.length > 0) {
+    for (let i = 0; i < nodes.length && i < pqPubKeys.length; i++) {
+      nodes[i].pqPublicKey = pqPubKeys[i];
+    }
+  }
+
+  return nodes;
 }
 
 export interface ShardingConfig {
