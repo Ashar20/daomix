@@ -20,8 +20,8 @@ const ELECTION_ID = Number(process.env.DAOCHAIN_ELECTION_ID || 42);
 // Default WS endpoint (can be overridden)
 process.env.DAOCHAIN_WS_URL = process.env.DAOCHAIN_WS_URL || "ws://127.0.0.1:9944";
 
-// Optional: Disable transport by default for a minimal first-pass E2E
-process.env.DAOCHAIN_TRANSPORT_ENABLED = process.env.DAOCHAIN_TRANSPORT_ENABLED || "false";
+// Enable transport for full network hopping test
+process.env.DAOCHAIN_TRANSPORT_ENABLED = process.env.DAOCHAIN_TRANSPORT_ENABLED || "true";
 // Disable PQ for E2E to keep wire formats classical and avoid optional branches
 process.env.DAOMIX_PQ_ENABLED = process.env.DAOMIX_PQ_ENABLED || "false";
 

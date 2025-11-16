@@ -87,3 +87,15 @@
 [DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
 [DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
 [DaoMix] /mix: First ciphertext (truncated): 0x8ec242542bad2fab363ae294e98de5299fb23d6d04a7b69c42d7b21baa2a8ac886c950d00e73d5484c8822e49f65f1b7c6...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0xcc8b58998e0b35db9aa3ff5dc98ef3cff324ebdfbc6da499c994edbad6e0ce17fa977e6b0ca26ee647c90fcf64f3501f7a...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0x922720b28d16976c7066a09ca170f04fd1240c76cbe35139ab3553e6591bf6f9907971b8ce3fcf9fb557a83ccdc966117c...
+[DaoMix] /mix: Peeling 3 ciphertexts
+[DaoMix] /mix: Node public key: 0x78972b27afa3f8c769c3c9223a411ba1b4d4d82e866fb0b4b48a5bdde2c34e0c
+[DaoMix] /mix: Sender public key: 0xc1906d015181d82b57845353a133ff10cc3d81244547e5f96b3845585e8d0d55
+[DaoMix] /mix: First ciphertext (truncated): 0xaa925cd51bf6e72c8c0bac1203774ebf2af5e2014e09476a953befc4ea150103204f50dfb75fbdb1d35a719c1c9704720b...
