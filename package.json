@@ -17,7 +17,11 @@
     "dev:dapp": "pnpm --filter @polokol/dapp dev",
     "build": "pnpm -r build",
     "build:sdk": "pnpm --filter @polokol/dotmix-provider build",
-    "test": "pnpm -r test --if-present"
+    "test": "pnpm -r test --if-present",
+    "demo:setup": "bash scripts/demo-setup.sh",
+    "demo:start": "bash scripts/demo-start.sh",
+    "demo:ui": "node demo-ui-server.js",
+    "demo:manual": "node demo-manual.js"
   },
   "packageManager": "pnpm@8.0.0"
 }

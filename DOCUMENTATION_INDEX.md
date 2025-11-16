@@ -4,6 +4,77 @@ Complete reference guide for all DaoMix documentation.
 
 ---
 
+## 🎭 Live Demo (Start Here!)
+
+### 🚀 [Quick Start Guide](DEMO_QUICKSTART.md)
+**Experience TWO REAL PARACHAINS in 2 commands - NO MOCKS!**
+
+**Contents**:
+- One-command setup (`npm run demo:setup`)
+- One-command start (`npm run demo:start`)
+- Manual RPC entry workflow
+- Browser UI walkthrough
+- Troubleshooting
+
+**Perfect for**: First-time users, educators, demo presenters
+
+### 📖 [Complete Demo Guide](DEMO_COMPLETE.md)
+**Comprehensive step-by-step guide with detailed explanations.**
+
+**Contents**:
+- How the demo works (2 real parachains + 3 mix nodes)
+- Step-by-step user experience
+- Real vs Mock comparison tables
+- Production accuracy analysis
+- Educational value explanation
+- Live log examples
+
+**Perfect for**: Technical users, students, blockchain learners
+
+### ✅ [Real Demo Technical Proof](REAL_DEMO_COMPLETE.md)
+**Technical documentation proving everything is real.**
+
+**Contents**:
+- What was built (architecture)
+- Why it's real (not mocked)
+- Real XCM flow diagrams
+- Real cryptography details
+- Production accuracy comparison
+- Files created list
+
+**Perfect for**: Technical reviewers, auditors, skeptics
+
+### 🔧 [Demo Implementation Summary](DEMO_IMPLEMENTATION_SUMMARY.md)
+**Summary of what was implemented and how it works.**
+
+**Contents**:
+
+### 🎨 [Clean UI Implementation](CLEAN_UI_IMPLEMENTATION.md)
+**Documentation of the new clean, educational demo UI.**
+
+**Contents**:
+- User complaint and fix
+- Before/after comparison
+- Files created/modified
+- Technical implementation details
+- User requirements checklist
+
+**Perfect for**: Understanding the new UI design
+
+### 📱 [Demo UI Documentation](DEMO_UI_README.md)
+**Technical documentation for the demo UI server and interface.**
+
+**Contents**:
+- Requirements met checklist
+- Files created/modified
+- Technical architecture
+- How it works (end-to-end)
+- Commands reference
+
+**Perfect for**: Developers, maintainers, contributors
+
+---
+
 ## For Parachain Developers
 
 ### 🚀 [Cross-Chain Mixing Integration Guide](CROSS_CHAIN_MIXING_GUIDE.md)
@@ -48,6 +119,21 @@ Complete reference guide for all DaoMix documentation.
 - Next steps for production
 
 **Perfect for**: DevOps, release managers, core contributors
+
+---
+
+## 🎭 [Interactive Frontend Demo](DEMO_README.md)
+**Live browser-based demonstration of the complete DaoMix system.**
+
+**Contents**:
+- Manual RPC URL entry (educational)
+- Two browser tabs with real-time logs
+- Create elections and cast votes
+- Watch live mixing process
+- Cross-chain privacy flow visualization
+- WebSocket streaming logs
+
+**Perfect for**: Product demos, user education, stakeholder presentations
 
 ---
 

@@ -46,6 +46,30 @@ The guide covers:
 
 📚 **[Full Documentation Index](DOCUMENTATION_INDEX.md)** - Find all guides organized by role and task
 
+## 🎭 Live Demo - TWO REAL PARACHAINS
+
+**Experience REAL cross-chain privacy - NO MOCKS, NO SIMULATIONS:**
+
+```bash
+# First time setup (5-10 minutes)
+npm run demo:setup
+
+# Start demo (every time)
+npm run demo:start
+```
+
+**What you get:**
+- ✅ **2 REAL Substrate parachains** (DaoChain Para 1000 + VotingChain Para 2001)
+- ✅ **REAL XCM V4 messages** (cross-chain communication)
+- ✅ **3 REAL mix nodes** (HTTP servers with cryptography)
+- ✅ **Manual RPC entry** (educational - copy URLs from terminal to browser)
+- ✅ **Live logs** (real-time streaming from actual blockchain processes)
+- ✅ **Test connections** (verify real blockchain connectivity)
+
+**Quick Start**: [DEMO_QUICKSTART.md](DEMO_QUICKSTART.md)
+**Complete Guide**: [DEMO_COMPLETE.md](DEMO_COMPLETE.md)
+**Technical Details**: [REAL_DEMO_COMPLETE.md](REAL_DEMO_COMPLETE.md)
+
 ## Getting Started (Development)
 
 ### Prerequisites

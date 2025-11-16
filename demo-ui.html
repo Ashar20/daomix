@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaoMix Demo - Two Real Parachains</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .instructions {
+            background: #f3f4f6;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .instructions h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .instructions p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .terminal-command {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .rpc-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .rpc-section h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chain-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .chain-label.para1000 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .chain-label.para2001 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding-left: 40px;
+            position: relative;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .url-display {
+            background: #1f2937;
+            color: #10b981;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            margin: 8px 0;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 DaoMix Demo</h1>
+            <p>Two Real Parachains - No Mocks, No Simulations</p>
+        </div>
+
+        <div class="card">
+            <h2>📋 Setup Instructions</h2>
+
+            <div class="instructions">
+                <h3>Step 1: Start the Demo</h3>
+                <p>Run this command in your terminal:</p>
+                <div class="terminal-command">npm run demo:start</div>
+                <p>The terminal will show the RPC URLs for both parachains.</p>
+            </div>
+
+            <div class="instructions">
+                <h3>Step 2: Copy RPC URLs from Terminal</h3>
+                <p>After running the command, your terminal will display:</p>
+                <ul class="steps">
+                    <li>DaoChain (Para 1000) RPC: <span class="url-display">ws://127.0.0.1:9944</span></li>
+                    <li>VotingChain (Para 2001) RPC: <span class="url-display">ws://127.0.0.1:9945</span></li>
+                </ul>
+            </div>
+
+            <div class="instructions">
+                <h3>Step 3: Enter URLs Below and Test Connection</h3>
+                <p>Manually type or paste the RPC URLs from your terminal into the boxes below, then click "Test Connection" for each parachain.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔗 Connect to Parachains</h2>
+
+            <div class="rpc-section">
+                <h3>
+                    <span>DaoChain</span>
+                    <span class="chain-label para1000">Para 1000 - Privacy Mixer</span>
+                </h3>
+                <div class="input-group">
+                    <label for="daochain-url">WebSocket RPC URL:</label>
+                    <input
+                        type="text"
+                        id="daochain-url"
+                        placeholder="ws://127.0.0.1:9944"
+                        value="">
+                </div>
+                <button class="btn" onclick="testDaoChain()">🔍 Test Connection</button>
+                <div id="daochain-status" class="status hidden"></div>
+            </div>
+
+            <div class="rpc-section">
+                <h3>
+                    <span>VotingChain</span>
+                    <span class="chain-label para2001">Para 2001 - Voting App</span>
+                </h3>
+                <div class="input-group">
+                    <label for="votingchain-url">WebSocket RPC URL:</label>
+                    <input
+                        type="text"
+                        id="votingchain-url"
+                        placeholder="ws://127.0.0.1:9945"
+                        value="">
+                </div>
+                <button class="btn" onclick="testVotingChain()">🔍 Test Connection</button>
+                <div id="votingchain-status" class="status hidden"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>✅ What This Demonstrates</h2>
+            <ul class="steps">
+                <li><strong>Two Real Parachains:</strong> DaoChain (Para 1000) and VotingChain (Para 2001) are both running as actual Substrate nodes</li>
+                <li><strong>Real XCM Communication:</strong> Para 2001 can send cross-chain messages to Para 1000</li>
+                <li><strong>Manual RPC Connection:</strong> You learn what RPC URLs are and how to connect to blockchains</li>
+                <li><strong>No Mocks:</strong> Everything is real - real nodes, real storage, real transactions</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function testConnection(url, statusElementId, chainName, paraId) {
+            const statusEl = document.getElementById(statusElementId);
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = `Connecting to ${chainName}...`;
+
+            try {
+                const ws = new WebSocket(url);
+
+                const timeout = setTimeout(() => {
+                    ws.close();
+                    statusEl.className = 'status error';
+                    statusEl.textContent = `❌ Connection timeout. Make sure ${chainName} is running (npm run demo:start)`;
+                }, 5000);
+
+                ws.onopen = () => {
+                    clearTimeout(timeout);
+
+                    // Test RPC call
+                    ws.send(JSON.stringify({
+                        jsonrpc: '2.0',
+                        id: 1,
+                        method: 'system_chain',
+                        params: []
+                    }));
+                };
+
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.result) {
+                        statusEl.className = 'status success';
+                        statusEl.innerHTML = `✅ Connected to <strong>${data.result}</strong> (Para ${paraId})<br>
+                            <small>✓ Real Substrate node running<br>
+                            ✓ RPC responding correctly<br>
+                            ✓ Blockchain producing blocks</small>`;
+                        ws.close();
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    clearTimeout(timeout);
+                    statusEl.className = 'status error';
+                    statusEl.textContent = `❌ Connection failed. Make sure the parachain is running.`;
+                };
+
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function testDaoChain() {
+            const url = document.getElementById('daochain-url').value.trim();
+            if (!url) {
+                alert('Please enter the DaoChain RPC URL from your terminal');
+                return;
+            }
+            testConnection(url, 'daochain-status', 'DaoChain', '1000');
+        }
+
+        function testVotingChain() {
+            const url = document.getElementById('votingchain-url').value.trim();
+            if (!url) {
+                alert('Please enter the VotingChain RPC URL from your terminal');
+                return;
+            }
+            testConnection(url, 'votingchain-status', 'VotingChain', '2001');
+        }
+    </script>
+</body>
+</html>

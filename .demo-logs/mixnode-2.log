@@ -1,0 +1,7 @@
+
+> @polokol/mixer@0.1.0 dev:mix-node
+> TS_NODE_FILES=true ts-node src/mixNodeServer.ts
+
+[DaoMix] Mix-node starting...
+[DaoMix] Public key: 0xd516e24f59b14e362fa82d89f56c54b4bf890a1ad50198e8772209d46228753b
+[DaoMix] Mix-node listening on http://localhost:9001
