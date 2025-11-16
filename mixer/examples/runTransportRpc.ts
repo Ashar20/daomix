@@ -1,7 +1,7 @@
 import axios from "axios";
-import { initCrypto, generateKeypair, toHex } from "./crypto";
-import { sendRpcOverTransportMix } from "./transportClient";
-import type { TransportNodePub } from "./transportOnion";
+import { initCrypto, generateKeypair, toHex } from "../src/crypto/crypto";
+import { sendRpcOverTransportMix } from "../src/substrate/transportClient";
+import type { TransportNodePub } from "../src/onion/transportOnion";
 
 interface HealthResponse {
 	status: string;

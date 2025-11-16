@@ -6,8 +6,8 @@ import {
   pqDecapsulate,
   combineSharedSecrets,
   PqKeypair,
-} from "../src/pqCrypto";
-import { initCrypto } from "../src/crypto";
+} from "../src/crypto/pqCrypto";
+import { initCrypto } from "../src/crypto/crypto";
 
 describe("Post-Quantum Cryptography (ML-KEM-768)", () => {
   beforeAll(async () => {

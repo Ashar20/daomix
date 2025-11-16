@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { runDaoMixForElection } from "./orchestrator";
+import { runDaoMixForElection } from "../servers/orchestrator";
 
 async function main() {
   const idEnv = process.env.DAOMIX_ELECTION_ID || "1";

@@ -10,7 +10,7 @@ import {
 
 // Re-export TransportNode with PQ support
 export type { TransportNode };
-import type { HexString } from "./shared";
+import type { HexString } from "../types/shared";
 
 export interface DaoChainClients {
 	api: ApiPromise;

@@ -1,5 +1,5 @@
-import { HexString } from "./shared";
-import { fromHex, toHex } from "./crypto";
+import { HexString } from "../types/shared";
+import { fromHex, toHex } from "../crypto/crypto";
 import MerkleTree from "merkletreejs";
 import keccak256 from "keccak256";
 

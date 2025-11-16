@@ -5,7 +5,7 @@ import {
 	type HexString,
 	deriveHybridAeadKey,
 	deriveHybridAeadKeyForReceiver,
-} from "./crypto";
+} from "../crypto/crypto";
 import sodium from "libsodium-wrappers";
 import { TextEncoder, TextDecoder } from "util";
 

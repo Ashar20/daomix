@@ -9,8 +9,8 @@ import {
   fromHex,
   decryptLayer,
   publicKeyFromSecret,
-} from "./crypto";
-import { MixRequest, MixResponse, HexString } from "./shared";
+} from "../src/crypto/crypto";
+import { MixRequest, MixResponse, HexString } from "../src/types/shared";
 
 dotenv.config();
 

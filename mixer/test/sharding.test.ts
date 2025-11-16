@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from "vitest";
-import { toHex } from "../src/crypto";
+import { toHex, initCrypto } from "../src/crypto/crypto";
 import {
 	shardCiphertext,
 	reconstructFromShards,
@@ -7,8 +7,7 @@ import {
 	ShardBundle,
 	createBundles,
 	flattenBundles,
-} from "../src/sharding";
-import { initCrypto } from "../src/crypto";
+} from "../src/utils/sharding";
 
 function makeSequentialBytes(len: number): Uint8Array {
 	const out = new Uint8Array(len);

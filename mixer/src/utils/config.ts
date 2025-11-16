@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { HexString } from "./shared";
+import { HexString } from "../types/shared";
 
 export interface MixNodeConfig {
   url: string;

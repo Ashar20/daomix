@@ -5,14 +5,16 @@ import {
 	pqDecapsulate,
 	combineSharedSecrets,
 } from "./pqCrypto";
-import { isPqEnabled } from "./config";
+import { isPqEnabled } from "../utils/config";
+import type { HexString } from "../types/shared";
+
+// Re-export HexString for convenience
+export type { HexString };
 
 export interface Keypair {
   publicKey: Uint8Array;
   secretKey: Uint8Array;
 }
-
-export type HexString = `0x${string}`;
 
 let sodiumReady = false;
 

@@ -1,20 +1,20 @@
 import "dotenv/config";
 import { TextEncoder } from "util";
-import { buildOnion } from "./onion";
+import { buildOnion } from "../src/onion/onion";
 import {
   initCrypto,
   fromHex,
   Keypair,
-} from "./crypto";
+} from "../src/crypto/crypto";
 import {
   loadMixNodes,
   loadOnionConfig,
-} from "./config";
+} from "../src/utils/config";
 import {
 	connectDaoChain,
 	castVoteTx,
 	type TransportConfig,
-} from "./substrateClient";
+} from "../src/substrate/substrateClient";
 
 const encoder = new TextEncoder();
 

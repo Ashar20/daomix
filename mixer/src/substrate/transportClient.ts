@@ -4,11 +4,11 @@ import {
 	toHex,
 	fromHex,
 	type HexString,
-} from "./crypto";
+} from "../crypto/crypto";
 import {
 	buildTransportOnion,
 	type TransportNodePub,
-} from "./transportOnion";
+} from "../onion/transportOnion";
 
 export interface TransportNode {
 	url: string;
@@ -44,8 +44,7 @@ export async function sendRpcOverTransportMix(params: {
 	if (params.senderSecretKeyHex) {
 		senderSecretKey = fromHex(params.senderSecretKeyHex as HexString);
 		// Derive public key from secret
-		const { publicKeyFromSecret } = await import("./crypto");
-		const { initCrypto } = await import("./crypto");
+		const { publicKeyFromSecret, initCrypto } = await import("../crypto/crypto");
 		await initCrypto();
 		senderPublicKey = await publicKeyFromSecret(senderSecretKey);
 	} else {

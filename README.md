@@ -9,11 +9,19 @@ Polokol = Polkadot SDK DAO chain + DotMix mixer stack
 
 ## Overview
 
-This monorepo contains four main components:
+This monorepo contains multiple components:
+
+- **`@polokol/daomix-sdk`** (in `mixer/`) – **Main SDK** for DaoMix: Hybrid post-quantum mixnet for on-chain voting
+  - Core crypto (X25519 + ML-KEM-768)
+  - Onion routing (ballots + transport)
+  - Sharding & bundling
+  - Substrate/Polkadot integration
+  - Server implementations (mix nodes, transport nodes)
+  - Example scripts and full pipeline runner
 
 - **`polokol-chain`** – Substrate-based chain stub for future DaoMix integration (currently unused placeholder)
-- **`mixnode`** – Node.js + TypeScript JSON-RPC forwarder (ingress/middle/egress proxy)
-- **`sdk`** – TypeScript library exporting `DotMixProvider` (generic JSON-RPC client)
+- **`mixnode`** – Node.js + TypeScript JSON-RPC forwarder (ingress/middle/egress proxy) - **deprecated, use @polokol/daomix-sdk instead**
+- **`sdk`** – TypeScript library exporting `DotMixProvider` (generic JSON-RPC client) - **deprecated, use @polokol/daomix-sdk instead**
 - **`dapp`** – Next.js + TypeScript demo dApp proving the wiring (`chain_getBlock`)
 
 ## What's Working

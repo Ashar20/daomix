@@ -1,19 +1,43 @@
 {
-  "name": "@polokol/mixer",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@polokol/daomix-sdk",
+  "version": "1.0.0",
+  "description": "DaoMix SDK - Hybrid post-quantum mixnet for on-chain voting",
+  "keywords": [
+    "daomix",
+    "mixnet",
+    "post-quantum",
+    "voting",
+    "polkadot",
+    "substrate",
+    "onion-routing",
+    "cryptography",
+    "ml-kem",
+    "kyber"
+  ],
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
-    "dev:mix-node": "TS_NODE_FILES=true ts-node src/mixNodeServer.ts",
-    "dev:transport-node": "TS_NODE_FILES=true ts-node src/transportNodeServer.ts",
-    "run:transport-rpc": "TS_NODE_FILES=true ts-node src/runTransportRpc.ts",
-    "run:daochain-pipeline-transport": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
-    "demo:orchestrator": "TS_NODE_FILES=true ts-node src/orchestratorDemo.ts",
-    "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts",
-    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts"
+    "dev:mix-node": "TS_NODE_FILES=true ts-node servers/mixNodeServer.ts",
+    "dev:transport-node": "TS_NODE_FILES=true ts-node servers/transportNodeServer.ts",
+    "run:transport-rpc": "TS_NODE_FILES=true ts-node examples/runTransportRpc.ts",
+    "run:daochain-pipeline-transport": "TS_NODE_FILES=true ts-node examples/runDaoMixDaoChain.ts",
+    "demo:orchestrator": "TS_NODE_FILES=true ts-node examples/orchestratorDemo.ts",
+    "demo:cast-ballots": "TS_NODE_FILES=true ts-node examples/castOnionBallotsDemo.ts",
+    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node examples/runDaoMixDaoChain.ts"
   },
   "dependencies": {
     "@polkadot/api": "^10.12.1",

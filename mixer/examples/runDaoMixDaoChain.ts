@@ -91,9 +91,9 @@ import {
 	registerVoterTx,
 	loadTransportConfig,
 	type TransportConfig,
-} from "./substrateClient";
-import { castOnionBallotsOnDaoChain, type DaoChainBallot } from "./castOnionBallots";
-import { runDaoMixForElectionOnDaoChain } from "./orchestrator";
+} from "../src/substrate/substrateClient";
+import { castOnionBallotsOnDaoChain, type DaoChainBallot } from "../servers/castOnionBallots";
+import { runDaoMixForElectionOnDaoChain } from "../servers/orchestrator";
 import { Keyring } from "@polkadot/keyring";
 import type { ApiPromise } from "@polkadot/api";
 

@@ -8,12 +8,12 @@ import {
 	toHex,
 	fromHex,
 	publicKeyFromSecret,
-} from "./crypto";
+} from "../src/crypto/crypto";
 import {
 	peelTransportLayer,
 	decodeRpcPayload,
-} from "./transportOnion";
-import { HexString } from "./shared";
+} from "../src/onion/transportOnion";
+import { HexString } from "../src/types/shared";
 
 dotenv.config();
 

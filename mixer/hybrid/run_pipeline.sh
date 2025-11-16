@@ -130,7 +130,7 @@ export DAOCHAIN_TRANSPORT_NODE_PQ_PUBKEYS
 export DAOCHAIN_TRANSPORT_SENDER_SK
 
 # Run the TypeScript pipeline (using ts-node since the built JS might need runtime deps)
-if ! TS_NODE_FILES=true npx ts-node --project mixer/tsconfig.json mixer/src/runDaoMixDaoChain.ts 2>&1 | tee "$LOG_FILE"; then
+if ! TS_NODE_FILES=true npx ts-node --project mixer/tsconfig.json mixer/examples/runDaoMixDaoChain.ts 2>&1 | tee "$LOG_FILE"; then
   status=$?
   echo ""
   echo "[-] Pipeline failed with exit code $status."

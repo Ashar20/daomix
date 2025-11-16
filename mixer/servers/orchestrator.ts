@@ -4,22 +4,22 @@ import MerkleTree from "merkletreejs";
 import keccak256 from "keccak256";
 import type { ApiPromise } from "@polkadot/api";
 
-import { MixRequest, MixResponse, HexString } from "./shared";
+import { MixRequest, MixResponse, HexString } from "../src/types/shared";
 import {
   loadOnionConfig,
   loadMixNodes,
   MixNodeConfig,
   loadShardingConfig,
-} from "./config";
-import { decryptFinalForTally } from "./onion";
-import { fromHex, toHex, Keypair } from "./crypto";
+} from "../src/utils/config";
+import { decryptFinalForTally } from "../src/onion/onion";
+import { fromHex, toHex, Keypair } from "../src/crypto/crypto";
 import {
 	connectDaoChain,
 	setMixCommitmentsTx,
 	submitTallyTx,
 	loadTransportConfig,
 	type TransportConfig,
-} from "./substrateClient";
+} from "../src/substrate/substrateClient";
 import { TextDecoder, TextEncoder } from "util";
 import {
   shardCiphertext,
@@ -28,7 +28,7 @@ import {
   ShardBundle,
   ShardWithMeta,
   reconstructFromShards,
-} from "./sharding";
+} from "../src/utils/sharding";
 
 export function buildMerkleRoot(values: HexString[]): HexString {
   if (values.length === 0) {

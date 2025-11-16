@@ -2,16 +2,16 @@ import { describe, it, expect, beforeAll } from "vitest";
 import {
 	initCrypto,
 	generateKeypair,
-} from "../src/crypto";
+} from "../src/crypto/crypto";
 import {
 	buildOnion,
 	peelOnionForNode,
 	decryptFinalForTally,
-} from "../src/onion";
+} from "../src/onion/onion";
 import {
 	initPq,
 	generatePqKeypair,
-} from "../src/pqCrypto";
+} from "../src/crypto/pqCrypto";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();

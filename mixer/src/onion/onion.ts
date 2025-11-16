@@ -6,7 +6,7 @@ import {
 	initCrypto,
 	deriveHybridAeadKey,
 	deriveHybridAeadKeyForReceiver,
-} from "./crypto";
+} from "../crypto/crypto";
 import sodium from "libsodium-wrappers";
 
 export interface NodePublic {

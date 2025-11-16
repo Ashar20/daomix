@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { castDemoOnionBallots } from "./castOnionBallots";
+import { castDemoOnionBallots } from "../servers/castOnionBallots";
 
 async function main() {
   const idEnv = process.env.DAOMIX_ELECTION_ID || "1";
