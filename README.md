@@ -1,31 +1,52 @@
-# Polokol Monorepo
+# DaoMix: Cross-Chain Privacy-Preserving Voting
 
-> **DaoMix Direction**  
-> This repository is evolving into **DaoMix**, a Chaum-style mixnet for on-chain voting.  
-> The current `mixnode` + `sdk` + `dapp` stack is a generic JSON-RPC path that we will
-> repurpose for DaoMix flows.
-
-Polokol = Polkadot SDK DAO chain + DotMix mixer stack
+> **Privacy-First Governance for Polkadot Ecosystem**
+> DaoMix provides a **Chaum-style mixnet** for anonymous voting across parachains.
+> Any parachain can submit mixing jobs via XCM to leverage DaoMix's privacy infrastructure.
 
 ## Overview
 
-This monorepo contains four main components:
+This repository contains the complete DaoMix cross-chain mixing system:
 
-- **`polokol-chain`** – Substrate-based chain stub for future DaoMix integration (currently unused placeholder)
-- **`mixnode`** – Node.js + TypeScript JSON-RPC forwarder (ingress/middle/egress proxy)
-- **`sdk`** – TypeScript library exporting `DotMixProvider` (generic JSON-RPC client)
-- **`dapp`** – Next.js + TypeScript demo dApp proving the wiring (`chain_getBlock`)
+- **`polkadot-sdk/templates/parachain`** – DaoChain parachain with DaomixVoting + MixJob pallets
+- **`mixer`** – Mix-node network, orchestrator, and TypeScript SDK for onion encryption
+- **`CROSS_CHAIN_MIXING_GUIDE.md`** – **Complete guide for parachains to integrate XCM-based mixing**
+- **`REAL_XCM_IMPLEMENTATION.md`** – Technical proof that XCM mixing is fully implemented
+
+## Key Features
+
+- **Cross-Chain Mixing**: Any Polkadot parachain can submit anonymous voting jobs via XCM
+- **Onion Encryption**: Multi-layer encryption with X25519 + XChaCha20-Poly1305 AEAD
+- **Post-Quantum Ready**: Hybrid ML-KEM support for future-proof security
+- **Verifiable Results**: Merkle commitments enable cryptographic verification of tallies
+- **Decentralized Mix Nodes**: Permissionless network of shuffle nodes for unlinkability
 
 ## What's Working
 
-The following features are currently functional:
+- ✅ **DaoChain Parachain**: Running with DaomixVoting + MixJob pallets
+- ✅ **XCM Cross-Chain Mixing**: Parachains can submit jobs via XCM (sibling-only barrier)
+- ✅ **Onion Encryption**: Multi-layer X25519 + XChaCha20-Poly1305 AEAD
+- ✅ **Mix-Node Network**: Decentralized shuffling with sharding support
+- ✅ **Automatic Orchestrator**: Background job processing and tally submission
+- ✅ **Post-Quantum Cryptography**: Hybrid ML-KEM encryption (optional)
+- ✅ **Transport Mix**: Onion routing for JSON-RPC requests
+- ✅ **Merkle Commitments**: Cryptographic verification of input/output integrity
 
-- ✅ **Mixnode** forwards JSON-RPC requests to a configurable upstream RPC (default: `https://polkadot.api.onfinality.io/public`)
-- ✅ **DotMixProvider SDK** wraps JSON-RPC calls and sends them through the mixnode
-- ✅ **dApp** calls `chain_getBlock` via DotMixProvider → Mixnode → Public Polkadot RPC and displays live block data
-- ✅ **End-to-end flow**: dApp → DotMixProvider → Mixnode → Public Substrate/Polkadot RPC → Block data
+## Quick Start for Parachains
 
-## Getting Started
+**Want to integrate anonymous voting into your parachain?**
+
+👉 **[Read the Complete Integration Guide](CROSS_CHAIN_MIXING_GUIDE.md)**
+
+The guide covers:
+- Use cases (governance voting, private polls, DAO decisions, auctions)
+- Step-by-step XCM integration
+- Code examples for election setup, ballot encryption, job submission
+- Security considerations and cost estimation
+
+📚 **[Full Documentation Index](DOCUMENTATION_INDEX.md)** - Find all guides organized by role and task
+
+## Getting Started (Development)
 
 ### Prerequisites
 
