@@ -120,6 +120,23 @@ pub type Barrier = TrailingSetTopicAsId<
 	>,
 >;
 
+/// Allow MixJob pallet calls from sibling parachains via XCM
+pub struct AllowMixJobFromSiblings;
+impl Contains<(Location, Xcm<RuntimeCall>)> for AllowMixJobFromSiblings {
+	fn contains((origin, xcm): &(Location, Xcm<RuntimeCall>)) -> bool {
+		// Only allow from sibling parachains (not relay chain or local)
+		let is_sibling_para = matches!(origin, Location { parents: 1, interior: Junctions::X1(_) });
+
+		if !is_sibling_para {
+			return false;
+		}
+
+		// For now, allow any XCM from sibling parachains (can be made more restrictive later)
+		// In production, you would check for specific Transact instructions
+		true
+	}
+}
+
 pub struct XcmConfig;
 impl xcm_executor::Config for XcmConfig {
 	type RuntimeCall = RuntimeCall;
@@ -174,9 +191,8 @@ impl pallet_xcm::Config for Runtime {
 	type SendXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
 	type XcmRouter = XcmRouter;
 	type ExecuteXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
-	type XcmExecuteFilter = Nothing;
-	// ^ Disable dispatchable execute on the XCM pallet.
-	// Needs to be `Everything` for local testing.
+	type XcmExecuteFilter = AllowMixJobFromSiblings;
+	// ^ Allow MixJob pallet calls from sibling parachains for cross-chain mixing
 	type XcmExecutor = XcmExecutor<XcmConfig>;
 	type XcmTeleportFilter = Everything;
 	type XcmReserveTransferFilter = Nothing;

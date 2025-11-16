@@ -351,3 +351,13 @@ impl pallet_parachain_template::Config for Runtime {
 impl pallet_daomix_voting::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 }
+parameter_types! {
+	pub const MaxJobs: u32 = 1_000;
+}
+
+/// Configure the MixJob pallet.
+impl pallet_mix_job::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type MaxJobs = MaxJobs;
+}
+

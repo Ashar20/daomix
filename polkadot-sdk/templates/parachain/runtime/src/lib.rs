@@ -308,6 +308,10 @@ mod runtime {
 	// DaoMix Voting
 	#[runtime::pallet_index(51)]
 	pub type DaomixVoting = pallet_daomix_voting;
+
+	// MixJob
+	#[runtime::pallet_index(52)]
+	pub type MixJob = pallet_mix_job;
 }
 
 #[docify::export(register_validate_block)]

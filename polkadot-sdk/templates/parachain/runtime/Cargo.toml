@@ -27,6 +27,7 @@ smallvec = { workspace = true, default-features = true }
 
 # Local
 pallet-daomix-voting = { path = "../pallets/daomix-voting", default-features = false, version = "0.0.0" }
+pallet-mix-job = { path = "../pallets/mix-job", default-features = false, version = "0.0.0" }
 pallet-parachain-template = { workspace = true }
 
 polkadot-sdk = { workspace = true, default-features = false, features = [
@@ -76,6 +77,7 @@ std = [
 	"cumulus-pallet-parachain-system/std",
 	"log/std",
 	"pallet-daomix-voting/std",
+	"pallet-mix-job/std",
 	"pallet-parachain-template/std",
 	"polkadot-sdk/std",
 	"scale-info/std",
