@@ -27,3 +27,4 @@ echo "[E2E] WS: $DAOCHAIN_WS_URL"
 npm run test:daochain-e2e --silent
 
 
+
