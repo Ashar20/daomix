@@ -1249,7 +1249,7 @@ export default function Sandbox() {
                             </div>
                             <div className="p-6">
                             <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                              <span>DaoChain 🔐</span>
+                              <span>DaoChain</span>
                               <span className="bg-[#1a1a1a] text-[#4ade80] border border-[#2a2a2a] px-2 py-1 rounded text-xs font-semibold">Para 1000 - Privacy Mixer</span>
                             </h3>
 
@@ -1272,7 +1272,7 @@ export default function Sandbox() {
                             </button>
 
                             {daochainStatus && (
-                              <div className={`mt-4 p-3 rounded border ${daochainStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border-red-400'}`}>
+                              <div className={`mt-4 p-3 rounded border ${daochainStatus.includes('Connected') || daochainStatus.includes('Success') || daochainStatus.includes('created') || daochainStatus.includes('submitted') ? 'bg-[#1a1a1a] text-[#4ade80] border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border-red-400'}`}>
                                 {daochainStatus}
                               </div>
                             )}
@@ -1297,7 +1297,7 @@ export default function Sandbox() {
                             </div>
                             <div className="p-6">
                             <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
-                              <span>VotingChain 🔐</span>
+                              <span>VotingChain</span>
                               <span className="bg-[#1a1a1a] text-[#fbbf24] border border-[#2a2a2a] px-2 py-1 rounded text-xs font-semibold">Para 2001 - Voting App</span>
                             </h3>
 
@@ -1320,7 +1320,7 @@ export default function Sandbox() {
                             </button>
 
                             {votingchainStatus && (
-                              <div className={`mt-4 p-3 rounded border ${votingchainStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border-red-400'}`}>
+                              <div className={`mt-4 p-3 rounded border ${votingchainStatus.includes('Connected') || votingchainStatus.includes('Success') ? 'bg-[#1a1a1a] text-[#4ade80] border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border-red-400'}`}>
                                 {votingchainStatus}
                               </div>
                             )}
@@ -1449,7 +1449,7 @@ export default function Sandbox() {
                               Create Election
                             </button>
                             {electionStatus && (
-                              <div className={`mt-4 p-3 rounded ${electionStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : electionStatus.includes('⏳') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
+                              <div className={`mt-4 p-3 rounded ${electionStatus.includes('Success') || electionStatus.includes('created') || electionStatus.includes('Election') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : electionStatus.includes('Processing') || electionStatus.includes('Preparing') || electionStatus.includes('Creating') || electionStatus.includes('Submitting') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
                                 {electionStatus}
                               </div>
                             )}
@@ -1499,7 +1499,7 @@ export default function Sandbox() {
                               Cast Vote
                             </button>
                             {voteStatus && (
-                              <div className={`mt-4 p-3 rounded ${voteStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : voteStatus.includes('⏳') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
+                              <div className={`mt-4 p-3 rounded ${voteStatus.includes('Success') || voteStatus.includes('cast') || voteStatus.includes('Vote') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : voteStatus.includes('Processing') || voteStatus.includes('Preparing') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
                                 {voteStatus}
                               </div>
                             )}
@@ -1542,7 +1542,7 @@ export default function Sandbox() {
                               Submit XCM Job (Para 2001 → Para 1000)
                             </button>
                             {xcmStatus && (
-                              <div className={`mt-4 p-3 rounded ${xcmStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : xcmStatus.includes('⏳') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
+                              <div className={`mt-4 p-3 rounded ${xcmStatus.includes('Success') || xcmStatus.includes('submitted') || xcmStatus.includes('XCM') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : xcmStatus.includes('Processing') || xcmStatus.includes('Preparing') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
                                 {xcmStatus}
                               </div>
                             )}
@@ -1680,7 +1680,7 @@ export default function Sandbox() {
                             Publish (Encrypted via Transport Mix)
                           </button>
                           {publishStatus && (
-                            <div className={`mt-4 p-3 rounded ${publishStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : publishStatus.includes('🔐') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
+                            <div className={`mt-4 p-3 rounded ${publishStatus.includes('Success') || publishStatus.includes('published') || publishStatus.includes('Publish') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : publishStatus.includes('Sending') || publishStatus.includes('Encrypted') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
                               {publishStatus}
                             </div>
                           )}
@@ -1719,7 +1719,7 @@ export default function Sandbox() {
                             Connect
                           </button>
                           {chainStatus && (
-                            <div className={`mb-4 p-3 rounded ${chainStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
+                            <div className={`mb-4 p-3 rounded ${chainStatus.includes('Connected') || chainStatus.includes('Success') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
                               {chainStatus}
                             </div>
                           )}
@@ -1746,7 +1746,7 @@ export default function Sandbox() {
                               Test IPFS Connection
                             </button>
                             {ipfsStatus && (
-                              <div className={`mt-4 p-3 rounded ${ipfsStatus.includes('✅') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
+                              <div className={`mt-4 p-3 rounded ${ipfsStatus.includes('Connected') || ipfsStatus.includes('Success') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
                                 {ipfsStatus}
                               </div>
                             )}
@@ -1900,7 +1900,7 @@ export default function Sandbox() {
                           : 'bg-[#ff6b35] hover:bg-[#e55a2b] text-black border-[#ff6b35]'
                       }`}
                     >
-                      {currentStep === TABS.length - 1 ? 'COMPLETE ✓' : 'NEXT →'}
+                      {currentStep === TABS.length - 1 ? 'COMPLETE' : 'NEXT →'}
                     </button>
                   </div>
                 </div>
@@ -1956,8 +1956,8 @@ export default function Sandbox() {
                                 # Testing DaoChain connection via transport mix...
                               </div>
                               {daochainStatus && (
-                                <div className={`mt-1 ${daochainStatus.includes('✅') ? 'text-[#4ade80]' : 'text-red-400'}`}>
-                                  {daochainStatus.split('✓')[1] || daochainStatus}
+                                <div className={`mt-1 ${daochainStatus.includes('Connected') || daochainStatus.includes('Success') ? 'text-[#4ade80]' : 'text-red-400'}`}>
+                                  {daochainStatus}
                                 </div>
                               )}
                               <div className="flex mt-4">
@@ -1968,8 +1968,8 @@ export default function Sandbox() {
                                 # Testing VotingChain connection via transport mix...
                               </div>
                               {votingchainStatus && (
-                                <div className={`mt-1 ${votingchainStatus.includes('✅') ? 'text-[#4ade80]' : 'text-red-400'}`}>
-                                  {votingchainStatus.split('✓')[1] || votingchainStatus}
+                                <div className={`mt-1 ${votingchainStatus.includes('Connected') || votingchainStatus.includes('Success') ? 'text-[#4ade80]' : 'text-red-400'}`}>
+                                  {votingchainStatus}
                                 </div>
                               )}
                             </>
@@ -1985,8 +1985,8 @@ export default function Sandbox() {
                                 # Creating election on DaoChain...
                               </div>
                               {electionStatus && (
-                                <div className={`mt-1 ${electionStatus.includes('✅') ? 'text-[#4ade80]' : electionStatus.includes('⏳') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
-                                  {electionStatus.includes('✅') ? 'Election created successfully' : electionStatus.includes('⏳') ? 'Processing...' : 'Error occurred'}
+                                <div className={`mt-1 ${electionStatus.includes('Success') || electionStatus.includes('created') || electionStatus.includes('Election') ? 'text-[#4ade80]' : electionStatus.includes('Processing') || electionStatus.includes('Preparing') || electionStatus.includes('Creating') || electionStatus.includes('Submitting') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
+                                  {electionStatus.includes('Success') || electionStatus.includes('created') || electionStatus.includes('Election') ? 'Election created successfully' : electionStatus.includes('Processing') || electionStatus.includes('Preparing') || electionStatus.includes('Creating') || electionStatus.includes('Submitting') ? 'Processing...' : 'Error occurred'}
                                 </div>
                               )}
 
@@ -1998,8 +1998,8 @@ export default function Sandbox() {
                                 # Casting vote via VotingChain...
                               </div>
                               {voteStatus && (
-                                <div className={`mt-1 ${voteStatus.includes('✅') ? 'text-[#4ade80]' : voteStatus.includes('⏳') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
-                                  {voteStatus.includes('✅') ? 'Vote cast successfully' : voteStatus.includes('⏳') ? 'Processing...' : 'Error occurred'}
+                                <div className={`mt-1 ${voteStatus.includes('Success') || voteStatus.includes('cast') || voteStatus.includes('Vote') ? 'text-[#4ade80]' : voteStatus.includes('Processing') || voteStatus.includes('Preparing') || voteStatus.includes('Creating') || voteStatus.includes('Submitting') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
+                                  {voteStatus.includes('Success') || voteStatus.includes('cast') || voteStatus.includes('Vote') ? 'Vote cast successfully' : voteStatus.includes('Processing') || voteStatus.includes('Preparing') || voteStatus.includes('Creating') || voteStatus.includes('Submitting') ? 'Processing...' : 'Error occurred'}
                                 </div>
                               )}
 
@@ -2011,8 +2011,8 @@ export default function Sandbox() {
                                 # Submitting XCM mixing job...
                               </div>
                               {xcmStatus && (
-                                <div className={`mt-1 ${xcmStatus.includes('✅') ? 'text-[#4ade80]' : xcmStatus.includes('⏳') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
-                                  {xcmStatus.includes('✅') ? 'XCM job submitted successfully' : xcmStatus.includes('⏳') ? 'Processing...' : 'Error occurred'}
+                                <div className={`mt-1 ${xcmStatus.includes('Success') || xcmStatus.includes('submitted') || xcmStatus.includes('XCM') ? 'text-[#4ade80]' : xcmStatus.includes('Processing') || xcmStatus.includes('Preparing') || xcmStatus.includes('Creating') || xcmStatus.includes('Submitting') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
+                                  {xcmStatus.includes('Success') || xcmStatus.includes('submitted') || xcmStatus.includes('XCM') ? 'XCM job submitted successfully' : xcmStatus.includes('Processing') || xcmStatus.includes('Preparing') || xcmStatus.includes('Creating') || xcmStatus.includes('Submitting') ? 'Processing...' : 'Error occurred'}
                                 </div>
                               )}
                             </>
@@ -2028,12 +2028,12 @@ export default function Sandbox() {
                                 # Testing IPFS and chain connections...
                               </div>
                               {ipfsStatus && (
-                                <div className={`mt-1 ${ipfsStatus.includes('✅') ? 'text-[#4ade80]' : 'text-red-400'}`}>
+                                <div className={`mt-1 ${ipfsStatus.includes('Connected') || ipfsStatus.includes('Success') ? 'text-[#4ade80]' : 'text-red-400'}`}>
                                   {ipfsStatus}
                                 </div>
                               )}
                               {chainStatus && (
-                                <div className={`mt-1 ${chainStatus.includes('✅') ? 'text-[#4ade80]' : 'text-red-400'}`}>
+                                <div className={`mt-1 ${chainStatus.includes('Connected') || chainStatus.includes('Success') ? 'text-[#4ade80]' : 'text-red-400'}`}>
                                   {chainStatus}
                                 </div>
                               )}
@@ -2041,7 +2041,7 @@ export default function Sandbox() {
                                 # Publishing encrypted content to IPFS...
                               </div>
                               {publishStatus && (
-                                <div className={`mt-1 ${publishStatus.includes('✅') ? 'text-[#4ade80]' : publishStatus.includes('🔐') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
+                                <div className={`mt-1 ${publishStatus.includes('Success') || publishStatus.includes('published') || publishStatus.includes('Publish') ? 'text-[#4ade80]' : publishStatus.includes('Sending') || publishStatus.includes('Encrypted') ? 'text-[#fbbf24]' : 'text-red-400'}`}>
                                   {publishStatus}
                                 </div>
                               )}
