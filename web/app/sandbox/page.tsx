@@ -737,9 +737,6 @@ export default function Sandbox() {
       setArticleTitle('');
       setArticleContent('');
 
-      if (activeTab === 'browse') {
-        // Refresh publications display
-      }
     } catch (error: any) {
       setPublishStatus(`❌ Error: ${error.message}`);
     }
@@ -1780,126 +1777,7 @@ export default function Sandbox() {
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Publishing Tab Content (from demo-ui-publishing.html) */}
-      {activeTab === 'messaging' && startupScreenVisible && (
-        <div className="fixed inset-0 bg-black text-white z-50">
-          <div className="container mx-auto p-8">
-            <div className="flex">
-              {/* Publish Tab */}
-              <div className="w-1/2 pr-8">
-                <div className="bg-white border border-[#2a2a2a] p-6 rounded mb-6">
-                  <h2 className="text-2xl font-bold font-mono text-black mb-4">✍️ Publish Encrypted Content</h2>
-                  <p className="text-[#6b7280] mb-4">
-                    Your identity will be hidden through 3-hop onion routing. Content is encrypted and stored on IPFS.
-                  </p>
-
-                  <div className="mb-4">
-                    <label className="block text-black font-medium mb-2">Article Title:</label>
-                    <input
-                      type="text"
-                      value={articleTitle}
-                      onChange={(e) => setArticleTitle(e.target.value)}
-                      className="w-full p-3 border-2 border-[#e5e7eb] rounded font-mono text-sm bg-white text-black"
-                      placeholder="Enter article title"
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block text-black font-medium mb-2">Article Content:</label>
-                    <textarea
-                      value={articleContent}
-                      onChange={(e) => setArticleContent(e.target.value)}
-                      className="w-full p-3 border-2 border-[#e5e7eb] rounded font-mono text-sm bg-white text-black"
-                      rows={8}
-                      placeholder="Write your article here..."
-                    />
-                  </div>
-
-                  <button
-                    onClick={publishArticle}
-                    className="bg-gradient-to-r from-[#3b82f6] to-[#1e3a8a] text-white px-6 py-3 rounded font-semibold hover:opacity-90"
-                  >
-                    🔐 Publish (Encrypted via Transport Mix)
-                  </button>
-                  {publishStatus && (
-                    <div className={`mt-4 p-3 rounded ${publishStatus.includes('✅') ? 'bg-green-100 text-green-800' : publishStatus.includes('🔐') ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}>
-                      {publishStatus}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Setup Tab */}
-              <div className="w-1/2">
-                <div className="bg-white border border-[#2a2a2a] p-6 rounded mb-6">
-                  <h2 className="text-2xl font-bold font-mono text-black mb-4">⚙️ Setup</h2>
-
-                  <div className="mb-4">
-                    <label className="block text-black font-medium mb-2">PublishingChain WebSocket RPC URL:</label>
-                    <input
-                      type="text"
-                      value={chainUrl}
-                      onChange={(e) => setChainUrl(e.target.value)}
-                      className="w-full p-3 border-2 border-[#e5e7eb] rounded font-mono text-sm bg-white text-black"
-                      placeholder="ws://127.0.0.1:9950"
-                    />
-                  </div>
-                  <button
-                    onClick={connectPublishingChain}
-                    className="bg-gradient-to-r from-[#3b82f6] to-[#1e3a8a] text-white px-6 py-3 rounded font-semibold hover:opacity-90 mb-6"
-                  >
-                    🔗 Connect
-                  </button>
-                  {chainStatus && (
-                    <div className={`mb-4 p-3 rounded ${chainStatus.includes('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {chainStatus}
-                    </div>
-                  )}
-                </div>
-
-                <div className="bg-white border border-[#2a2a2a] p-6 rounded">
-                  <h2 className="text-xl font-bold font-mono text-black mb-4">🗄️ IPFS Storage (Off-chain)</h2>
-                  <p className="text-[#6b7280] mb-4">
-                    Uses the IPFS HTTP API to pin encrypted content, following the recommended integration pattern in Polkadot docs.
-                    <br />
-                    <small>Docs: <a href="https://docs.polkadot.com/develop/toolkit/integrations/storage/#ipfs" target="_blank" className="text-[#3b82f6]">Storage Integrations → IPFS</a></small>
-                  </p>
-                  <div className="mb-4">
-                    <label className="block text-black font-medium mb-2">IPFS API Endpoint:</label>
-                    <input
-                      type="text"
-                      value={ipfsEndpoint}
-                      onChange={(e) => setIpfsEndpoint(e.target.value)}
-                      className="w-full p-3 border-2 border-[#e5e7eb] rounded font-mono text-sm bg-white text-black"
-                      placeholder="http://127.0.0.1:5001"
-                    />
-                  </div>
-                  <button
-                    onClick={connectIpfs}
-                    className="bg-gradient-to-r from-[#3b82f6] to-[#1e3a8a] text-white px-6 py-3 rounded font-semibold hover:opacity-90"
-                  >
-                    🧪 Test IPFS Connection
-                  </button>
-                  {ipfsStatus && (
-                    <div className={`mt-4 p-3 rounded ${ipfsStatus.includes('✅') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {ipfsStatus}
-                    </div>
-                  )}
-                  <p className="text-[#6b7280] text-sm mt-4">
-                    Make sure your local IPFS daemon allows CORS:
-                    <br />
-                    <code className="bg-[#f3f4f6] p-2 rounded text-xs mt-2 block font-mono">
-                      ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]' && ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["GET","POST"]'
-                    </code>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );

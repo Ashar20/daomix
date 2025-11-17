@@ -25,6 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Polkadot.js API v16.4.7 with Extrinsic v5 support (local bundle) */}
+        <script src="/polkadot-browser-bundle.js" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
