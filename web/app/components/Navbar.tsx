@@ -14,7 +14,7 @@ export default function Navbar() {
                 <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
               </div>
             </div>
-            <span className="text-white font-mono font-bold text-xs tracking-wider uppercase">
+            <span className="text-white font-mono font-bold text-sm tracking-wider uppercase">
               DAOCHAIN
             </span>
           </div>
@@ -29,37 +29,37 @@ export default function Navbar() {
         <div className="flex items-center h-full">
           <Link 
             href="#features" 
-            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
+            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-xs font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
           >
             FEATURES
           </Link>
           <Link 
             href="#how-it-works" 
-            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
+            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-xs font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
           >
             HOW IT WORKS
           </Link>
           <Link 
             href="#architecture" 
-            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
+            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-xs font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
           >
             ARCHITECTURE
           </Link>
           <Link 
             href="#use-cases" 
-            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
+            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-xs font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
           >
             USE CASES
           </Link>
           <Link 
             href="#docs" 
-            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
+            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-xs font-mono tracking-wider border-l border-[#2a2a2a] transition-colors"
           >
             DOCS
           </Link>
           <Link 
             href="/sandbox" 
-            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-colors btn-animated-texture"
+            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-xs font-mono tracking-wider border-l border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-colors btn-animated-texture btn-text-orange"
           >
             SANDBOX
           </Link>

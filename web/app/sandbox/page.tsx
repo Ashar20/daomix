@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type Platform = "macos" | "linux" | "windows";
 
@@ -108,6 +109,17 @@ export default function Sandbox() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+      {/* Back Button */}
+      <Link 
+        href="/"
+        className="fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2 border border-[#2a2a2a] hover:border-[#ff6b35] text-[#9a9a9a] hover:text-[#ff6b35] font-mono text-xs uppercase tracking-widest transition-colors bg-black"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        BACK TO HOME
+      </Link>
+
       {/* Left Sidebar Navigation */}
       <div className="fixed left-0 top-0 bottom-0 w-20 border-r border-[#2a2a2a] bg-black z-50 flex flex-col">
         <div className="flex-1 flex flex-col items-center justify-center gap-6 py-12">
@@ -125,7 +137,7 @@ export default function Sandbox() {
                 }`}
                 title={s.label}
               />
-              <span className="text-[8px] font-mono text-[#6a6a6a]">
+              <span className="text-[10px] font-mono text-[#6a6a6a]">
                 {String(index + 1).padStart(2, '0')}
               </span>
             </div>
@@ -134,13 +146,13 @@ export default function Sandbox() {
         
         {/* Bottom Step Counter */}
         <div className="p-4 border-t border-[#2a2a2a] text-center">
-          <div className="text-[8px] font-mono text-[#6a6a6a] uppercase tracking-widest">
+          <div className="text-[10px] font-mono text-[#6a6a6a] uppercase tracking-widest">
             STEP
           </div>
-          <div className="text-lg font-mono font-bold text-[#ff6b35]">
+          <div className="text-xl font-mono font-bold text-[#ff6b35]">
             {String(currentStep + 1).padStart(2, '0')}
           </div>
-          <div className="text-[8px] font-mono text-[#6a6a6a]">
+          <div className="text-[10px] font-mono text-[#6a6a6a]">
             OF {String(STEPS.length).padStart(2, '0')}
           </div>
         </div>
@@ -172,14 +184,14 @@ export default function Sandbox() {
                 <div className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-2 h-2 bg-[#ff6b35] rounded-full animate-pulse"></div>
-                    <span className="text-[9px] uppercase tracking-widest text-[#9a9a9a] font-mono">
+                    <span className="text-[11px] uppercase tracking-widest text-[#9a9a9a] font-mono">
                       STEP {String(currentStep + 1).padStart(2, '0')} / {String(STEPS.length).padStart(2, '0')}
                     </span>
                   </div>
-                  <h1 className="text-5xl font-bold font-mono leading-tight mb-6">
+                  <h1 className="text-6xl font-bold font-mono leading-tight mb-6">
                     {step.title}
                   </h1>
-                  <p className="text-[#9a9a9a] text-sm font-mono leading-relaxed mb-6">
+                  <p className="text-[#9a9a9a] text-base font-mono leading-relaxed mb-6">
                     {step.description}
                   </p>
                 </div>
@@ -189,11 +201,11 @@ export default function Sandbox() {
                   <div className="flex items-center justify-between px-4 py-2 border-b border-[#2a2a2a]">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 rounded-full bg-[#ff6b35]"></div>
-                      <span className="text-[9px] font-mono text-[#9a9a9a]">{String(currentStep + 1).padStart(2, '0')} - TERMINAL / IDE</span>
+                      <span className="text-[11px] font-mono text-[#9a9a9a]">{String(currentStep + 1).padStart(2, '0')} - TERMINAL / IDE</span>
                     </div>
                   </div>
                   <div className="p-4">
-                    <div className="flex items-center gap-2 mb-3 text-[10px] font-mono">
+                    <div className="flex items-center gap-2 mb-3 text-xs font-mono">
                       <button
                         onClick={() => handlePlatformChange("macos")}
                         className={`px-2 py-0.5 transition-colors ${
@@ -230,8 +242,8 @@ export default function Sandbox() {
                     </div>
                     <div className="bg-black border border-[#2a2a2a] p-3 rounded flex items-center justify-between group hover:border-[#ff6b35] transition-colors">
                       <div className="flex items-center gap-2 flex-1 overflow-hidden">
-                        <span className="text-[#ff6b35] text-[10px] font-mono">{'>'}</span>
-                        <span className="text-[#9a9a9a] text-[10px] font-mono truncate">{currentCommand}</span>
+                        <span className="text-[#ff6b35] text-xs font-mono">{'>'}</span>
+                        <span className="text-[#9a9a9a] text-xs font-mono truncate">{currentCommand}</span>
                       </div>
                       <button
                         onClick={handleCopyCommand}
@@ -255,20 +267,20 @@ export default function Sandbox() {
 
                 {/* Expected Output */}
                 <div className="mb-8">
-                  <div className="text-[9px] uppercase tracking-widest text-[#9a9a9a] font-mono mb-2">
+                  <div className="text-[11px] uppercase tracking-widest text-[#9a9a9a] font-mono mb-2">
                     EXPECTED OUTPUT
                   </div>
-                  <div className="bg-black border border-[#2a2a2a] p-4 font-mono text-[10px]">
+                  <div className="bg-black border border-[#2a2a2a] p-4 font-mono text-xs">
                     <p className="text-[#4ade80]">{step.output}</p>
                   </div>
                 </div>
 
                 {/* Quick Tip */}
                 <div className="border-l-2 border-[#ff6b35] pl-4">
-                  <div className="text-[9px] uppercase tracking-widest text-[#ff6b35] font-mono mb-2">
+                  <div className="text-[11px] uppercase tracking-widest text-[#ff6b35] font-mono mb-2">
                     TIP
                   </div>
-                  <p className="text-[#9a9a9a] text-[10px] font-mono leading-relaxed">
+                  <p className="text-[#9a9a9a] text-xs font-mono leading-relaxed">
                     {currentStep === 0 && "Make sure you have Node.js 20+ and pnpm installed before running this command."}
                     {currentStep === 1 && "The node must be running before you can start the mix-node or execute the pipeline."}
                     {currentStep === 2 && "You can run multiple mix-nodes on different ports for better anonymity."}
@@ -283,24 +295,24 @@ export default function Sandbox() {
                 <button
                   onClick={handlePrevStep}
                   disabled={currentStep === 0}
-                  className={`flex items-center gap-2 px-4 py-2 border text-[10px] font-mono uppercase tracking-widest transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 border text-xs font-mono uppercase tracking-widest transition-colors ${
                     currentStep === 0
                       ? 'border-[#2a2a2a] text-[#6a6a6a] cursor-not-allowed'
-                      : 'border-[#2a2a2a] text-white hover:border-[#ff6b35] hover:text-[#ff6b35]'
+                      : 'border-[#2a2a2a] text-white hover:border-[#ff6b35] hover:text-[#ff6b35] btn-animated-texture'
                   }`}
                 >
                   ← PREVIOUS
                 </button>
-                <div className="text-[10px] font-mono text-[#6a6a6a]">
+                <div className="text-xs font-mono text-[#6a6a6a]">
                   {currentStep + 1} OF {STEPS.length}
                 </div>
                 <button
                   onClick={handleNextStep}
                   disabled={currentStep === STEPS.length - 1}
-                  className={`flex items-center gap-2 px-4 py-2 text-[10px] font-mono uppercase tracking-widest transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-widest transition-colors btn-animated-texture btn-orange-border border ${
                     currentStep === STEPS.length - 1
-                      ? 'bg-[#ff6b35] text-black cursor-default'
-                      : 'bg-[#ff6b35] hover:bg-[#e55a2b] text-black'
+                      ? 'bg-[#ff6b35] text-black cursor-default border-[#ff6b35]'
+                      : 'bg-[#ff6b35] hover:bg-[#e55a2b] text-black border-[#ff6b35]'
                   }`}
                 >
                   {currentStep === STEPS.length - 1 ? 'COMPLETE ✓' : 'NEXT →'}
@@ -312,7 +324,7 @@ export default function Sandbox() {
           {/* Right IDE Section */}
           <div className="w-1/2 bg-black sticky top-0 h-screen flex flex-col">
             {/* Top Label */}
-            <div className="absolute top-4 right-4 text-[9px] font-mono text-[#6a6a6a] uppercase tracking-widest">
+            <div className="absolute top-4 right-4 text-[11px] font-mono text-[#6a6a6a] uppercase tracking-widest">
               TERMINAL / IDE
             </div>
 
@@ -326,7 +338,7 @@ export default function Sandbox() {
                     <div className="w-2.5 h-2.5 rounded-full bg-[#2a2a2a]"></div>
                     <div className="w-2.5 h-2.5 rounded-full bg-[#2a2a2a]"></div>
                   </div>
-                  <span className="text-[9px] font-mono text-[#6a6a6a]">orchestrator.ts - daomix</span>
+                  <span className="text-[11px] font-mono text-[#6a6a6a]">orchestrator.ts - daomix</span>
                   <div className="flex items-center gap-2">
                     <svg className="w-3 h-3 text-[#6a6a6a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10"></circle>
@@ -339,12 +351,12 @@ export default function Sandbox() {
                   {/* File Explorer */}
                   <div className="w-48 border-r border-[#2a2a2a] bg-[#0a0a0a] p-3">
                     <div className="mb-3">
-                      <div className="flex items-center gap-2 mb-2 text-[9px] font-mono text-[#9a9a9a] uppercase">
+                      <div className="flex items-center gap-2 mb-2 text-[11px] font-mono text-[#9a9a9a] uppercase">
                         <span>▼</span>
                         <span className="text-white font-bold">EXPLORER</span>
                       </div>
                     </div>
-                    <div className="space-y-1 text-[9px] font-mono">
+                    <div className="space-y-1 text-[11px] font-mono">
                       <div className="flex items-center gap-2 text-[#9a9a9a] hover:text-white cursor-pointer">
                         <span>▼</span>
                         <span className="text-[#ff6b35]">DAOMIX</span>
@@ -375,7 +387,7 @@ export default function Sandbox() {
                   </div>
 
                   {/* Terminal Output */}
-                  <div className="flex-1 bg-black p-4 font-mono text-[9px] overflow-auto">
+                  <div className="flex-1 bg-black p-4 font-mono text-[11px] overflow-auto">
                     <div className="mb-3 text-[#6a6a6a]">TERMINAL OUTPUT</div>
                     <div className="space-y-1">
                       <div className="flex">
@@ -420,10 +432,10 @@ export default function Sandbox() {
             </div>
 
             {/* Bottom Label */}
-            <div className="absolute bottom-8 right-8 text-[9px] font-mono text-[#6a6a6a] uppercase tracking-widest">
+            <div className="absolute bottom-8 right-8 text-[11px] font-mono text-[#6a6a6a] uppercase tracking-widest">
               IDE
             </div>
-            <div className="absolute bottom-8 left-8 text-sm font-mono text-[#6a6a6a]">
+            <div className="absolute bottom-8 left-8 text-base font-mono text-[#6a6a6a]">
               Step {currentStep + 1}: {step.label}
             </div>
           </div>

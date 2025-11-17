@@ -105,6 +105,14 @@ body {
   color: #ffffff !important;
 }
 
+.btn-animated-texture.btn-text-orange:hover {
+  color: #ff6b35 !important;
+}
+
+.btn-animated-texture.btn-orange-border:hover {
+  border-color: #ff6b35 !important;
+}
+
 .btn-animated-texture:hover::before {
   opacity: 1;
 }
