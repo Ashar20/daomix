@@ -7,9 +7,8 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-16 pb-12 px-6 relative overflow-hidden">
-        <DiagonalTexture />
-        <div className="max-w-6xl mx-auto relative z-10">
+      <section className="pt-16 pb-12 px-6">
+        <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-1.5 mb-3">
             <div className="w-1.5 h-1.5 bg-[#ff6b35] rounded-full animate-pulse"></div>
             <span className="text-[9px] uppercase tracking-widest text-[#9a9a9a] font-mono">VISION</span>
@@ -43,8 +42,8 @@ export default function Home() {
       </section>
 
       {/* Main Content Section with Terminal */}
-      <section className="border-t border-[#2a2a2a]">
-        <div className="flex">
+      <section id="features" className="border-t border-[#2a2a2a] scroll-mt-10 relative isolate">
+        <div className="flex min-h-screen">
           {/* Left Content */}
           <div className="w-1/2 border-r border-[#2a2a2a]">
             {/* What DaoChain Does */}
@@ -86,7 +85,7 @@ export default function Home() {
             </div>
 
             {/* How It Works */}
-            <div className="py-8 px-6">
+            <div id="how-it-works" className="py-8 px-6 scroll-mt-10">
               <div className="flex items-start gap-1.5 mb-3">
                 <div className="w-1 h-1 bg-[#ff6b35] rounded-full mt-0.5"></div>
                 <span className="text-[9px] uppercase tracking-widest text-[#9a9a9a] font-mono">HOW IT WORKS</span>
@@ -115,9 +114,9 @@ export default function Home() {
           </div>
 
           {/* Right Side - IDE/Terminal Mockup */}
-          <div className="w-1/2 bg-[#0a0a0a] sticky top-10 h-screen">
+          <div className="w-1/2 bg-[#0a0a0a] sticky top-10 self-start overflow-hidden" style={{ maxHeight: 'calc(100vh - 2.5rem)' }}>
             {/* Terminal Header */}
-            <div className="border-b border-[#2a2a2a] p-3 flex items-center justify-between">
+            <div className="border-b border-[#2a2a2a] p-3 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-[#ff6b35]"></div>
@@ -131,7 +130,7 @@ export default function Home() {
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-[#2a2a2a] flex text-[9px] font-mono">
+            <div className="border-b border-[#2a2a2a] flex text-[9px] font-mono flex-shrink-0">
               <div className="px-4 py-2 bg-[#1a1a1a] border-r border-[#2a2a2a] text-white">
                 01 TERMINAL / IDE
               </div>
@@ -144,7 +143,7 @@ export default function Home() {
             </div>
 
             {/* IDE Content */}
-            <div className="p-6 font-mono text-[10px] h-full overflow-auto">
+            <div className="p-6 font-mono text-[10px] overflow-auto flex-1" style={{ maxHeight: 'calc(100vh - 10rem)' }}>
               {/* Explorer */}
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-3 text-[#9a9a9a]">
@@ -222,8 +221,9 @@ export default function Home() {
 
 
       {/* Technical Architecture */}
-      <section className="py-8 px-6 border-t border-[#2a2a2a]">
-        <div className="max-w-6xl mx-auto">
+      <section id="architecture" className="py-8 px-6 border-t border-[#2a2a2a] scroll-mt-10 relative overflow-hidden bg-black z-10">
+        <DiagonalTexture />
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="flex items-start gap-1.5 mb-4">
             <div className="w-1 h-1 bg-[#ff6b35] rounded-full mt-0.5"></div>
             <span className="text-[9px] uppercase tracking-widest text-[#9a9a9a] font-mono">TECHNICAL ARCHITECTURE</span>
@@ -308,7 +308,7 @@ export default function Home() {
       </section>
 
       {/* Who Uses DaoChain */}
-      <section className="py-8 px-6 border-t border-[#2a2a2a]">
+      <section id="use-cases" className="py-8 px-6 border-t border-[#2a2a2a] scroll-mt-10">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-start gap-1.5 mb-4">
             <div className="w-1 h-1 bg-[#ff6b35] rounded-full mt-0.5"></div>
@@ -351,7 +351,7 @@ export default function Home() {
       </section>
 
       {/* Quick Start */}
-      <section id="docs" className="py-8 px-6 border-t border-[#2a2a2a]">
+      <section id="docs" className="py-8 px-6 border-t border-[#2a2a2a] scroll-mt-10">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-start gap-1.5 mb-4">
             <div className="w-1 h-1 bg-[#ff6b35] rounded-full mt-0.5"></div>
@@ -410,8 +410,8 @@ export default function Home() {
               className="px-5 py-2.5 bg-[#ff6b35] hover:bg-[#e55a2b] text-black font-mono font-bold text-[9px] uppercase tracking-widest transition-colors"
             >
               GITHUB
-            </a>
-            <a 
+          </a>
+          <a
               href="#docs" 
               className="px-5 py-2.5 border border-[#2a2a2a] hover:border-[#ff6b35] text-[#9a9a9a] hover:text-[#ff6b35] font-mono font-bold text-[9px] uppercase tracking-widest transition-colors"
             >
