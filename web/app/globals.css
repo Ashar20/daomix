@@ -1,26 +1,133 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
+  --secondary: #1a1a1a;
+  --tertiary: #2a2a2a;
+  --text-secondary: #9a9a9a;
+  --border: #2a2a2a;
+  --orange: #ff6b35;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border);
+  --color-orange: var(--orange);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar Styles */
+.custom-scrollbar {
+  overflow-y: scroll !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px;
+  display: block;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-left: 1px solid #2a2a2a;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #6a6a6a;
+  border-radius: 6px;
+  border: 2px solid #1a1a1a;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #ff6b35;
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: auto;
+  scrollbar-color: #6a6a6a #1a1a1a;
+}
+
+/* Hide Scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Animated Diagonal Texture for Buttons */
+@keyframes slide-diagonal {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 50px 50px;
+  }
+}
+
+.btn-animated-texture {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s;
+}
+
+.btn-animated-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 6px,
+    rgba(255, 255, 255, 0.3) 6px,
+    rgba(255, 255, 255, 0.3) 7px
+  );
+  background-size: 50px 50px;
+  animation: slide-diagonal 1s linear infinite;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-animated-texture:hover {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+.btn-animated-texture.btn-text-orange:hover {
+  color: #ff6b35 !important;
+}
+
+.btn-animated-texture.btn-orange-border:hover {
+  border-color: #ff6b35 !important;
+}
+
+.btn-animated-texture:hover::before {
+  opacity: 1;
+}
+
+.btn-animated-texture > * {
+  position: relative;
+  z-index: 2;
 }

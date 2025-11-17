@@ -17,7 +17,22 @@
     "dev:dapp": "pnpm --filter @polokol/dapp dev",
     "build": "pnpm -r build",
     "build:sdk": "pnpm --filter @polokol/dotmix-provider build",
-    "test": "pnpm -r test --if-present"
+    "build:polkadot-bundle": "esbuild polkadot-bundle-entry.js --bundle --format=iife --outfile=polkadot-browser-bundle.js --global-name=PolkadotBundle --minify",
+    "test": "pnpm -r test --if-present",
+    "demo:setup": "bash scripts/demo-setup.sh",
+    "demo:start": "bash scripts/demo-start.sh",
+    "demo:cleanup": "bash scripts/demo-cleanup.sh",
+    "demo:ui": "node demo-ui-server.js",
+    "demo:manual": "node demo-manual.js"
   },
-  "packageManager": "pnpm@8.0.0"
+  "packageManager": "pnpm@8.0.0",
+  "dependencies": {
+    "@polkadot/api": "^16.4.7",
+    "@polkadot/keyring": "^13.2.1",
+    "@polkadot/util": "^13.2.1",
+    "@polkadot/util-crypto": "^13.2.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.0"
+  }
 }

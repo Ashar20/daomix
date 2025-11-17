@@ -1,0 +1,36 @@
+Initializing daemon...
+Kubo version: 0.38.2
+Repo version: 18
+System version: amd64/linux
+Golang version: go1.25.3
+PeerID: 12D3KooWQxG4BcV15Ur7X6nZnhaKPi6tYpnw2YU9crh9Uq8u9uoy
+2025/11/17 22:13:03 failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 7168 kiB, got: 416 kiB). See https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes for details.
+Swarm listening on 127.0.0.1:4001 (TCP+UDP)
+Swarm listening on 172.17.0.1:4001 (TCP+UDP)
+Swarm listening on 192.168.64.129:4001 (TCP+UDP)
+Swarm listening on [::1]:4001 (TCP+UDP)
+Run 'ipfs id' to inspect announced and discovered multiaddrs of this node.
+
+
+ℹ️  Anonymous telemetry will be enabled in 15m0s
+
+Kubo will collect anonymous usage data to help improve the software:
+• What:  Feature usage and configuration (no personal data)
+         Use GOLOG_LOG_LEVEL="telemetry=debug" to inspect collected data
+• When:  First collection in 15m0s, then every 24h
+• How:   HTTP POST to https://telemetry.ipshipyard.dev
+         Anonymous ID: f2bf9f66-8d8b-404e-898a-4c390163bf7e
+
+No data sent yet. To opt-out before collection starts:
+• Set environment: IPFS_TELEMETRY=off
+• Or run: ipfs config Plugins.Plugins.telemetry.Config.Mode off
+• Then restart daemon
+
+This message is shown only once.
+Learn more: https://github.com/ipfs/kubo/blob/master/docs/telemetry.md
+
+
+RPC API server listening on /ip4/127.0.0.1/tcp/5001
+WebUI: http://127.0.0.1:5001/webui
+Gateway server listening on /ip4/127.0.0.1/tcp/8080
+Daemon is ready

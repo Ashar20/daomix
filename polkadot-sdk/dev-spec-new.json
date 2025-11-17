@@ -1,0 +1,5 @@
+Error: 
+   0: [91mInvalid input: Error opening spec file ``: No such file or directory (os error 2)[0m
+
+Backtrace omitted. Run with RUST_BACKTRACE=1 environment variable to display it.
+Run with RUST_BACKTRACE=full to include source snippets.

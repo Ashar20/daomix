@@ -1,0 +1,5 @@
+Error: 
+   0: [91mInvalid input: Error parsing spec file: invalid type: integer `2025`, expected struct ClientSpec at line 1 column 4[0m
+
+Backtrace omitted. Run with RUST_BACKTRACE=1 environment variable to display it.
+Run with RUST_BACKTRACE=full to include source snippets.

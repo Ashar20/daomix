@@ -43,3 +43,4 @@ Cargo.lock
 
 # OS
 Thumbs.db
+*.log

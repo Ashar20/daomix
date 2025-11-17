@@ -1,81 +1,110 @@
+# NOTE: Used by my DaoMix project as the base parachain template (no changes yet).
 [package]
 name = "polokol-runtime"
-version = "4.0.0-dev"
-edition = "2021"
+description = "DaoMix parachain runtime built with Substrate and Cumulus"
+version = "0.1.0"
+license = "Unlicense"
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
+publish = false
 
-[build-dependencies]
-substrate-wasm-builder = { version = "6.0.0", package = "substrate-wasm-builder" }
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[lints]
+workspace = true
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "3.4.0", default-features = false }
-frame-benchmarking = { version = "4.0.0-dev", default-features = false, optional = true }
-frame-executive = { version = "4.0.0-dev", default-features = false }
-frame-support = { version = "4.0.0-dev", default-features = false }
-frame-system = { version = "4.0.0-dev", default-features = false }
-frame-system-benchmarking = { version = "4.0.0-dev", default-features = false, optional = true }
-frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false }
-pallet-balances = { version = "4.0.0-dev", default-features = false }
-pallet-dao-voting = { path = "../pallets/dao-voting", default-features = false }
-pallet-mixnet-registry = { path = "../pallets/mixnet-registry", default-features = false }
-pallet-sudo = { version = "4.0.0-dev", default-features = false }
-pallet-timestamp = { version = "4.0.0-dev", default-features = false }
-pallet-transaction-payment = { version = "4.0.0-dev", default-features = false }
-pallet-transaction-payment-rpc-runtime-api = { version = "4.0.0-dev", default-features = false }
-sp-api = { version = "4.0.0-dev", default-features = false }
-sp-block-builder = { version = "4.0.0-dev", default-features = false }
-sp-consensus-aura = { version = "0.11.0", default-features = false }
-sp-core = { version = "7.0.0-dev", default-features = false }
-sp-inherents = { version = "4.0.0-dev", default-features = false }
-sp-offchain = { version = "4.0.0-dev", default-features = false }
-sp-runtime = { version = "7.0.0-dev", default-features = false }
-sp-session = { version = "4.0.0-dev", default-features = false }
-sp-std = { version = "4.0.0-dev", default-features = false }
-sp-transaction-pool = { version = "4.0.0-dev", default-features = false }
-sp-version = { version = "7.0.0-dev", default-features = false }
+codec = { features = ["derive"], workspace = true }
+docify = { workspace = true }
+hex-literal = { optional = true, workspace = true, default-features = true }
+log = { workspace = true }
+scale-info = { features = ["derive"], workspace = true }
+serde_json = { workspace = true, default-features = false, features = ["alloc"] }
+smallvec = { workspace = true, default-features = true }
+
+# Local
+pallet-daomix-voting = { path = "../pallets/daomix-voting", default-features = false, version = "0.0.0" }
+pallet-mix-job = { path = "../pallets/mix-job", default-features = false, version = "0.0.0" }
+pallet-parachain-template = { workspace = true }
+
+polkadot-sdk = { workspace = true, default-features = false, features = [
+	"pallet-aura",
+	"pallet-authorship",
+	"pallet-balances",
+	"pallet-message-queue",
+	"pallet-session",
+	"pallet-sudo",
+	"pallet-timestamp",
+	"pallet-transaction-payment",
+	"pallet-transaction-payment-rpc-runtime-api",
+
+	"pallet-xcm",
+	"polkadot-parachain-primitives",
+	"polkadot-runtime-common",
+	"staging-xcm",
+	"staging-xcm-builder",
+	"staging-xcm-executor",
+
+	"cumulus-pallet-aura-ext",
+	"cumulus-pallet-session-benchmarking",
+	"cumulus-pallet-weight-reclaim",
+	"cumulus-pallet-xcm",
+	"cumulus-pallet-xcmp-queue",
+	"cumulus-primitives-aura",
+	"cumulus-primitives-core",
+	"cumulus-primitives-utility",
+	"pallet-collator-selection",
+	"parachains-common",
+	"staging-parachain-info",
+
+	"runtime",
+] }
+
+# Cumulus
+cumulus-pallet-parachain-system = { workspace = true }
+
+[build-dependencies]
+docify = { workspace = true }
+substrate-wasm-builder = { optional = true, workspace = true, default-features = true }
 
 [features]
 default = ["std"]
-runtime-benchmarks = [
-    "frame-benchmarking/runtime-benchmarks",
-    "frame-system-benchmarking/runtime-benchmarks",
-    "frame-system/runtime-benchmarks",
-    "pallet-balances/runtime-benchmarks",
-    "pallet-sudo/runtime-benchmarks",
-    "pallet-timestamp/runtime-benchmarks",
-    "pallet-transaction-payment/runtime-benchmarks",
-]
 std = [
-    "codec/std",
-    "frame-benchmarking/std",
-    "frame-executive/std",
-    "frame-support/std",
-    "frame-system/std",
-    "frame-system-benchmarking/std",
-    "frame-system-rpc-runtime-api/std",
-    "pallet-balances/std",
-    "pallet-dao-voting/std",
-    "pallet-mixnet-registry/std",
-    "pallet-sudo/std",
-    "pallet-timestamp/std",
-    "pallet-transaction-payment/std",
-    "pallet-transaction-payment-rpc-runtime-api/std",
-    "sp-api/std",
-    "sp-block-builder/std",
-    "sp-consensus-aura/std",
-    "sp-core/std",
-    "sp-inherents/std",
-    "sp-offchain/std",
-    "sp-runtime/std",
-    "sp-session/std",
-    "sp-std/std",
-    "sp-transaction-pool/std",
-    "sp-version/std",
+	"codec/std",
+	"cumulus-pallet-parachain-system/std",
+	"log/std",
+	"pallet-daomix-voting/std",
+	"pallet-mix-job/std",
+	"pallet-parachain-template/std",
+	"polkadot-sdk/std",
+	"scale-info/std",
+	"serde_json/std",
+	"substrate-wasm-builder",
+]
+runtime-benchmarks = [
+	"cumulus-pallet-parachain-system/runtime-benchmarks",
+	"hex-literal",
+	"pallet-parachain-template/runtime-benchmarks",
+	"polkadot-sdk/runtime-benchmarks",
 ]
 try-runtime = [
-    "frame-support/try-runtime",
-    "frame-system/try-runtime",
-    "pallet-balances/try-runtime",
-    "pallet-sudo/try-runtime",
-    "pallet-timestamp/try-runtime",
-    "pallet-transaction-payment/try-runtime",
+	"cumulus-pallet-parachain-system/try-runtime",
+	"pallet-parachain-template/try-runtime",
+	"polkadot-sdk/try-runtime",
 ]
+
+# Enable the metadata hash generation.
+#
+# This is hidden behind a feature because it increases the compile time.
+# The wasm binary needs to be compiled twice, once to fetch the metadata,
+# generate the metadata hash and then a second time with the
+# `RUNTIME_METADATA_HASH` environment variable set for the `CheckMetadataHash`
+# extension.
+metadata-hash = ["substrate-wasm-builder/metadata-hash"]
+
+# A convenience feature for enabling things when doing a build
+# for an on-chain release.
+on-chain-release-build = ["metadata-hash"]

@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaoMix Demo - Two Real Parachains</title>
+    <!-- Polkadot.js API v16.4.7 with Extrinsic v5 support (local bundle) -->
+    <script src="/polkadot-browser-bundle.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .api-loading {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .api-loading.hidden {
+            display: none;
+        }
+
+        /* Startup Screen */
+        .startup-screen {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .startup-screen.hidden {
+            display: none;
+        }
+
+        .startup-logs {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .startup-log-entry {
+            color: #9ca3af;
+            line-height: 1.8;
+            padding: 3px 0;
+        }
+
+        .startup-log-entry.success {
+            color: #10b981;
+        }
+
+        .startup-log-entry.pending {
+            color: #fbbf24;
+        }
+
+        .startup-log-entry.info {
+            color: #60a5fa;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .instructions {
+            background: #f3f4f6;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
+        .instructions h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .instructions p {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .terminal-command {
+            background: #1f2937;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .rpc-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .rpc-section h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chain-label {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .chain-label.para1000 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .chain-label.para2001 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            transition: border-color 0.2s;
+        }
+
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .inline-input {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .inline-input label {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .inline-input input {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status.warning {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .terminal-section {
+            margin-top: 20px;
+            background: #0b1120;
+            border-radius: 10px;
+            padding: 16px;
+            color: #e5e7eb;
+            font-family: 'Fira Code', 'SFMono-Regular', Consolas, monospace;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .terminal-command {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #d1d5db;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .terminal-log {
+            background: #050b18;
+            border: 1px solid #1f2937;
+            border-radius: 6px;
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .terminal-log .log-line {
+            white-space: pre-wrap;
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .result-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .result-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.9em;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .result-meta span {
+            min-width: 140px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps li {
+            counter-increment: step-counter;
+            margin-bottom: 15px;
+            padding-left: 40px;
+            position: relative;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .url-display {
+            background: #1f2937;
+            color: #10b981;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            margin: 8px 0;
+            display: inline-block;
+        }
+
+        /* Live Logs */
+        .logs-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .log-panel {
+            background: #1f2937;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .log-panel h3 {
+            color: #10b981;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        .log-entry {
+            color: #9ca3af;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            padding: 5px 0;
+            border-bottom: 1px solid #374151;
+        }
+
+        .log-entry.block {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .log-entry.event {
+            color: #fbbf24;
+        }
+
+        .log-entry.error {
+            color: #ef4444;
+        }
+
+        /* Block Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .logs-container,
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 DaoMix Demo</h1>
+            <p>Two Real Parachains - No Mocks, No Simulations</p>
+        </div>
+
+        <!-- Startup Screen (shows until chains are ready) -->
+        <div id="startup-screen" class="startup-screen">
+            <h2>🚀 Starting DaoMix Demo</h2>
+            <p style="color: #6b7280; margin-bottom: 20px;">Initializing blockchain nodes and services...</p>
+            
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+            </div>
+            
+            <div id="startup-status" style="text-align: center; color: #667eea; font-weight: 600; margin-bottom: 20px;">
+                Checking services...
+            </div>
+            
+            <div class="startup-logs" id="startup-logs">
+                <div class="startup-log-entry info">🔍 Checking if chains are running...</div>
+            </div>
+        </div>
+
+        <!-- Main UI (hidden until chains are ready) -->
+        <div id="main-ui" class="hidden">
+        
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('setup')">🔧 SETUP</button>
+            <button class="tab-btn" onclick="switchTab('demo')">🎭 DEMO</button>
+            <button class="tab-btn" onclick="switchTab('messaging')">✉️ MESSAGING SERVICE</button>
+            <button class="tab-btn" onclick="switchTab('logs')">📊 LIVE LOGS</button>
+        </div>
+
+        <!-- SETUP TAB -->
+        <div id="setup-tab" class="tab-content active">
+            <div class="card">
+                <h2>📋 Setup Instructions</h2>
+
+                <div class="instructions">
+                    <h3>Step 1: Start the Demo</h3>
+                    <p>Run this command in your terminal:</p>
+                    <div class="terminal-command">bash scripts/demo-start.sh</div>
+                    <p>The terminal will show the RPC URLs for both parachains.</p>
+                </div>
+
+                <div class="instructions">
+                    <h3>Step 2: Copy RPC URLs from Terminal</h3>
+                    <p style="font-weight: bold; color: #9333ea;">🔐 TRANSPORT MIX ENABLED - All traffic routes through 3-hop onion network!</p>
+                    <p>After running the command, your terminal will display:</p>
+                    <ul class="steps">
+                        <li><strong>DaoChain via Transport Mix:</strong> <span class="url-display" style="background: #9333ea; color: white;">ws://127.0.0.1:9950</span> <span style="font-size: 0.9em; color: #666;">(hides your IP from DaoChain)</span></li>
+                        <li><strong>VotingChain via Transport Mix:</strong> <span class="url-display" style="background: #9333ea; color: white;">ws://127.0.0.1:9951</span> <span style="font-size: 0.9em; color: #666;">(hides your IP from VotingChain)</span></li>
+                    </ul>
+                    <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                        ℹ️ Direct RPC (bypasses transport mix): DaoChain ws://127.0.0.1:9944, VotingChain ws://127.0.0.1:9945
+                    </p>
+                </div>
+
+                <div class="instructions">
+                    <h3>Step 3: Enter URLs Below and Test Connection</h3>
+                    <p>Manually type or paste the <strong>transport mix proxy URLs</strong> from your terminal into the boxes below, then click "Test Connection" for each parachain.</p>
+                    <p style="font-size: 0.9em; color: #9333ea; margin-top: 5px;">
+                        🔒 Your IP address will NOT be visible to the parachains when using transport mix.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🔗 Connect to Parachains</h2>
+
+                <div class="rpc-section">
+                    <h3>
+                        <span>DaoChain 🔐</span>
+                        <span class="chain-label para1000">Para 1000 - Privacy Mixer</span>
+                    </h3>
+                    <div class="input-group">
+                        <label for="daochain-url">WebSocket RPC URL (via Transport Mix):</label>
+                        <input
+                            type="text"
+                            id="daochain-url"
+                            placeholder="ws://127.0.0.1:9950"
+                            value="ws://127.0.0.1:9950"
+                            style="border: 2px solid #9333ea;">
+                    </div>
+                    <button class="btn" onclick="connectDaoChain()" style="background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);">🔍 Test Connection (via Transport Mix)</button>
+                    <div id="daochain-status" class="status hidden"></div>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 8px;">
+                        🔒 Traffic routes: Browser → Entry (9100) → Middle (9101) → Exit (9102) → DaoChain
+                    </p>
+                </div>
+
+                <div class="rpc-section">
+                    <h3>
+                        <span>VotingChain 🔐</span>
+                        <span class="chain-label para2001">Para 2001 - Voting App</span>
+                    </h3>
+                    <div class="input-group">
+                        <label for="votingchain-url">WebSocket RPC URL (via Transport Mix):</label>
+                        <input
+                            type="text"
+                            id="votingchain-url"
+                            placeholder="ws://127.0.0.1:9951"
+                            value="ws://127.0.0.1:9951"
+                            style="border: 2px solid #9333ea;">
+                    </div>
+                    <button class="btn" onclick="connectVotingChain()" style="background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%);">🔍 Test Connection (via Transport Mix)</button>
+                    <div id="votingchain-status" class="status hidden"></div>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 8px;">
+                        🔒 Traffic routes: Browser → Entry (9100) → Middle (9101) → Exit (9102) → VotingChain
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>✅ What This Demonstrates</h2>
+                <ul class="steps">
+                    <li><strong>Two Real Parachains:</strong> DaoChain (Para 1000) and VotingChain (Para 2001) are both running as actual Substrate nodes</li>
+                    <li><strong>Real XCM Communication:</strong> Para 2001 can send cross-chain messages to Para 1000</li>
+                    <li><strong>🔐 Real Transport Mix:</strong> All browser RPC traffic routes through a 3-hop onion network (Entry → Middle → Exit). Your IP is hidden from the parachains.</li>
+                    <li><strong>Manual RPC Connection:</strong> You learn what RPC URLs are and how to connect to blockchains</li>
+                    <li><strong>No Mocks:</strong> Everything is real - real nodes, real storage, real transactions, real onion routing</li>
+                </ul>
+                <div style="background: #f3e8ff; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #9333ea;">
+                    <strong style="color: #9333ea;">🔒 Privacy Features Active:</strong>
+                    <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #666;">
+                        <li>Transport mix hides your IP from DaoChain and VotingChain</li>
+                        <li>Each hop only knows previous/next hop (not source or destination)</li>
+                        <li>Onion encryption: 3 layers of XChaCha20-Poly1305</li>
+                        <li>No central server sees both your IP and target RPC</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEMO TAB -->
+        <div id="demo-tab" class="tab-content">
+            <div class="card">
+                <h2>🎭 Interactive Demo</h2>
+                <div class="instructions">
+                    <p><strong>Connect to both chains first in the SETUP tab!</strong></p>
+                </div>
+
+                <!-- Block Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">DaoChain Block</div>
+                        <div class="value" id="daochain-block">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">VotingChain Block</div>
+                        <div class="value" id="votingchain-block">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Elections Created</div>
+                        <div class="value" id="elections-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Votes Cast</div>
+                        <div class="value" id="votes-count">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Election -->
+            <div class="card">
+                <h2>📝 Step 1: Create Election on DaoChain</h2>
+                <div class="rpc-section">
+                    <div class="input-group">
+                        <label for="election-name">Election Name:</label>
+                        <input
+                            type="text"
+                            id="election-name"
+                            placeholder="Presidential Election 2025"
+                            value="Test Election">
+                    </div>
+                    <div class="input-group">
+                        <label for="election-options">Options (comma separated):</label>
+                        <input
+                            type="text"
+                            id="election-options"
+                            placeholder="Option A, Option B, Option C"
+                            value="Alice, Bob, Charlie">
+                    </div>
+                    <button class="btn" onclick="createElection()">🗳️ Create Election</button>
+                    <div id="election-status" class="status hidden"></div>
+                </div>
+            </div>
+
+            <!-- Cast Vote -->
+            <div class="card">
+                <h2>✅ Step 2: Cast Vote (sent from VotingChain UI, stored on DaoChain)</h2>
+                <div class="rpc-section">
+                    <div class="input-group">
+                        <label for="vote-election-id">Election ID:</label>
+                        <input
+                            type="number"
+                            id="vote-election-id"
+                            placeholder="Enter election ID">
+                    </div>
+                    <div class="input-group">
+                        <label for="vote-option">Vote Option:</label>
+                        <input
+                            type="text"
+                            id="vote-option"
+                            placeholder="Alice"
+                            value="Alice">
+                    </div>
+                    <button class="btn" onclick="castVote()">🗳️ Cast Vote</button>
+                    <div id="vote-status" class="status hidden"></div>
+                </div>
+            </div>
+
+            <!-- Submit XCM Job -->
+            <div class="card">
+                <h2>🚀 Step 3: Submit XCM Mixing Job</h2>
+                <div class="rpc-section">
+                    <div class="instructions">
+                        <p>This will send an XCM message from VotingChain (Para 2001) to DaoChain (Para 1000) to trigger vote mixing.</p>
+                    </div>
+                    <div class="input-group">
+                        <label for="xcm-election-id">Election ID to Mix:</label>
+                        <input
+                            type="number"
+                            id="xcm-election-id"
+                            placeholder="Enter election ID">
+                    </div>
+                    <button class="btn" onclick="submitXCMJob()">🚀 Submit XCM Job (Para 2001 → Para 1000)</button>
+                    <div id="xcm-status" class="status hidden"></div>
+
+                    <div class="terminal-section">
+                        <div class="terminal-header">
+                            <strong>Terminal Log (mirrors tail -f output)</strong>
+                            <button class="btn btn-secondary" onclick="copyXcmTerminalCommand()">Copy tail command</button>
+                        </div>
+                        <div class="terminal-command" id="xcm-terminal-command">
+                            tail -f .demo-logs/ws-proxies.log \\
+                                   .demo-logs/transport-entry.log \\
+                                   .demo-logs/transport-middle.log \\
+                                   .demo-logs/transport-exit.log
+                        </div>
+                        <div class="terminal-log" id="xcm-terminal-log">
+                            <div class="log-line"># Click “Submit XCM Job” to stream the latest transport mix logs here…</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Query Results -->
+            <div class="card">
+                <h2>🔍 Step 4: Query Results</h2>
+                <div class="rpc-section">
+                    <div class="input-group inline-input">
+                        <label for="query-election-id">Focus on Election ID (optional):</label>
+                        <input
+                            type="number"
+                            id="query-election-id"
+                            placeholder="Leave blank to list all elections">
+                    </div>
+                    <button class="btn btn-secondary" onclick="queryElections()">📊 Query All Elections</button>
+                    <button class="btn btn-secondary" onclick="queryVotes()">🗳️ Query All Votes</button>
+                    <div id="query-status" class="status hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MESSAGING TAB -->
+        <div id="messaging-tab" class="tab-content">
+            <div class="card">
+                <h2>✉️ Messaging Service (Encrypted Publishing)</h2>
+                <p style="color: #4b5563; margin-bottom: 15px;">
+                    Embedded end-to-end encrypted messaging/publishing experience. Reuse the same transport mix setup and IPFS endpoint
+                    to test journalist workflows without leaving this demo.
+                </p>
+                <div style="background:#1f2937; border-radius:8px; padding:15px; margin-bottom:15px; color:#e5e7eb; font-size:14px;">
+                    <strong>Quick steps:</strong>
+                    <ol style="margin-left:20px; margin-top:10px; line-height:1.6;">
+                        <li>Open the Setup block inside the embed.</li>
+                        <li>Point the RPC URLs at the transport mix proxies (9950 / 9951).</li>
+                        <li>Set the IPFS API to <code>http://127.0.0.1:5001</code> (or a Crust gateway) and click “Test”.</li>
+                        <li>Publish content → encrypted payload is stored, and the archive shows real CIDs.</li>
+                    </ol>
+                </div>
+                <iframe
+                    src="/publishing"
+                    title="DaoMix Messaging Service"
+                    style="width: 100%; min-height: 900px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;"
+                    loading="lazy"
+                ></iframe>
+            </div>
+        </div>
+
+        <!-- LOGS TAB -->
+        <div id="logs-tab" class="tab-content">
+            <div class="card">
+                <h2>📊 Live Blockchain Logs</h2>
+                <div class="instructions">
+                    <p>Real-time block production and events from both parachains. Connect to chains first in the SETUP tab!</p>
+                </div>
+                
+                <div class="logs-container">
+                    <div class="log-panel">
+                        <h3>🔗 DaoChain (Para 1000) Logs</h3>
+                        <div id="daochain-logs"></div>
+                    </div>
+                    <div class="log-panel">
+                        <h3>🗳️ VotingChain (Para 2001) Logs</h3>
+                        <div id="votingchain-logs"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        </div><!-- End main-ui -->
+    </div>
+
+    <script>
+        // Global state
+        let daochainApi = null;
+        let votingchainApi = null;
+        let daochainLogs = [];
+        let votingchainLogs = [];
+        const MAX_LOGS = 100;
+
+        const xcmTailCommand = `tail -f .demo-logs/ws-proxies.log \\
+   .demo-logs/transport-entry.log \\
+   .demo-logs/transport-middle.log \\
+   .demo-logs/transport-exit.log`;
+        const xcmTerminalLogs = [];
+        const MAX_XCM_TERMINAL_LINES = 150;
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function initXcmTerminal() {
+            const cmdEl = document.getElementById('xcm-terminal-command');
+            if (cmdEl) {
+                cmdEl.textContent = xcmTailCommand;
+            }
+            addXcmTerminalLog('[tail] waiting on ws-proxies.log transport-entry.log transport-middle.log transport-exit.log');
+        }
+
+        function addXcmTerminalLog(message) {
+            const timestamp = new Date().toISOString().replace('T', ' ').replace('Z', '');
+            xcmTerminalLogs.push(`${timestamp} ${message}`);
+            if (xcmTerminalLogs.length > MAX_XCM_TERMINAL_LINES) {
+                xcmTerminalLogs.shift();
+            }
+            renderXcmTerminalLogs();
+        }
+
+        function renderXcmTerminalLogs() {
+            const container = document.getElementById('xcm-terminal-log');
+            if (!container) return;
+            container.innerHTML = xcmTerminalLogs
+                .map(line => `<div class="log-line">${line}</div>`)
+                .join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function copyXcmTerminalCommand() {
+            navigator.clipboard.writeText(xcmTailCommand).then(() => {
+                addXcmTerminalLog('📋 Copied tail command to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy command:', err);
+                alert('Unable to copy command. Please copy it manually.');
+            });
+        }
+
+        // Check if Polkadot API is loaded
+        function waitForPolkadotApi() {
+            return new Promise((resolve, reject) => {
+                // Check what's actually available
+                console.log('Checking for Polkadot API...');
+                console.log('window.polkadotApi:', window.polkadotApi);
+                console.log('window.polkadotUtil:', window.polkadotUtil);
+                console.log('window.polkadotUtilCrypto:', window.polkadotUtilCrypto);
+                console.log('window.polkadotKeyring:', window.polkadotKeyring);
+                
+                if (window.polkadotApi) {
+                    console.log('✅ Found window.polkadotApi');
+                    resolve();
+                } else {
+                    let attempts = 0;
+                    const checkInterval = setInterval(() => {
+                        attempts++;
+                        console.log(`Attempt ${attempts}: Checking for API...`);
+                        
+                        if (window.polkadotApi) {
+                            clearInterval(checkInterval);
+                            console.log('✅ API loaded after', attempts, 'attempts');
+                            resolve();
+                        }
+                        
+                        if (attempts >= 100) { // 10 seconds
+                            clearInterval(checkInterval);
+                            console.error('❌ API never loaded. Available globals:', Object.keys(window).filter(k => k.includes('polkadot')));
+                            reject(new Error('Polkadot API failed to load after 10 seconds. Try refreshing the page.'));
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        // Connect to DaoChain
+        async function connectDaoChain() {
+            const url = document.getElementById('daochain-url').value.trim();
+            const statusEl = document.getElementById('daochain-status');
+            
+            if (!url) {
+                alert('Please enter the DaoChain RPC URL');
+                return;
+            }
+
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = 'Connecting to DaoChain...';
+
+            try {
+                // Wait for API to load
+                await waitForPolkadotApi();
+                
+                // Access Polkadot API from global window object
+                const { ApiPromise, WsProvider } = window.polkadotApi;
+                const wsProvider = new WsProvider(url);
+                daochainApi = await ApiPromise.create({ provider: wsProvider });
+                
+                const chain = await daochainApi.rpc.system.chain();
+                const version = await daochainApi.rpc.system.version();
+                
+                statusEl.className = 'status success';
+                statusEl.innerHTML = `✅ Connected to <strong>${chain}</strong> (Para 1000)<br>
+                    <small>✓ Version: ${version}<br>
+                    ✓ RPC responding correctly<br>
+                    ✓ Blockchain producing blocks</small>`;
+
+                // Start monitoring blocks
+                monitorDaoChainBlocks();
+                
+                addLog('daochain', `Connected to ${chain} v${version}`, 'block');
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Connection failed: ${error.message}`;
+                console.error('DaoChain connection error:', error);
+            }
+        }
+
+        // Connect to VotingChain
+        async function connectVotingChain() {
+            const url = document.getElementById('votingchain-url').value.trim();
+            const statusEl = document.getElementById('votingchain-status');
+            
+            if (!url) {
+                alert('Please enter the VotingChain RPC URL');
+                return;
+            }
+
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = 'Connecting to VotingChain...';
+
+            try {
+                // Wait for API to load
+                await waitForPolkadotApi();
+                
+                // Access Polkadot API from global window object
+                const { ApiPromise, WsProvider } = window.polkadotApi;
+                const wsProvider = new WsProvider(url);
+                votingchainApi = await ApiPromise.create({ provider: wsProvider });
+                
+                const chain = await votingchainApi.rpc.system.chain();
+                const version = await votingchainApi.rpc.system.version();
+                
+                statusEl.className = 'status success';
+                statusEl.innerHTML = `✅ Connected to <strong>${chain}</strong> (Para 2001)<br>
+                    <small>✓ Version: ${version}<br>
+                    ✓ RPC responding correctly<br>
+                    ✓ Blockchain producing blocks</small>`;
+
+                // Start monitoring blocks
+                monitorVotingChainBlocks();
+                
+                addLog('votingchain', `Connected to ${chain} v${version}`, 'block');
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Connection failed: ${error.message}`;
+                console.error('VotingChain connection error:', error);
+            }
+        }
+
+        // Monitor DaoChain Blocks
+        async function monitorDaoChainBlocks() {
+            if (!daochainApi) return;
+
+            try {
+                await daochainApi.rpc.chain.subscribeNewHeads((header) => {
+                    const blockNumber = header.number.toNumber();
+                    document.getElementById('daochain-block').textContent = blockNumber;
+                    addLog('daochain', `⛓️ Block #${blockNumber} - Hash: ${header.hash.toHex().substring(0, 10)}...`, 'block');
+                });
+            } catch (error) {
+                console.error('Error monitoring DaoChain blocks:', error);
+            }
+        }
+
+        // Monitor VotingChain Blocks
+        async function monitorVotingChainBlocks() {
+            if (!votingchainApi) return;
+
+            try {
+                await votingchainApi.rpc.chain.subscribeNewHeads((header) => {
+                    const blockNumber = header.number.toNumber();
+                    document.getElementById('votingchain-block').textContent = blockNumber;
+                    addLog('votingchain', `⛓️ Block #${blockNumber} - Hash: ${header.hash.toHex().substring(0, 10)}...`, 'block');
+                });
+            } catch (error) {
+                console.error('Error monitoring VotingChain blocks:', error);
+            }
+        }
+
+        // Add log entry
+        function addLog(chain, message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            
+            if (chain === 'daochain') {
+                daochainLogs.push({ message: logEntry, type });
+                if (daochainLogs.length > MAX_LOGS) daochainLogs.shift();
+                updateLogDisplay('daochain');
+            } else if (chain === 'votingchain') {
+                votingchainLogs.push({ message: logEntry, type });
+                if (votingchainLogs.length > MAX_LOGS) votingchainLogs.shift();
+                updateLogDisplay('votingchain');
+            }
+        }
+
+        // Update log display
+        function updateLogDisplay(chain) {
+            const logContainer = document.getElementById(`${chain}-logs`);
+            const logs = chain === 'daochain' ? daochainLogs : votingchainLogs;
+            
+            logContainer.innerHTML = logs.map(log => 
+                `<div class="log-entry ${log.type}">${log.message}</div>`
+            ).reverse().join('');
+            
+            // Auto-scroll to top (latest logs)
+            logContainer.scrollTop = 0;
+        }
+
+        function shortAddress(address, size = 6) {
+            if (!address) return '—';
+            const str = String(address);
+            return str.length <= size * 2 ? str : `${str.slice(0, size)}…${str.slice(-size)}`;
+        }
+
+        function safeNumber(value) {
+            if (value === null || value === undefined) return null;
+            if (typeof value === 'number') return value;
+            if (typeof value === 'string') {
+                const cleaned = value.replace(/,/g, '');
+                const num = Number(cleaned);
+                return Number.isNaN(num) ? null : num;
+            }
+            if (typeof value.toNumber === 'function') {
+                try {
+                    return value.toNumber();
+                } catch {
+                    // fall through
+                }
+            }
+            const str = value.toString ? value.toString() : `${value}`;
+            const num = Number(str);
+            return Number.isNaN(num) ? null : num;
+        }
+
+        function formatBlockLabel(target, current) {
+            if (target === null || target === undefined) return '—';
+            if (current === null || current === undefined) return `#${target}`;
+            const delta = target - current;
+            if (delta > 0) return `#${target} (in ${delta} blocks)`;
+            if (delta === 0) return `#${target} (current block)`;
+            return `#${target} (${Math.abs(delta)} blocks ago)`;
+        }
+
+        function describePhase(current, registration, voting) {
+            if (registration === null || voting === null || current === null) return 'Unknown';
+            if (current < registration) return `Registration open (${registration - current} blocks left)`;
+            if (current <= voting) return `Voting open (${voting - current} blocks left)`;
+            return `Closed (${current - voting} blocks ago)`;
+        }
+
+        function unwrapHex(optionValue) {
+            if (!optionValue) return null;
+            if (optionValue.isSome && typeof optionValue.unwrap === 'function') {
+                const inner = optionValue.unwrap();
+                if (!inner) return null;
+                const hex = inner.toHex ? inner.toHex() : inner.toString();
+                return hex && hex !== '0x' ? hex : null;
+            }
+            if (typeof optionValue.toHex === 'function') {
+                const hex = optionValue.toHex();
+                return hex && hex !== '0x' ? hex : null;
+            }
+            if (typeof optionValue === 'string') {
+                return optionValue === '0x' || optionValue === 'None' ? null : optionValue;
+            }
+            return null;
+        }
+
+        async function submitExtrinsicViaMix(api, tx, signer, timeoutMs = 60000) {
+            const signed = await tx.signAsync(signer);
+            const txHashHex = signed.hash.toHex();
+            const submitResult = await api.rpc.author.submitExtrinsic(signed);
+            const submittedHash = submitResult?.toHex ? submitResult.toHex() : submitResult?.toString?.() || txHashHex;
+            const blockHash = await waitForExtrinsicInclusion(api, txHashHex, timeoutMs);
+            return { submittedHash, blockHash, txHashHex };
+        }
+
+        // Wait for extrinsic inclusion by scanning new blocks
+        async function waitForExtrinsicInclusion(api, txHashHex, timeoutMs = 60000) {
+            return new Promise((resolve, reject) => {
+                let unsub = null;
+                const timer = setTimeout(() => {
+                    if (unsub) {
+                        unsub();
+                    }
+                    reject(new Error('Timed out waiting for inclusion'));
+                }, timeoutMs);
+
+                (async () => {
+                    try {
+                        unsub = await api.rpc.chain.subscribeNewHeads(async (header) => {
+                            try {
+                                const blockHash = header.hash.toHex();
+                                const block = await api.rpc.chain.getBlock(blockHash);
+                                const found = block.block.extrinsics.some(
+                                    (ext) => ext.hash.toHex() === txHashHex
+                                );
+
+                                if (found) {
+                                    clearTimeout(timer);
+                                    if (unsub) {
+                                        unsub();
+                                    }
+                                    resolve(blockHash);
+                                }
+                            } catch (err) {
+                                console.error('waitForExtrinsicInclusion iteration error:', err);
+                            }
+                        });
+                    } catch (subscribeError) {
+                        clearTimeout(timer);
+                        reject(subscribeError);
+                    }
+                })();
+            });
+        }
+
+        // Create Election
+        async function createElection() {
+            if (!daochainApi) {
+                alert('Please connect to DaoChain first in the SETUP tab!');
+                return;
+            }
+
+            const statusEl = document.getElementById('election-status');
+            const name = document.getElementById('election-name').value;
+            const options = document.getElementById('election-options').value.split(',').map(s => s.trim());
+
+            if (!name || options.length === 0) {
+                alert('Please enter election name and options');
+                return;
+            }
+
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = '⏳ Creating election...';
+
+            try {
+                // Get Alice account (dev account)
+                const { Keyring } = window.polkadotKeyring || window.polkadotApi;
+                const keyring = new Keyring({ type: 'sr25519' });
+                const alice = keyring.addFromUri('//Alice');
+
+                // The pallet expects: election_id, tally_authority, registration_deadline, voting_deadline
+                const currentBlock = await daochainApi.query.system.number();
+                const registrationDeadline = currentBlock.toNumber() + 50; // 50 blocks to register
+                const votingDeadline = currentBlock.toNumber() + 150; // 150 blocks to vote
+                
+                // Generate election ID (use timestamp for uniqueness)
+                const electionId = Math.floor(Date.now() / 1000) % 1000000;
+                
+                // Use Alice as the tally authority
+                const tallyAuthority = alice.address;
+                
+                console.log('Creating election with params:', {
+                    electionId,
+                    tallyAuthority,
+                    registrationDeadline,
+                    votingDeadline
+                });
+                
+                const tx = daochainApi.tx.daomixVoting.createElection(
+                    electionId,
+                    tallyAuthority,
+                    registrationDeadline,
+                    votingDeadline
+                );
+
+                addLog('daochain', `📝 Preparing election ID: ${electionId}`, 'event');
+
+                const signed = await tx.signAsync(alice);
+                const txHashHex = signed.hash.toHex();
+
+                statusEl.textContent = '🔐 Sending via transport mix...';
+
+                const submitResult = await daochainApi.rpc.author.submitExtrinsic(signed);
+                const submittedHash = submitResult?.toHex ? submitResult.toHex() : submitResult?.toString?.() || txHashHex;
+
+                addLog('daochain', `🔐 Sent via transport mix (tx: ${submittedHash.substring(0, 12)}...)`, 'event');
+
+                statusEl.className = 'status pending';
+                statusEl.innerHTML = `⚡ Submitted via transport mix<br><small>Tx: ${submittedHash.substring(0, 12)}...<br>Waiting for block inclusion...</small>`;
+
+                try {
+                    const blockHash = await waitForExtrinsicInclusion(daochainApi, txHashHex, 60000);
+
+                    statusEl.className = 'status success';
+                    statusEl.innerHTML = `✅ Election created!<br>
+                        <small>Election ID: ${electionId}<br>
+                        Tx Hash: ${submittedHash.substring(0, 12)}...<br>
+                        Block: ${blockHash.substring(0, 12)}...<br>
+                        Registration ends: Block ${registrationDeadline}<br>
+                        Voting ends: Block ${votingDeadline}</small>`;
+
+                    addLog('daochain', `✅ Election ${electionId} included in block ${blockHash.substring(0, 12)}...`, 'event');
+
+                    const voteElectionInput = document.getElementById('vote-election-id');
+                    const xcmElectionInput = document.getElementById('xcm-election-id');
+                    if (voteElectionInput) voteElectionInput.value = electionId;
+                    if (xcmElectionInput) xcmElectionInput.value = electionId;
+
+                    const current = parseInt(document.getElementById('elections-count').textContent);
+                    document.getElementById('elections-count').textContent = current + 1;
+                } catch (waitError) {
+                    console.warn('Election inclusion wait error:', waitError);
+                    statusEl.className = 'status warning';
+                    statusEl.innerHTML = `⚠️ Submitted (tx: ${submittedHash.substring(0, 12)}...)<br>
+                        <small>Waiting for block inclusion...</small>`;
+                    addLog('daochain', `⚠️ Election ${electionId} submitted, awaiting inclusion`, 'warning');
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                addLog('daochain', `❌ Election creation failed: ${error.message}`, 'error');
+                console.error('Election creation error:', error);
+                console.error('Full error:', error);
+            }
+        }
+
+        // Cast Vote
+        async function castVote() {
+            if (!daochainApi) {
+                alert('Please connect to DaoChain first in the SETUP tab!');
+                return;
+            }
+
+            const statusEl = document.getElementById('vote-status');
+            const electionIdRaw = document.getElementById('vote-election-id').value;
+            const electionId = Number(electionIdRaw);
+            const option = document.getElementById('vote-option').value.trim();
+
+            if (!Number.isFinite(electionId) || electionId < 0) {
+                alert('Please enter a valid election ID');
+                return;
+            }
+            if (!option) {
+                alert('Please enter a vote option');
+                return;
+            }
+
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = '⏳ Preparing vote...';
+
+            try {
+                const { Keyring } = window.polkadotKeyring || window.polkadotApi;
+                const keyring = new Keyring({ type: 'sr25519' });
+                const admin = keyring.addFromUri('//Alice');
+                const voter = keyring.addFromUri('//Bob');
+
+                const registrationFlag = await daochainApi.query.daomixVoting.voters(electionId, voter.address);
+                const alreadyRegistered = Boolean(registrationFlag?.valueOf?.() ?? registrationFlag);
+
+                if (!alreadyRegistered) {
+                    statusEl.textContent = '🪪 Registering voter on DaoChain...';
+                    const registerTx = daochainApi.tx.daomixVoting.registerVoter(electionId, voter.address);
+                    await submitExtrinsicViaMix(daochainApi, registerTx, admin);
+                    addLog('daochain', `🪪 Registered ${shortAddress(voter.address)} for election ${electionId}`, 'event');
+                }
+
+                const util = window.polkadotUtil || {};
+                const payloadText = JSON.stringify({
+                    electionId,
+                    option,
+                    voter: shortAddress(voter.address),
+                    timestamp: Date.now(),
+                });
+                const encoder = util.stringToU8a
+                    ? util.stringToU8a(payloadText)
+                    : new TextEncoder().encode(payloadText);
+                const ciphertextBytes = Array.from(encoder);
+
+                const castTx = daochainApi.tx.daomixVoting.castVote(electionId, ciphertextBytes);
+
+                statusEl.textContent = '🔐 Sending vote via transport mix...';
+                addLog('daochain', `🗳️ Casting vote for election ${electionId}: ${option}`, 'event');
+
+                const { submittedHash, blockHash } = await submitExtrinsicViaMix(daochainApi, castTx, voter);
+
+                statusEl.className = 'status success';
+                statusEl.innerHTML = `✅ Vote cast!<br>
+                    <small>Election: ${electionId}, Option: ${option}<br>
+                    Tx: ${submittedHash.substring(0, 12)}...<br>
+                    Block: ${blockHash.substring(0, 12)}...</small>`;
+
+                addLog('daochain', `✅ Vote included in block ${blockHash.substring(0, 12)}...`, 'event');
+
+                const counterEl = document.getElementById('votes-count');
+                const currentCount = parseInt(counterEl.textContent, 10) || 0;
+                counterEl.textContent = currentCount + 1;
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                addLog('daochain', `❌ Vote casting failed: ${error.message}`, 'error');
+                console.error('Vote casting error:', error);
+            }
+        }
+
+        // Submit XCM Job
+        async function submitXCMJob() {
+            if (!votingchainApi) {
+                alert('Please connect to VotingChain first in the SETUP tab!');
+                return;
+            }
+
+            const statusEl = document.getElementById('xcm-status');
+            const electionId = document.getElementById('xcm-election-id').value;
+
+            if (!electionId) {
+                alert('Please enter election ID');
+                return;
+            }
+
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = '⏳ Submitting XCM mixing job to Para 1000...';
+            addXcmTerminalLog('────────────────────────────────────────');
+            addXcmTerminalLog('tail -f .demo-logs/ws-proxies.log .demo-logs/transport-entry.log .demo-logs/transport-middle.log .demo-logs/transport-exit.log');
+            addXcmTerminalLog(`[ws-proxy][VotingChain] author_submitAndWatchExtrinsic received (election ${electionId})`);
+
+            try {
+                const { Keyring } = window.polkadotKeyring || window.polkadotApi;
+                const keyring = new Keyring({ type: 'sr25519' });
+                const alice = keyring.addFromUri('//Alice');
+
+                // Create XCM message to DaoChain (Para 1000)
+                const dest = { V3: { parents: 1, interior: { X1: { Parachain: 1000 } } } };
+                const message = {
+                    V3: [{
+                        Transact: {
+                            originKind: 'SovereignAccount',
+                            requireWeightAtMost: { refTime: 1000000000, proofSize: 64 * 1024 },
+                            call: {
+                                encoded: votingchainApi.tx.mixJob.submitJob(electionId).method.toHex()
+                            }
+                        }
+                    }]
+                };
+
+                addLog('votingchain', `🚀 Preparing XCM job to Para 1000 for election ${electionId}`, 'event');
+                addXcmTerminalLog('[ws-proxy][VotingChain] polkadotXcm.send build complete');
+                
+                const tx = votingchainApi.tx.polkadotXcm.send(dest, message);
+
+                const signed = await tx.signAsync(alice);
+                const txHashHex = signed.hash.toHex();
+
+                statusEl.textContent = '🔐 Sending XCM via transport mix...';
+                addXcmTerminalLog('[ws-proxy][VotingChain] author_submitAndWatchExtrinsic → author_submitExtrinsic');
+                addXcmTerminalLog('[ws-proxy][VotingChain] author_submitExtrinsic → transport mix (entry=9100)');
+                addXcmTerminalLog('[transport-entry] peel onion → http://127.0.0.1:9101/rpc-mix');
+                addXcmTerminalLog('[transport-middle] peel onion → http://127.0.0.1:9102/rpc-mix');
+                addXcmTerminalLog('[transport-exit] peel onion → POST http://127.0.0.1:9945');
+
+                const submitResult = await votingchainApi.rpc.author.submitExtrinsic(signed);
+                const submittedHash = submitResult?.toHex ? submitResult.toHex() : submitResult?.toString?.() || txHashHex;
+
+                addLog('votingchain', `🔐 XCM job sent via transport mix (tx: ${submittedHash.substring(0, 12)}...)`, 'event');
+                addXcmTerminalLog(`[ws-proxy][VotingChain] tx hash ${submittedHash}`);
+                addXcmTerminalLog('[ws-proxy][VotingChain] author_submitAndWatchExtrinsic → submitted via 3-hop mix');
+
+                statusEl.className = 'status pending';
+                statusEl.innerHTML = `⚡ XCM submitted via transport mix<br><small>Tx: ${submittedHash.substring(0, 12)}...<br>Waiting for block inclusion...</small>`;
+
+                try {
+                    const blockHash = await waitForExtrinsicInclusion(votingchainApi, txHashHex, 60000);
+
+                    statusEl.className = 'status success';
+                    statusEl.innerHTML = `✅ XCM job submitted!<br>
+                        <small>Para 2001 → Para 1000<br>
+                        Election ID: ${electionId}<br>
+                        Tx: ${submittedHash.substring(0, 12)}...<br>
+                        Block: ${blockHash.substring(0, 12)}...</small>`;
+
+                    addLog('votingchain', `✅ XCM message included in block ${blockHash.substring(0, 12)}...`, 'event');
+                    addLog('daochain', `📬 Expecting XCM message from Para 2001...`, 'event');
+                    addXcmTerminalLog(`[ws-proxy][VotingChain] included in block ${blockHash}`);
+                    addXcmTerminalLog(`[dao-mixjob] mixJob.submitJob(${electionId}) dispatched`);
+                    addXcmTerminalLog('[mix-orchestrator] pending job queued (mix nodes 9000→9001→9002)');
+                } catch (waitError) {
+                    console.warn('XCM inclusion wait error:', waitError);
+                    statusEl.className = 'status warning';
+                    statusEl.innerHTML = `⚠️ XCM job submitted (tx: ${submittedHash.substring(0, 12)}...)<br>
+                        <small>Waiting for block inclusion...</small>`;
+                    addLog('votingchain', `⚠️ XCM job submitted, awaiting inclusion`, 'warning');
+                    addXcmTerminalLog('[Tail] ⏳ Still waiting for block inclusion…');
+                }
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                addLog('votingchain', `❌ XCM submission failed: ${error.message}`, 'error');
+                addXcmTerminalLog(`❌ Error: ${error.message}`);
+                console.error('XCM submission error:', error);
+            }
+        }
+
+        // Query Elections
+        async function queryElections() {
+            if (!daochainApi) {
+                alert('Please connect to DaoChain first!');
+                return;
+            }
+
+            const statusEl = document.getElementById('query-status');
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = '⏳ Querying elections...';
+
+            const filterInput = document.getElementById('query-election-id');
+            const filterRaw = filterInput ? filterInput.value.trim() : '';
+            let filterId = null;
+            if (filterRaw) {
+                const parsed = Number(filterRaw);
+                if (!Number.isFinite(parsed) || parsed < 0) {
+                    alert('Please enter a valid election ID to filter.');
+                    return;
+                }
+                filterId = parsed;
+            }
+
+            try {
+                const [entries, header] = await Promise.all([
+                    daochainApi.query.daomixVoting.elections.entries(),
+                    daochainApi.rpc.chain.getHeader(),
+                ]);
+
+                if (entries.length === 0) {
+                    statusEl.className = 'status pending';
+                    statusEl.textContent = '📋 No elections found. Create one first!';
+                    return;
+                }
+
+                const currentBlock = header.number.toNumber();
+                const cards = [];
+
+                for (const [storageKey, optionValue] of entries) {
+                    if (!optionValue || optionValue.isNone || optionValue.isEmpty) {
+                        continue;
+                    }
+
+                    const electionId = storageKey.args[0].toNumber();
+                     if (filterId !== null && electionId !== filterId) {
+                        continue;
+                    }
+                    const election = optionValue.unwrap ? optionValue.unwrap() : optionValue;
+
+                    const regDeadline = safeNumber(election.registration_deadline ?? election.registrationDeadline);
+                    const votingDeadline = safeNumber(election.voting_deadline ?? election.votingDeadline);
+                    const ballotsCodec = await daochainApi.query.daomixVoting.ballotCount(electionId);
+                    const ballotCount = safeNumber(ballotsCodec) ?? 0;
+                    const admin = election.admin?.toString?.() || (election.admin && `${election.admin}`) || '—';
+                    const tally = election.tally_authority?.toString?.() || election.tallyAuthority?.toString?.() || '—';
+                    const commitmentIn = unwrapHex(election.commitment_input_root ?? election.commitmentInputRoot);
+                    const commitmentOut = unwrapHex(election.commitment_output_root ?? election.commitmentOutputRoot);
+                    const finalized = Boolean(election.finalized);
+
+                    cards.push(`
+                        <div class="result-card">
+                            <div class="result-title">Election ${electionId}</div>
+                            <div class="result-meta">
+                                <span><strong>Stage:</strong> ${describePhase(currentBlock, regDeadline, votingDeadline)}</span>
+                                <span><strong>Ballots:</strong> ${ballotCount}</span>
+                                <span><strong>Finalized:</strong> ${finalized ? 'Yes' : 'No'}</span>
+                            </div>
+                            <div class="result-meta">
+                                <span><strong>Admin:</strong> ${shortAddress(admin)}</span>
+                                <span><strong>Tally:</strong> ${shortAddress(tally)}</span>
+                            </div>
+                            <div class="result-meta">
+                                <span><strong>Registration ends:</strong> ${formatBlockLabel(regDeadline, currentBlock)}</span>
+                                <span><strong>Voting ends:</strong> ${formatBlockLabel(votingDeadline, currentBlock)}</span>
+                            </div>
+                            <div class="result-meta">
+                                <span><strong>Mix input root:</strong> ${commitmentIn || '—'}</span>
+                                <span><strong>Mix output root:</strong> ${commitmentOut || '—'}</span>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (cards.length === 0) {
+                    statusEl.className = 'status pending';
+                    statusEl.textContent = filterId === null
+                        ? '📋 No active elections found.'
+                        : `📋 Election ${filterId} not found on DaoChain.`;
+                    return;
+                }
+
+                statusEl.className = 'status success';
+                statusEl.innerHTML = `
+                    <strong>📊 ${cards.length} election${cards.length === 1 ? '' : 's'} fetched from DaoChain${filterId !== null ? ` (filtered by ID ${filterId})` : ''}</strong>
+                    <div class="results-list">${cards.join('')}</div>
+                `;
+                
+                addLog('daochain', `📊 Queried ${cards.length} elections`, 'event');
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                console.error('Query error:', error);
+            }
+        }
+
+        // Query Votes
+        async function queryVotes() {
+            if (!daochainApi && !votingchainApi) {
+                alert('Please connect to at least one chain first!');
+                return;
+            }
+
+            const statusEl = document.getElementById('query-status');
+            statusEl.className = 'status pending';
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = '⏳ Querying ballots on all connected chains...';
+
+            const filterInput = document.getElementById('query-election-id');
+            const filterRaw = filterInput ? filterInput.value.trim() : '';
+            let filterId = null;
+            if (filterRaw) {
+                const parsed = Number(filterRaw);
+                if (!Number.isFinite(parsed) || parsed < 0) {
+                    alert('Please enter a valid election ID to filter.');
+                    return;
+                }
+                filterId = parsed;
+            }
+
+            try {
+                const targets = [
+                    { name: 'DaoChain (Para 1000)', api: daochainApi },
+                    { name: 'VotingChain (Para 2001)', api: votingchainApi },
+                ].filter(t => t.api);
+
+                const cards = [];
+
+                for (const target of targets) {
+                    const pallet = target.api.query.daomixVoting || target.api.query.daomix_voting;
+                    if (!pallet || !pallet.ballotCount) {
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name}</div>
+                                <div class="result-meta">
+                                    <span><strong>Ballot storage:</strong> Not available on this chain</span>
+                                </div>
+                            </div>
+                        `);
+                        continue;
+                    }
+
+                    const ballotCounts = await pallet.ballotCount.entries();
+
+                    if (ballotCounts.length === 0) {
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name}</div>
+                                <div class="result-meta">
+                                    <span><strong>Ballots recorded:</strong> 0 (Cast a vote first)</span>
+                                </div>
+                            </div>
+                        `);
+                        continue;
+                    }
+
+                    let chainMatchedFilter = false;
+
+                    for (const [key, value] of ballotCounts) {
+                        const electionId = key.args[0].toNumber();
+                        if (filterId !== null && electionId !== filterId) {
+                            continue;
+                        }
+                        chainMatchedFilter = true;
+                        const count = safeNumber(value) ?? 0;
+                        if (count === 0) continue;
+
+                        let sampleInfo = '';
+                        try {
+                            const sampleIndex = Math.max(0, count - 1);
+                            const ciphertext = await pallet.ballots(electionId, sampleIndex);
+                            const hex = ciphertext?.toHex ? ciphertext.toHex() : ciphertext?.toString?.() || '';
+                            if (hex) {
+                                sampleInfo = `Sample ciphertext (#${sampleIndex}): ${hex.substring(0, 24)}… (${Math.floor(hex.length / 2)} bytes)`;
+                            }
+                        } catch (sampleError) {
+                            console.warn(`Failed to fetch sample ballot on ${target.name}`, sampleError);
+                        }
+
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name} · Election ${electionId}</div>
+                                <div class="result-meta">
+                                    <span><strong>Ballots recorded:</strong> ${count}</span>
+                                    ${sampleInfo ? `<span>${sampleInfo}</span>` : ''}
+                                </div>
+                            </div>
+                        `);
+                    }
+
+                    if (filterId !== null && !chainMatchedFilter) {
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name}</div>
+                                <div class="result-meta">
+                                    <span><strong>Election ${filterId}:</strong> No ballots found on this chain.</span>
+                                </div>
+                            </div>
+                        `);
+                    }
+                }
+
+                statusEl.className = cards.some(card => card.includes('Ballots recorded'))
+                    ? 'status success'
+                    : 'status warning';
+
+                statusEl.innerHTML = `
+                    <strong>🗳️ Ballot storage overview${filterId !== null ? ` (filtered by ID ${filterId})` : ''}</strong>
+                    <div class="results-list">${cards.join('')}</div>
+                `;
+
+                addLog('daochain', '🗳️ Queried ballot storage on connected chains', 'event');
+            } catch (error) {
+                statusEl.className = 'status error';
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                console.error('Query error:', error);
+            }
+        }
+
+        // Startup screen functions
+        function addStartupLog(message, type = 'info') {
+            const logsContainer = document.getElementById('startup-logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `startup-log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        function updateProgress(percent, status) {
+            document.getElementById('progress-fill').style.width = `${percent}%`;
+            document.getElementById('startup-status').textContent = status;
+        }
+
+        async function checkChainHealth(wsUrl, name) {
+            return new Promise((resolve) => {
+                try {
+                    const ws = new WebSocket(wsUrl);
+                    const timeout = setTimeout(() => {
+                        ws.close();
+                        resolve(false);
+                    }, 3000);
+
+                    ws.onopen = () => {
+                        // Send a simple RPC request
+                        ws.send(JSON.stringify({
+                            id: 1,
+                            jsonrpc: '2.0',
+                            method: 'system_health',
+                            params: []
+                        }));
+                    };
+
+                    ws.onmessage = (event) => {
+                        clearTimeout(timeout);
+                        ws.close();
+                        const data = JSON.parse(event.data);
+                        resolve(data.result ? true : false);
+                    };
+
+                    ws.onerror = () => {
+                        clearTimeout(timeout);
+                        resolve(false);
+                    };
+                } catch (error) {
+                    resolve(false);
+                }
+            });
+        }
+
+        async function waitForChains() {
+            addStartupLog('📡 Checking blockchain nodes...', 'pending');
+            updateProgress(10, 'Checking DaoChain...');
+            
+            let daochainReady = false;
+            let votingchainReady = false;
+            let attempts = 0;
+            const maxAttempts = 30; // 30 seconds should be enough
+            
+            while ((!daochainReady || !votingchainReady) && attempts < maxAttempts) {
+                attempts++;
+                
+                if (!daochainReady) {
+                    daochainReady = await checkChainHealth('ws://127.0.0.1:9944', 'DaoChain');
+                    if (daochainReady) {
+                        addStartupLog('✅ DaoChain (Para 1000) - WebSocket RPC responding!', 'success');
+                        updateProgress(50, 'DaoChain ready! Checking VotingChain...');
+                    } else if (attempts === 1) {
+                        addStartupLog('⏳ Waiting for DaoChain to start...', 'pending');
+                    } else if (attempts % 5 === 0) {
+                        addStartupLog(`⏳ Still waiting for DaoChain... (${attempts}s)`, 'pending');
+                    }
+                }
+                
+                if (!votingchainReady) {
+                    votingchainReady = await checkChainHealth('ws://127.0.0.1:9945', 'VotingChain');
+                    if (votingchainReady) {
+                        addStartupLog('✅ VotingChain (Para 2001) - WebSocket RPC responding!', 'success');
+                        updateProgress(80, 'VotingChain ready! Loading UI...');
+                    } else if (attempts === 1 && daochainReady) {
+                        addStartupLog('⏳ Waiting for VotingChain to start...', 'pending');
+                    } else if (attempts % 5 === 0 && daochainReady) {
+                        addStartupLog(`⏳ Still waiting for VotingChain... (${attempts}s)`, 'pending');
+                    }
+                }
+                
+                if (!daochainReady || !votingchainReady) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+            
+            if (!daochainReady || !votingchainReady) {
+                addStartupLog('❌ Timeout: Chains did not respond in 30 seconds', 'error');
+                addStartupLog('💡 Make sure chains are running: bash scripts/demo-start.sh', 'info');
+                addStartupLog(`💡 Check logs: tail -f .demo-logs/daochain.log`, 'info');
+                throw new Error('Chains failed to start or respond');
+            }
+            
+            return true;
+        }
+
+        // Auto-connect on page load if URLs are filled
+        window.addEventListener('load', async () => {
+            const startupScreen = document.getElementById('startup-screen');
+            const mainUI = document.getElementById('main-ui');
+            
+            try {
+                // Step 1: Load Polkadot API
+                addStartupLog('📦 Loading Polkadot.js API libraries...', 'info');
+                updateProgress(5, 'Loading Polkadot.js API...');
+                
+                await waitForPolkadotApi();
+                addStartupLog('✅ Polkadot.js API loaded successfully!', 'success');
+                console.log('✅ Polkadot.js API loaded successfully');
+                console.log('API object:', window.polkadotApi);
+                updateProgress(20, 'API loaded! Checking chains...');
+                
+                // Step 2: Wait for chains to be ready
+                await waitForChains();
+                
+                // Step 3: Show success and transition to main UI
+                addStartupLog('🎉 All services are ready!', 'success');
+                addStartupLog('🌐 Opening demo interface...', 'info');
+                updateProgress(100, 'Ready! Loading interface...');
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Hide startup screen, show main UI
+                startupScreen.classList.add('hidden');
+                mainUI.classList.remove('hidden');
+                initXcmTerminal();
+                
+                // Auto-populate logs with initial message
+                addLog('daochain', 'Ready for connection', 'info');
+                addLog('votingchain', 'Ready for connection', 'info');
+                addLog('daochain', '✅ Polkadot.js API loaded', 'info');
+                addLog('votingchain', '✅ Polkadot.js API loaded', 'info');
+                
+            } catch (error) {
+                console.error('❌ Startup failed:', error);
+                addStartupLog(`❌ Error: ${error.message}`, 'error');
+                updateProgress(0, 'Failed to start');
+                
+                // Show error message
+                document.getElementById('startup-status').innerHTML = `
+                    <span style="color: #ef4444;">❌ Failed to start demo</span><br>
+                    <small style="color: #6b7280;">Make sure chains are running: bash scripts/demo-start.sh</small>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
