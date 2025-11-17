@@ -7,7 +7,7 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="px-6 min-h-[calc(100vh-15rem)] flex items-center">
+      <section className="px-6 min-h-[100vh] flex items-center">
         <div className="max-w-6xl ml-[3rem] w-full">
           <div className="flex items-center gap-1.5 mb-3">
             <div className="w-1.5 h-1.5 bg-[#ff6b35] rounded-full animate-pulse"></div>
