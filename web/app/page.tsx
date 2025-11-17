@@ -456,18 +456,17 @@ export default function Home() {
         <DiagonalTexture />
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-6xl font-bold font-mono mb-3 tracking-tight">
-            No mocks. No screenshots.<br />
-            Everything is production-grade.
+            Ready to build?
           </h2>
-          <p className="text-base text-[#9a9a9a] font-mono mb-6">
-            Ship zero-knowledge governance, secure messaging, and privacy-preserving cross-chain workflows with DaoMix.
+          <p className="text-base text-[#9a9a9a] font-mono mb-6 max-w-2xl mx-auto">
+            Production-ready privacy infrastructure for Polkadot governance.
           </p>
           <div className="flex gap-3 justify-center">
             <a 
               href="https://github.com/Ashar20/daomix" 
               className="px-6 py-3 bg-[#ff6b35] hover:bg-[#e55a2b] text-black font-mono font-bold text-[11px] uppercase tracking-widest transition-colors btn-animated-texture"
             >
-              GITHUB
+              VIEW REPOSITORY
             </a>
             <a
               href="/sandbox" 
