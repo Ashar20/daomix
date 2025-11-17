@@ -34,6 +34,7 @@ export async function sendRpcOverTransportMix(params: {
 	rpcUrl: string;
 	method: string;
 	params: unknown[];
+	id?: unknown; // optional request ID from original RPC request
 	transportNodes: TransportNode[];
 	senderSecretKeyHex?: string; // optional hex secret key, generate if missing
 }): Promise<unknown> {
@@ -57,7 +58,7 @@ export async function sendRpcOverTransportMix(params: {
 	// 2. Build JSON-RPC request body
 	const rpcBody = {
 		jsonrpc: "2.0" as const,
-		id: Date.now(), // simple unique ID
+		id: params.id !== undefined ? params.id : Date.now(), // use provided ID or generate
 		method: params.method,
 		params: params.params,
 	};

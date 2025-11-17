@@ -101,9 +101,9 @@ Press `Ctrl+C` in the terminal.
 
 ## Troubleshooting
 
-**Port conflict?**
+**Port conflict or stuck processes?**
 ```bash
-pkill -f "polkadot-omni-node"
+npm run demo:cleanup
 npm run demo:start
 ```
 
@@ -113,8 +113,12 @@ npm run demo:setup
 ```
 
 **Connection failed?**
-- Wait 10 seconds for nodes to start
+- Wait 30-60 seconds for chains to fully initialize
 - Check `.demo-logs/daochain.log`
+
+**Transactions not working?**
+- Make sure you connected to both chains in SETUP tab first
+- The UI uses Polkadot.js v13 which supports modern chain features
 
 ---
 

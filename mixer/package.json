@@ -28,7 +28,8 @@
     "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts",
     "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
     "debug:system-remark": "ts-node --transpile-only src/debugSystemRemark.ts",
-    "inspect:runtime": "ts-node --transpile-only src/inspectRuntime.ts"
+    "inspect:runtime": "ts-node --transpile-only src/inspectRuntime.ts",
+    "demo:ws-proxies": "TS_NODE_FILES=true ts-node src/wsProxyLauncher.ts"
   },
   "dependencies": {
     "@polkadot/api": "^10.12.1",
@@ -40,11 +41,13 @@
     "express": "^4.19.0",
     "keccak256": "^1.0.6",
     "libsodium-wrappers": "^0.7.13",
-    "merkletreejs": "^0.3.9"
+    "merkletreejs": "^0.3.9",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0"

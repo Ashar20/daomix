@@ -1,0 +1,110 @@
+
+> @polokol/mixer@0.1.0 demo:ws-proxies
+> TS_NODE_FILES=true ts-node src/wsProxyLauncher.ts
+
+🚀 Starting WS-to-Transport Proxies for Demo
+
+📡 Fetching transport node public keys...
+
+✅ Fetched key from http://127.0.0.1:9100: 0xede3e6374ededc69ea...
+✅ Fetched key from http://127.0.0.1:9101: 0xc832c9fb263591a0dd...
+✅ Fetched key from http://127.0.0.1:9102: 0x1fba9b9c937ec87f29...
+
+✅ Transport network ready: 3 hops
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 Both proxies running!
+
+📋 Browser connection URLs:
+   DaoChain:    ws://127.0.0.1:9950
+   VotingChain: ws://127.0.0.1:9951
+
+🔐 All traffic routes through 3-hop transport mix
+
+Press Ctrl+C to stop
+
+🌐 WS-to-Transport Proxy for DaoChain
+   Listening: ws://127.0.0.1:9950
+   Entry node: http://127.0.0.1:9100
+   Target RPC: http://127.0.0.1:9944
+   Transport nodes: 3 hops
+   🔐 Real onion routing - NO MOCKS
+
+💡 Browser connects to: ws://127.0.0.1:9950
+   → Entry node builds onion
+   → 3-hop mix: entry → middle → exit
+   → Exit node reaches: http://127.0.0.1:9944
+
+🌐 WS-to-Transport Proxy for VotingChain
+   Listening: ws://127.0.0.1:9951
+   Entry node: http://127.0.0.1:9100
+   Target RPC: http://127.0.0.1:9945
+   Transport nodes: 3 hops
+   🔐 Real onion routing - NO MOCKS
+
+💡 Browser connects to: ws://127.0.0.1:9951
+   → Entry node builds onion
+   → 3-hop mix: entry → middle → exit
+   → Exit node reaches: http://127.0.0.1:9945
+
+[VotingChain] 🔗 Browser connected
+[VotingChain] 📡 chain_getBlockHash (id: 6)
+[VotingChain] 📡 state_getRuntimeVersion (id: 7)
+[VotingChain] 📡 system_chain (id: 8)
+[VotingChain] 📡 system_properties (id: 9)
+[VotingChain] 📡 rpc_methods (id: 10)
+[VotingChain] ✅ chain_getBlockHash → response sent (via 3-hop mix)
+[VotingChain] ✅ system_chain → response sent (via 3-hop mix)
+[VotingChain] ✅ state_getRuntimeVersion → response sent (via 3-hop mix)
+[VotingChain] ✅ system_properties → response sent (via 3-hop mix)
+[VotingChain] ✅ rpc_methods → response sent (via 3-hop mix)
+[DaoChain] 🔗 Browser connected
+[DaoChain] 📡 chain_getBlockHash (id: 6)
+[DaoChain] 📡 state_getRuntimeVersion (id: 7)
+[DaoChain] 📡 system_chain (id: 8)
+[DaoChain] 📡 system_properties (id: 9)
+[DaoChain] 📡 rpc_methods (id: 10)
+[DaoChain] ✅ chain_getBlockHash → response sent (via 3-hop mix)
+[DaoChain] ✅ state_getRuntimeVersion → response sent (via 3-hop mix)
+[DaoChain] ✅ system_properties → response sent (via 3-hop mix)
+[DaoChain] ✅ system_chain → response sent (via 3-hop mix)
+[DaoChain] ✅ rpc_methods → response sent (via 3-hop mix)
+[VotingChain] 🔗 Browser connected
+[VotingChain] 📡 chain_getBlockHash (id: 6)
+[VotingChain] 📡 state_getRuntimeVersion (id: 7)
+[VotingChain] 📡 system_chain (id: 8)
+[VotingChain] 📡 system_properties (id: 9)
+[VotingChain] 📡 rpc_methods (id: 10)
+[VotingChain] ✅ chain_getBlockHash → response sent (via 3-hop mix)
+[VotingChain] ✅ state_getRuntimeVersion → response sent (via 3-hop mix)
+[VotingChain] ✅ system_chain → response sent (via 3-hop mix)
+[VotingChain] ✅ system_properties → response sent (via 3-hop mix)
+[VotingChain] ✅ rpc_methods → response sent (via 3-hop mix)
+[VotingChain] 🔌 Browser disconnected
+[DaoChain] 🔌 Browser disconnected
+[VotingChain] 🔌 Browser disconnected
+[DaoChain] 🔗 Browser connected
+[DaoChain] 📡 chain_getBlockHash (id: 1)
+[DaoChain] 📡 state_getRuntimeVersion (id: 2)
+[DaoChain] 📡 system_chain (id: 3)
+[DaoChain] 📡 system_properties (id: 4)
+[DaoChain] 📡 rpc_methods (id: 5)
+[DaoChain] ✅ chain_getBlockHash → response sent (via 3-hop mix)
+[DaoChain] ✅ state_getRuntimeVersion → response sent (via 3-hop mix)
+[DaoChain] ✅ system_chain → response sent (via 3-hop mix)
+[DaoChain] ✅ system_properties → response sent (via 3-hop mix)
+[DaoChain] ✅ rpc_methods → response sent (via 3-hop mix)
+[VotingChain] 🔗 Browser connected
+[VotingChain] 📡 chain_getBlockHash (id: 1)
+[VotingChain] 📡 state_getRuntimeVersion (id: 2)
+[VotingChain] 📡 system_chain (id: 3)
+[VotingChain] 📡 system_properties (id: 4)
+[VotingChain] 📡 rpc_methods (id: 5)
+[VotingChain] ✅ system_chain → response sent (via 3-hop mix)
+[VotingChain] ✅ rpc_methods → response sent (via 3-hop mix)
+[VotingChain] ✅ system_properties → response sent (via 3-hop mix)
+[VotingChain] ✅ chain_getBlockHash → response sent (via 3-hop mix)
+[VotingChain] ✅ state_getRuntimeVersion → response sent (via 3-hop mix)

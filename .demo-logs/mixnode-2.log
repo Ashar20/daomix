@@ -3,5 +3,5 @@
 > TS_NODE_FILES=true ts-node src/mixNodeServer.ts
 
 [DaoMix] Mix-node starting...
-[DaoMix] Public key: 0xd516e24f59b14e362fa82d89f56c54b4bf890a1ad50198e8772209d46228753b
+[DaoMix] Public key: 0x2238997682c106eb2e7a4aff05fb06c9e7ac6b316efb56f6cc4f2150a0fc8b4d
 [DaoMix] Mix-node listening on http://localhost:9001

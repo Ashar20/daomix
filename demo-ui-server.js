@@ -13,24 +13,31 @@ const PORT = 8080;
 const ROOT_DIR = __dirname;
 
 const server = http.createServer((req, res) => {
+  let filePath;
+  let contentType = 'text/html';
+
   if (req.url === '/' || req.url === '/index.html') {
-    // Serve demo-ui.html
-    const filePath = path.join(ROOT_DIR, 'demo-ui.html');
-
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end('Error loading demo UI');
-        return;
-      }
-
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(data);
-    });
+    filePath = path.join(ROOT_DIR, 'demo-ui.html');
+    contentType = 'text/html';
+  } else if (req.url === '/polkadot-browser-bundle.js') {
+    filePath = path.join(ROOT_DIR, 'polkadot-browser-bundle.js');
+    contentType = 'application/javascript';
   } else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
+    return;
   }
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('Error loading file');
+      return;
+    }
+
+    res.writeHead(200, { 'Content-Type': contentType });
+    res.end(data);
+  });
 });
 
 server.listen(PORT, '127.0.0.1', () => {

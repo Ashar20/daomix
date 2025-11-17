@@ -48,6 +48,17 @@ function print_info() {
     echo -e "${BLUE}ℹ️  $1${NC}"
 }
 
+# Function to kill process on port
+kill_port() {
+    local port=$1
+    local pid=$(lsof -ti :$port 2>/dev/null)
+    if [ ! -z "$pid" ]; then
+        print_step "Killing process on port $port (PID: $pid)"
+        kill -9 $pid 2>/dev/null || true
+        sleep 1
+    fi
+}
+
 # Cleanup function
 cleanup() {
     print_header "🛑 Shutting down demo..."
@@ -55,7 +66,24 @@ cleanup() {
     print_step "Stopping all processes..."
     pkill -f "polkadot-omni-node" 2>/dev/null || true
     pkill -f "mixNodeServer" 2>/dev/null || true
+    pkill -f "mix-node" 2>/dev/null || true
+    pkill -f "transportNodeServer" 2>/dev/null || true
+    pkill -f "wsProxyLauncher" 2>/dev/null || true
     pkill -f "demo-ui-server.js" 2>/dev/null || true
+    pkill -f "demo-ui-server" 2>/dev/null || true
+
+    # Kill by port as backup
+    kill_port 9944  # DaoChain RPC
+    kill_port 9945  # VotingChain RPC
+    kill_port 9000  # Mix Node 1
+    kill_port 9001  # Mix Node 2
+    kill_port 9002  # Mix Node 3
+    kill_port 9100  # Transport Entry
+    kill_port 9101  # Transport Middle
+    kill_port 9102  # Transport Exit
+    kill_port 9950  # WS Proxy DaoChain
+    kill_port 9951  # WS Proxy VotingChain
+    kill_port 8080  # Demo UI
 
     print_success "All processes stopped"
     exit 0
@@ -72,17 +100,18 @@ if [ ! -f "$ROOT_DIR/polkadot-sdk/target/release/polkadot-omni-node" ]; then
     exit 1
 fi
 
-print_header "🎭 DaoMix Live Interactive Demo"
+print_header "🎭 DaoMix Live Interactive Demo with Transport Mix"
 echo ""
 print_info "This will start:"
-print_info "  • DaoChain (Para 1000 - privacy mixer) on port 9944"
-print_info "  • VotingChain (Para 2001 - voting app) on port 9945"
-print_info "  • Mix Node 1 on port 9000"
-print_info "  • Mix Node 2 on port 9001"
-print_info "  • Mix Node 3 on port 9002"
+print_info "  • DaoChain (Para 1000) on port 9944"
+print_info "  • VotingChain (Para 2001) on port 9945"
+print_info "  • Mix Node 1, 2, 3 on ports 9000-9002"
+print_info "  • Transport Entry, Middle, Exit on ports 9100-9102"
+print_info "  • WS Proxies (with transport mix) on ports 9950-9951"
 print_info "  • Demo UI on http://localhost:8080"
 echo ""
-print_warning "TWO REAL PARACHAINS with REAL XCM - no mocks!"
+print_warning "REAL PARACHAINS + REAL XCM + REAL TRANSPORT MIX"
+print_warning "NO MOCKS - All browser traffic goes through 3-hop onion routing!"
 echo ""
 
 read -p "Continue? (y/n) " -n 1 -r
@@ -96,9 +125,31 @@ print_header "🧹 Cleaning Previous State"
 print_step "Stopping any existing processes..."
 pkill -f "polkadot-omni-node" 2>/dev/null || true
 pkill -f "mixNodeServer" 2>/dev/null || true
+pkill -f "mix-node" 2>/dev/null || true
+pkill -f "transportNodeServer" 2>/dev/null || true
+pkill -f "wsProxyLauncher" 2>/dev/null || true
 pkill -f "demo-ui-server" 2>/dev/null || true
 sleep 2
 print_success "Previous processes stopped"
+
+print_step "Killing processes on demo ports (if any)..."
+kill_port 9944  # DaoChain RPC
+kill_port 9945  # VotingChain RPC
+kill_port 9933  # DaoChain HTTP
+kill_port 9934  # VotingChain HTTP
+kill_port 30333 # DaoChain P2P
+kill_port 30334 # VotingChain P2P
+kill_port 9000  # Mix Node 1
+kill_port 9001  # Mix Node 2
+kill_port 9002  # Mix Node 3
+kill_port 9100  # Transport Entry
+kill_port 9101  # Transport Middle
+kill_port 9102  # Transport Exit
+kill_port 9950  # WS Proxy DaoChain
+kill_port 9951  # WS Proxy VotingChain
+kill_port 8080  # Demo UI
+sleep 1
+print_success "Ports cleared"
 
 print_step "Clearing databases..."
 rm -rf /tmp/daochain-db /tmp/votingchain-db
@@ -228,6 +279,84 @@ else
     print_warning "Check logs: tail -f $LOG_DIR/mixnode-3.log"
 fi
 
+# Start Transport Nodes (for real IP privacy)
+print_header "🔐 Starting Transport Mix Network (3-Hop Onion Routing)"
+
+cd "$ROOT_DIR/mixer"
+
+# Transport Entry Node (9100)
+print_step "Starting Transport Entry Node (port 9100)..."
+TRANSPORT_ROLE=entry \
+TRANSPORT_PORT=9100 \
+TRANSPORT_NEXT_HOP=http://127.0.0.1:9101 \
+npm run dev:transport-node > "$LOG_DIR/transport-entry.log" 2>&1 &
+
+TRANSPORT_ENTRY_PID=$!
+sleep 3
+
+if ps -p $TRANSPORT_ENTRY_PID > /dev/null; then
+    print_success "Transport Entry Node running (PID: $TRANSPORT_ENTRY_PID)"
+else
+    print_error "Transport Entry Node failed to start!"
+    print_warning "Check logs: tail -f $LOG_DIR/transport-entry.log"
+fi
+
+# Transport Middle Node (9101)
+print_step "Starting Transport Middle Node (port 9101)..."
+TRANSPORT_ROLE=middle \
+TRANSPORT_PORT=9101 \
+TRANSPORT_NEXT_HOP=http://127.0.0.1:9102 \
+npm run dev:transport-node > "$LOG_DIR/transport-middle.log" 2>&1 &
+
+TRANSPORT_MIDDLE_PID=$!
+sleep 3
+
+if ps -p $TRANSPORT_MIDDLE_PID > /dev/null; then
+    print_success "Transport Middle Node running (PID: $TRANSPORT_MIDDLE_PID)"
+else
+    print_error "Transport Middle Node failed to start!"
+    print_warning "Check logs: tail -f $LOG_DIR/transport-middle.log"
+fi
+
+# Transport Exit Node (9102)
+print_step "Starting Transport Exit Node (port 9102)..."
+TRANSPORT_ROLE=exit \
+TRANSPORT_PORT=9102 \
+npm run dev:transport-node > "$LOG_DIR/transport-exit.log" 2>&1 &
+
+TRANSPORT_EXIT_PID=$!
+sleep 3
+
+if ps -p $TRANSPORT_EXIT_PID > /dev/null; then
+    print_success "Transport Exit Node running (PID: $TRANSPORT_EXIT_PID)"
+else
+    print_error "Transport Exit Node failed to start!"
+    print_warning "Check logs: tail -f $LOG_DIR/transport-exit.log"
+fi
+
+print_success "Transport Mix Network ready: 3-hop onion routing active"
+print_info "Entry → Middle → Exit (ports 9100 → 9101 → 9102)"
+
+# Start WebSocket Proxies (Browser ↔ Transport Mix)
+print_header "🌉 Starting WebSocket Proxies (Browser ↔ Transport Mix)"
+
+print_step "Starting WS proxies (ports 9950, 9951)..."
+cd "$ROOT_DIR/mixer"
+npm run demo:ws-proxies > "$LOG_DIR/ws-proxies.log" 2>&1 &
+
+WS_PROXY_PID=$!
+sleep 5
+
+if ps -p $WS_PROXY_PID > /dev/null; then
+    print_success "WebSocket Proxies running (PID: $WS_PROXY_PID)"
+    print_success "  • DaoChain proxy: ws://127.0.0.1:9950"
+    print_success "  • VotingChain proxy: ws://127.0.0.1:9951"
+    print_success "  • All browser traffic routes through transport mix"
+else
+    print_error "WebSocket Proxies failed to start!"
+    print_warning "Check logs: tail -f $LOG_DIR/ws-proxies.log"
+fi
+
 # Wait for all services to be ready
 print_header "⏳ Waiting for Services to Initialize"
 sleep 5
@@ -286,13 +415,17 @@ print_info "━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 echo -e "${GREEN}  🌐 Demo UI:                http://127.0.0.1:8080${NC}"
 echo ""
-echo -e "${BLUE}  🔗 DaoChain (Para 1000):${NC}"
-echo -e "${BLUE}     WS RPC:  ws://127.0.0.1:9944${NC}"
-echo -e "${BLUE}     HTTP:    http://127.0.0.1:9933${NC}"
+echo -e "${MAGENTA}  🔐 DaoChain via Transport Mix (PRIVATE):${NC}"
+echo -e "${MAGENTA}     ws://127.0.0.1:9950  ← Use this in browser!${NC}"
+echo -e "${BLUE}     (Routes through: Entry → Middle → Exit → DaoChain)${NC}"
 echo ""
-echo -e "${BLUE}  🗳️  VotingChain (Para 2001):${NC}"
-echo -e "${BLUE}     WS RPC:  ws://127.0.0.1:9945${NC}"
-echo -e "${BLUE}     HTTP:    http://127.0.0.1:9934${NC}"
+echo -e "${MAGENTA}  🔐 VotingChain via Transport Mix (PRIVATE):${NC}"
+echo -e "${MAGENTA}     ws://127.0.0.1:9951  ← Use this in browser!${NC}"
+echo -e "${BLUE}     (Routes through: Entry → Middle → Exit → VotingChain)${NC}"
+echo ""
+echo -e "${CYAN}  ℹ️  Direct RPC (bypasses transport mix):${NC}"
+echo -e "${CYAN}     DaoChain:    ws://127.0.0.1:9944${NC}"
+echo -e "${CYAN}     VotingChain: ws://127.0.0.1:9945${NC}"
 echo ""
 print_info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 print_info "📊 LIVE LOGS"
@@ -312,10 +445,12 @@ echo "  1. Open your browser to:"
 echo -e "     ${GREEN}http://127.0.0.1:8080${NC}"
 echo ""
 echo "  2. You'll see SETUP TAB - manually enter these URLs:"
-echo "     DaoChain (Para 1000):    ws://127.0.0.1:9944"
-echo "     VotingChain (Para 2001): ws://127.0.0.1:9945"
+echo -e "     ${MAGENTA}DaoChain:    ws://127.0.0.1:9950 (via transport mix)${NC}"
+echo -e "     ${MAGENTA}VotingChain: ws://127.0.0.1:9951 (via transport mix)${NC}"
 echo ""
 echo "  3. Click 'Test Connection' for EACH parachain"
+echo ""
+echo -e "  ${CYAN}💡 All RPC traffic routes through 3-hop onion network!${NC}"
 echo ""
 echo "  4. Verify you see:"
 echo "     ✅ DaomixVoting pallet"
