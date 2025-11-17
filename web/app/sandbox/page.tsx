@@ -121,6 +121,7 @@ export default function Sandbox() {
   const [articleTitle, setArticleTitle] = useState("");
   const [articleContent, setArticleContent] = useState("");
   const [publishStatus, setPublishStatus] = useState("");
+  const [decryptedPublications, setDecryptedPublications] = useState<Set<number>>(new Set());
 
   // Logs state
   const [daochainLogs, setDaochainLogs] = useState<LogEntry[]>([]);
@@ -787,6 +788,18 @@ export default function Sandbox() {
     } catch (error: any) {
       setPublishStatus(`Error: ${error.message}`);
     }
+  };
+
+  const toggleDecrypt = (index: number) => {
+    setDecryptedPublications(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
   };
 
   const copyXcmTerminalCommand = async () => {
@@ -1752,6 +1765,77 @@ export default function Sandbox() {
                             </div>
                           )}
                         </div>
+                        </div>
+
+                        {/* Public Archive Section */}
+                        <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded overflow-hidden">
+                          <div className="flex items-center gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-black">
+                            <div className="w-2 h-2 rounded-full bg-[#ff6b35]"></div>
+                            <span className="text-[11px] font-mono text-[#9a9a9a]">03 - TERMINAL / IDE</span>
+                          </div>
+                          <div className="p-4 bg-black">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#ff6b35] text-sm font-mono">{'>'}</span>
+                              <span className="text-white text-sm font-mono">archive.browse()</span>
+                            </div>
+                          </div>
+                          <div className="p-6 overflow-x-hidden">
+                            <h2 className="text-2xl font-bold font-mono text-white mb-4">Public Archive</h2>
+                            <p className={cx(textStyles.body, "mb-4")}>
+                              All published content (encrypted). Publisher identity is hidden.
+                            </p>
+
+                            {publications.length === 0 ? (
+                              <p className={cx(textStyles.body, "text-center py-8")}>
+                                No publications yet. Be the first to publish!
+                              </p>
+                            ) : (
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                {publications.map((pub, idx) => {
+                                  const isDecrypted = decryptedPublications.has(idx);
+                                  let decryptedContent = '';
+                                  if (isDecrypted) {
+                                    try {
+                                      decryptedContent = atob(pub.encryptedMetadata);
+                                    } catch (error: any) {
+                                      decryptedContent = `Unable to decrypt: ${error.message}`;
+                                    }
+                                  }
+
+                                  return (
+                                    <div key={pub.id} className="bg-[#1a1a1a] border border-[#2a2a2a] rounded p-4 w-full min-w-0 overflow-hidden">
+                                      <h3 className="text-lg font-bold font-mono text-white mb-2 break-words">
+                                        Publication #{pub.id}
+                                      </h3>
+                                      <div className={cx(textStyles.bodySmall, "mb-3 break-words")}>
+                                        Block: {pub.blockNumber} | {new Date(pub.timestamp).toLocaleString()}
+                                      </div>
+                                      <div className="bg-[#0a0a0a] border border-[#2a2a2a] p-3 rounded mb-3 font-mono text-xs text-[#9a9a9a] break-all max-w-full overflow-hidden">
+                                        {pub.encryptedMetadata.substring(0, 200)}...
+                                      </div>
+                                      <div className={cx(textStyles.bodySmall, "mb-3 font-mono text-[#ff6b35] break-all overflow-hidden")}>
+                                        IPFS: {pub.ipfsCid}
+                                      </div>
+                                      <p className={cx(textStyles.bodySmall, "mb-3 break-words")}>
+                                        Encrypted - Publisher identity hidden
+                                      </p>
+                                      <button
+                                        onClick={() => toggleDecrypt(idx)}
+                                        className={cx(textStyles.buttonSecondary, "mb-3 w-full sm:w-auto")}
+                                      >
+                                        {isDecrypted ? 'Hide Decrypted' : 'Decrypt locally (dev)'}
+                                      </button>
+                                      {isDecrypted && (
+                                        <pre className="bg-[#0a0a0a] border border-[#2a2a2a] p-3 rounded font-mono text-xs text-white whitespace-pre-wrap break-words max-w-full overflow-x-auto">
+                                          {decryptedContent}
+                                        </pre>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                        
