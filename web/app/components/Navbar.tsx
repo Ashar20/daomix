@@ -59,7 +59,7 @@ export default function Navbar() {
           </Link>
           <Link 
             href="/sandbox" 
-            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-colors"
+            className="h-full px-5 flex items-center text-[#9a9a9a] hover:text-[#ff6b35] uppercase text-[10px] font-mono tracking-wider border-l border-[#2a2a2a] bg-[#1a1a1a] hover:bg-[#2a2a2a] transition-colors btn-animated-texture"
           >
             SANDBOX
           </Link>

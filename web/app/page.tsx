@@ -7,8 +7,8 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-16 pb-12 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section className="px-6 min-h-screen flex items-center">
+        <div className="max-w-6xl mx-auto w-full">
           <div className="flex items-center gap-1.5 mb-3">
             <div className="w-1.5 h-1.5 bg-[#ff6b35] rounded-full animate-pulse"></div>
             <span className="text-[9px] uppercase tracking-widest text-[#9a9a9a] font-mono">VISION</span>
@@ -27,7 +27,7 @@ export default function Home() {
           <div className="flex gap-3">
             <a 
               href="#docs" 
-              className="px-5 py-2.5 bg-[#ff6b35] hover:bg-[#e55a2b] text-black font-mono font-bold text-[9px] uppercase tracking-widest transition-colors border border-[#ff6b35]"
+              className="px-5 py-2.5 bg-[#ff6b35] hover:bg-[#e55a2b] text-black font-mono font-bold text-[9px] uppercase tracking-widest transition-colors border border-[#ff6b35] btn-animated-texture"
             >
               GET STARTED →
             </a>
@@ -143,7 +143,7 @@ export default function Home() {
             </div>
 
             {/* IDE Content */}
-            <div className="p-6 font-mono text-[10px] overflow-auto flex-1" style={{ maxHeight: 'calc(100vh - 10rem)' }}>
+            <div className="p-6 font-mono text-[10px] custom-scrollbar" style={{ height: 'calc(100vh - 10rem)', overflowY: 'scroll' }}>
               {/* Explorer */}
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-3 text-[#9a9a9a]">
@@ -386,7 +386,7 @@ export default function Home() {
           </div>
           <a 
             href="/sandbox" 
-            className="inline-block px-5 py-2.5 border border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-black font-mono font-bold text-[9px] uppercase tracking-widest transition-colors"
+            className="inline-block px-5 py-2.5 border border-[#ff6b35] text-[#ff6b35] hover:bg-[#ff6b35] hover:text-black font-mono font-bold text-[9px] uppercase tracking-widest transition-colors btn-animated-texture"
           >
             TRY SANDBOX →
           </a>
@@ -407,10 +407,10 @@ export default function Home() {
           <div className="flex gap-3 justify-center">
             <a 
               href="https://github.com/your-repo/daomix" 
-              className="px-5 py-2.5 bg-[#ff6b35] hover:bg-[#e55a2b] text-black font-mono font-bold text-[9px] uppercase tracking-widest transition-colors"
+              className="px-5 py-2.5 bg-[#ff6b35] hover:bg-[#e55a2b] text-black font-mono font-bold text-[9px] uppercase tracking-widest transition-colors btn-animated-texture"
             >
               GITHUB
-          </a>
+            </a>
           <a
               href="#docs" 
               className="px-5 py-2.5 border border-[#2a2a2a] hover:border-[#ff6b35] text-[#9a9a9a] hover:text-[#ff6b35] font-mono font-bold text-[9px] uppercase tracking-widest transition-colors"
