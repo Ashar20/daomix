@@ -12,6 +12,7 @@ build/
 .next/
 out/
 
+
 # Misc
 .DS_Store
 *.pem
