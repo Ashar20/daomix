@@ -15,7 +15,7 @@ export default function Navbar() {
               </div>
             </div>
             <span className="text-white font-mono font-bold text-sm tracking-wider uppercase">
-              DAOCHAIN
+              DAOMIX
             </span>
           </div>
         </Link>

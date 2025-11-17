@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DaoChain",
+  title: "Daomix",
   description: "Private voting. Public trust.",
 };
 

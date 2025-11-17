@@ -1,6 +1,8 @@
+import React from 'react';
+
 export default function DiagonalTexture() {
   return (
-    <div 
+    <div
       className="absolute inset-0 opacity-15"
       style={{
         backgroundImage: `repeating-linear-gradient(
