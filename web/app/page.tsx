@@ -8,17 +8,18 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="px-6 min-h-[100vh] flex items-center">
-        <div className="max-w-6xl ml-[3rem] w-full">
+        <div className="max-w-8xl ml-[3rem] w-full">
           <div className="flex items-center gap-1.5 mb-3">
             <div className="w-1.5 h-1.5 bg-[#ff6b35] rounded-full animate-pulse"></div>
             <span className="text-[11px] uppercase tracking-widest text-[#9a9a9a] font-mono">DAOMIX PLATFORM</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold font-mono leading-tight mb-4 tracking-tight">
-            Anonymous voting.<br />
-            Verifiable results.
+            Anonymous Voting &<br />
+            Censorship Proof Publishing.<br />
+            Verifiable results.<br />
           </h1>
           <p className="text-base text-[#9a9a9a] mb-6 max-w-3xl font-mono leading-relaxed">
-            Privacy-preserving governance infrastructure for Polkadot parachains
+            Production-ready privacy infrastructure for Polkadot governance.
           </p>
           <div className="flex gap-3">
             <a 
@@ -76,9 +77,9 @@ export default function Home() {
                   <p className="text-[#6a6a6a] text-[11px]">pallet-mix-job • pallet-daomix-voting • XCM V4</p>
                 </div>
                 <div className="border-l-2 border-[#ff6b35] pl-3 py-1">
-                  <p className="text-white mb-1">Layer 2: Chaum Mixnet</p>
+                  <p className="text-white mb-1">Layer 2: Dao Mixnet</p>
                   <p className="text-[#9a9a9a]">3 HTTP nodes (9000/9001/9002)</p>
-                  <p className="text-[#6a6a6a] text-[11px]">X25519 + XChaCha20-Poly1305 • Fisher-Yates shuffle • Merkle commitments</p>
+                  <p className="text-[#6a6a6a] text-[11px]">X25519 + XChaCha20-Poly1305 • X25519 + ML-KEM(OPTIONAL) • Fisher-Yates shuffle • Merkle commitments</p>
                 </div>
                 <div className="border-l-2 border-[#ff6b35] pl-3 py-1">
                   <p className="text-white mb-1">Layer 3: Transport Mix</p>
@@ -288,7 +289,7 @@ export default function Home() {
               </p>
             </div>
             <div className="border border-[#2a2a2a] p-4 hover:border-[#ff6b35] transition-colors">
-              <h3 className="text-sm font-bold font-mono mb-2 text-[#ff6b35]">CHAUM MIXNET</h3>
+              <h3 className="text-sm font-bold font-mono mb-2 text-[#ff6b35]">Dao MIXNET</h3>
               <p className="text-[#9a9a9a] text-xs font-mono mb-1">
                 3 HTTP nodes • X25519 • XChaCha20-Poly1305
               </p>
