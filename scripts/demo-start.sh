@@ -68,6 +68,7 @@ cleanup() {
     pkill -f "mixNodeServer" 2>/dev/null || true
     pkill -f "mix-node" 2>/dev/null || true
     pkill -f "transportNodeServer" 2>/dev/null || true
+    pkill -f "mixJobOrchestratorRunner" 2>/dev/null || true
     pkill -f "wsProxyLauncher" 2>/dev/null || true
     pkill -f "demo-ui-server.js" 2>/dev/null || true
     pkill -f "demo-ui-server" 2>/dev/null || true
@@ -127,6 +128,7 @@ pkill -f "polkadot-omni-node" 2>/dev/null || true
 pkill -f "mixNodeServer" 2>/dev/null || true
 pkill -f "mix-node" 2>/dev/null || true
 pkill -f "transportNodeServer" 2>/dev/null || true
+pkill -f "mixJobOrchestratorRunner" 2>/dev/null || true
 pkill -f "wsProxyLauncher" 2>/dev/null || true
 pkill -f "demo-ui-server" 2>/dev/null || true
 sleep 2
@@ -277,6 +279,23 @@ if ps -p $MIXNODE3_PID > /dev/null; then
 else
     print_error "Mix Node 3 failed to start!"
     print_warning "Check logs: tail -f $LOG_DIR/mixnode-3.log"
+fi
+
+# Start MixJob Orchestrator
+print_header "🧠 Starting MixJob Orchestrator"
+cd "$ROOT_DIR/mixer"
+MIX_JOB_POLL_INTERVAL=3000 \
+npm run dev:mix-orchestrator > "$LOG_DIR/mix-orchestrator.log" 2>&1 &
+
+MIX_ORCH_PID=$!
+sleep 2
+
+if ps -p $MIX_ORCH_PID > /dev/null; then
+    print_success "MixJob Orchestrator running (PID: $MIX_ORCH_PID)"
+    print_success "  • Logs: .demo-logs/mix-orchestrator.log"
+else
+    print_error "MixJob Orchestrator failed to start!"
+    print_warning "Check logs: tail -f $LOG_DIR/mix-orchestrator.log"
 fi
 
 # Start Transport Nodes (for real IP privacy)
@@ -443,10 +462,13 @@ echo "  VotingChain:   tail -f .demo-logs/votingchain.log"
 echo "  Mix Node 1:    tail -f .demo-logs/mixnode-1.log"
 echo "  Mix Node 2:    tail -f .demo-logs/mixnode-2.log"
 echo "  Mix Node 3:    tail -f .demo-logs/mixnode-3.log"
+echo "  Mix Orchestrator: tail -f .demo-logs/mix-orchestrator.log"
 echo "  Transport Mix: tail -f .demo-logs/ws-proxies.log"
 echo "  Entry Node:    tail -f .demo-logs/transport-entry.log"
 echo "  Middle Node:   tail -f .demo-logs/transport-middle.log"
 echo "  Exit Node:     tail -f .demo-logs/transport-exit.log"
+echo ""
+echo "  Quick watch:   bash scripts/watch-mix-logs.sh"
 echo ""
 print_info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 print_info "📖 INSTRUCTIONS"

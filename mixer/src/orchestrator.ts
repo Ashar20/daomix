@@ -174,6 +174,9 @@ async function runShardedMixChain(
   // For each mix node: peel → shard → (next iteration reconstructs)
   for (let nodeIdx = 0; nodeIdx < mixNodes.length; nodeIdx++) {
     const node = mixNodes[nodeIdx];
+    console.log(
+      `[DaoMix] ── Hop ${nodeIdx + 1}/${mixNodes.length}: ${node.url} (peel + shuffle)`,
+    );
 
     // If we have shards from previous iteration, reconstruct first
     let inputCiphertexts: HexString[];
@@ -190,6 +193,11 @@ async function runShardedMixChain(
         shardsByMessage.set(shard.messageIndex, arr);
       }
 
+      console.log(
+        `[DaoMix]    Reassembling ${currentCiphertexts.length} ciphertexts from ${
+          shardsWithMeta.length
+        } shards`,
+      );
       inputCiphertexts = [];
       for (let messageIndex = 0; messageIndex < currentCiphertexts.length; messageIndex++) {
         const shards = shardsByMessage.get(messageIndex) ?? [];
@@ -207,8 +215,10 @@ async function runShardedMixChain(
     // Send full ciphertexts to /mix for onion peeling and shuffling
     const url = node.url.endsWith("/mix") ? node.url : `${node.url}/mix`;
 
-    console.log(`[DaoMix] Sending to ${url}: ${inputCiphertexts.length} ciphertexts`);
-    console.log(`[DaoMix] First input ciphertext (truncated): ${inputCiphertexts[0]?.substring(0, 100)}...`);
+    console.log(`[DaoMix]    Sending ${inputCiphertexts.length} ciphertext(s) to ${url}`);
+    console.log(
+      `[DaoMix]    Sample (truncated): ${inputCiphertexts[0]?.substring(0, 100)}...`,
+    );
 
     const reqBody: MixRequest = {
       ciphertexts: inputCiphertexts,
@@ -252,12 +262,15 @@ async function runShardedMixChain(
       shardsWithMeta = newShardsWithMeta;
 
       console.log(
-        `[DaoMix] Sharded mix via ${node.url}, permutationCommitment=${data.permutationCommitment}, totalShards=${shardsWithMeta.length}`
+        `[DaoMix]    Hop ${nodeIdx + 1} permutationCommitment=${data.permutationCommitment}`,
+      );
+      console.log(
+        `[DaoMix]    Emitting ${shardsWithMeta.length} shards (shardCount=${shardCount}) for next hop`,
       );
     } else {
       // Last node: don't shard, just return final ciphertexts
       console.log(
-        `[DaoMix] Final mix via ${node.url}, permutationCommitment=${data.permutationCommitment}`
+        `[DaoMix]    Final hop permutationCommitment=${data.permutationCommitment} (no further sharding)`,
       );
     }
   }

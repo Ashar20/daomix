@@ -8,17 +8,20 @@ set -e  # Exit on error
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+LOG_DIR="$ROOT_DIR/.demo-logs"
+mkdir -p "$LOG_DIR"
 
 echo "🎭 DaoMix Live Demo Setup"
 echo "=========================="
 echo ""
 echo "This script will:"
 echo "  1. Fix schnorrkel dependency conflicts"
-echo "  2. Build parachain runtime with MixJob + DaomixVoting pallets"
-echo "  3. Generate chain specs for DaoChain (Para 1000) + VotingChain (Para 2000)"
-echo "  4. Compile mix-node network"
-echo "  5. Generate onion encryption keys"
-echo "  6. Prepare demo UI"
+echo "  2. Install + configure local IPFS daemon (used by encrypted publishing demo)"
+echo "  3. Build parachain runtime with MixJob + DaomixVoting pallets"
+echo "  4. Generate chain specs for DaoChain (Para 1000) + VotingChain (Para 2000)"
+echo "  5. Compile mix-node network"
+echo "  6. Generate onion encryption keys"
+echo "  7. Prepare demo UI"
 echo ""
 echo "⏱️  Estimated time: 5-10 minutes"
 echo ""
@@ -31,7 +34,7 @@ fi
 
 # Track progress
 STEP=0
-total_steps=8
+total_steps=9
 
 function step() {
     STEP=$((STEP + 1))
@@ -70,7 +73,49 @@ NODE_VERSION=$(node --version)
 success "Rust $RUST_VERSION"
 success "Node $NODE_VERSION"
 
-# Step 2: Fix schnorrkel dependency conflict
+# Step 2: Ensure IPFS is installed, configured, and running
+step "Installing & configuring local IPFS daemon"
+
+if command -v ipfs &> /dev/null; then
+    IPFS_VERSION=$(ipfs --version)
+    success "$IPFS_VERSION already installed"
+else
+    if command -v brew &> /dev/null; then
+        echo "Installing ipfs via Homebrew..."
+        brew install ipfs
+        success "Installed ipfs via Homebrew"
+    else
+        error_exit "ipfs not found and Homebrew unavailable. Install from https://dist.ipfs.tech/#go-ipfs and rerun."
+    fi
+fi
+
+if [ ! -d "$HOME/.ipfs" ]; then
+    echo "Initializing IPFS repository..."
+    ipfs init
+    success "Initialized IPFS repository"
+else
+    success "IPFS repository already initialized"
+fi
+
+echo "Configuring IPFS API CORS for browser access..."
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]'
+ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '["GET", "POST"]'
+success "Configured IPFS HTTP API headers"
+
+if pgrep -x ipfs >/dev/null; then
+    success "IPFS daemon already running"
+else
+    echo "Starting IPFS daemon (logs: $LOG_DIR/ipfs-daemon.log)..."
+    (nohup ipfs daemon > "$LOG_DIR/ipfs-daemon.log" 2>&1 &) >/dev/null 2>&1
+    sleep 2
+    if pgrep -x ipfs >/dev/null; then
+        success "IPFS daemon started"
+    else
+        error_exit "Failed to start IPFS daemon. Check $LOG_DIR/ipfs-daemon.log"
+    fi
+fi
+
+# Step 3: Fix schnorrkel dependency conflict
 step "Fixing schnorrkel dependency conflict in MixJob pallet"
 
 cd "$ROOT_DIR/polkadot-sdk/templates/parachain/pallets/mix-job"
@@ -115,7 +160,7 @@ EOF
     success "Fixed MixJob pallet dependencies"
 fi
 
-# Step 3: Install wasm32 target
+# Step 4: Install wasm32-unknown-unknown target
 step "Installing wasm32-unknown-unknown target"
 
 cd "$ROOT_DIR/polkadot-sdk"
@@ -127,7 +172,7 @@ else
     success "Installed wasm32-unknown-unknown"
 fi
 
-# Step 4: Build DaoChain runtime
+# Step 5: Build DaoChain runtime (this may take 5-10 minutes)
 step "Building DaoChain runtime (this may take 5-10 minutes)"
 
 cd "$ROOT_DIR/polkadot-sdk"
@@ -146,7 +191,7 @@ else
     error_exit "Runtime build failed. Check /tmp/daomix-runtime-build.log"
 fi
 
-# Step 5: Build polkadot-omni-node (if needed)
+# Step 6: Check polkadot-omni-node binary
 step "Checking polkadot-omni-node binary"
 
 if [ -f "$ROOT_DIR/polkadot-sdk/target/release/polkadot-omni-node" ]; then
@@ -163,7 +208,7 @@ else
     fi
 fi
 
-# Step 6: Setup mixer package
+# Step 7: Setting up mixer package and mix nodes
 step "Setting up mixer package and mix nodes"
 
 cd "$ROOT_DIR/mixer"
@@ -185,7 +230,7 @@ else
     success "Onion keys already exist"
 fi
 
-# Step 7: Generate chain specs for both parachains
+# Step 8: Generating chain specs for DaoChain and VotingChain
 step "Generating chain specs for DaoChain and VotingChain"
 
 cd "$ROOT_DIR/polkadot-sdk"
@@ -215,7 +260,7 @@ else
     fi
 fi
 
-# Step 8: Verify setup
+# Step 9: Verifying setup
 step "Verifying setup"
 
 echo "Checking components..."

@@ -87,6 +87,11 @@ if pkill -f "wsProxyLauncher" 2>/dev/null; then
     KILLED=$((KILLED + 1))
 fi
 
+if pkill -f "mixJobOrchestratorRunner" 2>/dev/null; then
+    echo "  • Killed MixJobOrchestrator processes"
+    KILLED=$((KILLED + 1))
+fi
+
 if [ $KILLED -eq 0 ]; then
     print_success "No processes found by name"
 else

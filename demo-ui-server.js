@@ -19,6 +19,9 @@ const server = http.createServer((req, res) => {
   if (req.url === '/' || req.url === '/index.html') {
     filePath = path.join(ROOT_DIR, 'demo-ui.html');
     contentType = 'text/html';
+  } else if (req.url === '/publishing' || req.url === '/publishing.html') {
+    filePath = path.join(ROOT_DIR, 'demo-ui-publishing.html');
+    contentType = 'text/html';
   } else if (req.url === '/polkadot-browser-bundle.js') {
     filePath = path.join(ROOT_DIR, 'polkadot-browser-bundle.js');
     contentType = 'application/javascript';
@@ -42,7 +45,8 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`🌐 Demo UI Server running on http://127.0.0.1:${PORT}`);
-  console.log(`📋 Open this URL in your browser to access the demo`);
+  console.log(`📋 Voting Demo: http://127.0.0.1:${PORT}/`);
+  console.log(`📰 Publishing Demo: http://127.0.0.1:${PORT}/publishing`);
 });
 
 // Handle Ctrl+C gracefully

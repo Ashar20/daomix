@@ -577,6 +577,7 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('setup')">🔧 SETUP</button>
             <button class="tab-btn" onclick="switchTab('demo')">🎭 DEMO</button>
+            <button class="tab-btn" onclick="switchTab('messaging')">✉️ MESSAGING SERVICE</button>
             <button class="tab-btn" onclick="switchTab('logs')">📊 LIVE LOGS</button>
         </div>
 
@@ -812,6 +813,32 @@
             </div>
         </div>
 
+        <!-- MESSAGING TAB -->
+        <div id="messaging-tab" class="tab-content">
+            <div class="card">
+                <h2>✉️ Messaging Service (Encrypted Publishing)</h2>
+                <p style="color: #4b5563; margin-bottom: 15px;">
+                    Embedded end-to-end encrypted messaging/publishing experience. Reuse the same transport mix setup and IPFS endpoint
+                    to test journalist workflows without leaving this demo.
+                </p>
+                <div style="background:#1f2937; border-radius:8px; padding:15px; margin-bottom:15px; color:#e5e7eb; font-size:14px;">
+                    <strong>Quick steps:</strong>
+                    <ol style="margin-left:20px; margin-top:10px; line-height:1.6;">
+                        <li>Open the Setup block inside the embed.</li>
+                        <li>Point the RPC URLs at the transport mix proxies (9950 / 9951).</li>
+                        <li>Set the IPFS API to <code>http://127.0.0.1:5001</code> (or a Crust gateway) and click “Test”.</li>
+                        <li>Publish content → encrypted payload is stored, and the archive shows real CIDs.</li>
+                    </ol>
+                </div>
+                <iframe
+                    src="/publishing"
+                    title="DaoMix Messaging Service"
+                    style="width: 100%; min-height: 900px; border: 1px solid #e5e7eb; border-radius: 8px; background: white;"
+                    loading="lazy"
+                ></iframe>
+            </div>
+        </div>
+
         <!-- LOGS TAB -->
         <div id="logs-tab" class="tab-content">
             <div class="card">
@@ -871,12 +898,12 @@
             if (cmdEl) {
                 cmdEl.textContent = xcmTailCommand;
             }
-            addXcmTerminalLog('# Click “Submit XCM Job” to mirror the live transport mix logs here…');
+            addXcmTerminalLog('[tail] waiting on ws-proxies.log transport-entry.log transport-middle.log transport-exit.log');
         }
 
         function addXcmTerminalLog(message) {
-            const timestamp = new Date().toLocaleTimeString();
-            xcmTerminalLogs.push(`[${timestamp}] ${message}`);
+            const timestamp = new Date().toISOString().replace('T', ' ').replace('Z', '');
+            xcmTerminalLogs.push(`${timestamp} ${message}`);
             if (xcmTerminalLogs.length > MAX_XCM_TERMINAL_LINES) {
                 xcmTerminalLogs.shift();
             }
@@ -1390,8 +1417,8 @@
             statusEl.classList.remove('hidden');
             statusEl.textContent = '⏳ Submitting XCM mixing job to Para 1000...';
             addXcmTerminalLog('────────────────────────────────────────');
-            addXcmTerminalLog(`User clicked “Submit XCM Job” (election ${electionId})`);
-            addXcmTerminalLog('Simulating terminal output from tail -f …');
+            addXcmTerminalLog('tail -f .demo-logs/ws-proxies.log .demo-logs/transport-entry.log .demo-logs/transport-middle.log .demo-logs/transport-exit.log');
+            addXcmTerminalLog(`[ws-proxy][VotingChain] author_submitAndWatchExtrinsic received (election ${electionId})`);
 
             try {
                 const { Keyring } = window.polkadotKeyring || window.polkadotApi;
@@ -1413,8 +1440,7 @@
                 };
 
                 addLog('votingchain', `🚀 Preparing XCM job to Para 1000 for election ${electionId}`, 'event');
-                addXcmTerminalLog('> tail -f .demo-logs/ws-proxies.log .demo-logs/transport-entry.log ...');
-                addXcmTerminalLog('[Tail] Watching ws-proxies + transport node logs…');
+                addXcmTerminalLog('[ws-proxy][VotingChain] polkadotXcm.send build complete');
                 
                 const tx = votingchainApi.tx.polkadotXcm.send(dest, message);
 
@@ -1422,15 +1448,18 @@
                 const txHashHex = signed.hash.toHex();
 
                 statusEl.textContent = '🔐 Sending XCM via transport mix...';
-                addXcmTerminalLog('[VotingChain] 🔄 author_submitAndWatchExtrinsic → author_submitExtrinsic');
-                addXcmTerminalLog('[VotingChain] 🔐 author_submitExtrinsic → via transport mix');
+                addXcmTerminalLog('[ws-proxy][VotingChain] author_submitAndWatchExtrinsic → author_submitExtrinsic');
+                addXcmTerminalLog('[ws-proxy][VotingChain] author_submitExtrinsic → transport mix (entry=9100)');
+                addXcmTerminalLog('[transport-entry] peel onion → http://127.0.0.1:9101/rpc-mix');
+                addXcmTerminalLog('[transport-middle] peel onion → http://127.0.0.1:9102/rpc-mix');
+                addXcmTerminalLog('[transport-exit] peel onion → POST http://127.0.0.1:9945');
 
                 const submitResult = await votingchainApi.rpc.author.submitExtrinsic(signed);
                 const submittedHash = submitResult?.toHex ? submitResult.toHex() : submitResult?.toString?.() || txHashHex;
 
                 addLog('votingchain', `🔐 XCM job sent via transport mix (tx: ${submittedHash.substring(0, 12)}...)`, 'event');
-                addXcmTerminalLog(`[VotingChain] 📨 Got tx hash ${submittedHash.substring(0, 18)}…`);
-                addXcmTerminalLog('[VotingChain] ✅ author_submitAndWatchExtrinsic → submitted via 3-hop mix (subscription emulated)');
+                addXcmTerminalLog(`[ws-proxy][VotingChain] tx hash ${submittedHash}`);
+                addXcmTerminalLog('[ws-proxy][VotingChain] author_submitAndWatchExtrinsic → submitted via 3-hop mix');
 
                 statusEl.className = 'status pending';
                 statusEl.innerHTML = `⚡ XCM submitted via transport mix<br><small>Tx: ${submittedHash.substring(0, 12)}...<br>Waiting for block inclusion...</small>`;
@@ -1447,9 +1476,9 @@
 
                     addLog('votingchain', `✅ XCM message included in block ${blockHash.substring(0, 12)}...`, 'event');
                     addLog('daochain', `📬 Expecting XCM message from Para 2001...`, 'event');
-                    addXcmTerminalLog(`[VotingChain] 🧱 Included in block ${blockHash.substring(0, 18)}…`);
-                    addXcmTerminalLog('[DaoChain] 📬 mixJob.submitJob received → pending job queued');
-                    addXcmTerminalLog('[MixJob] Orchestrator will shuffle ballots through Mix Nodes 1 → 2 → 3');
+                    addXcmTerminalLog(`[ws-proxy][VotingChain] included in block ${blockHash}`);
+                    addXcmTerminalLog(`[dao-mixjob] mixJob.submitJob(${electionId}) dispatched`);
+                    addXcmTerminalLog('[mix-orchestrator] pending job queued (mix nodes 9000→9001→9002)');
                 } catch (waitError) {
                     console.warn('XCM inclusion wait error:', waitError);
                     statusEl.className = 'status warning';

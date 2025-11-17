@@ -9,6 +9,3 @@
 [TransportNode] Next hop: http://127.0.0.1:9102
 [TransportNode] RPC URL: N/A
 [TransportNode] middle node listening on http://localhost:9101
-[TransportNode] middle node /rpc-mix error: Error: Transport: failed to decrypt layer
-    at decryptTransportLayerHybrid (/Users/silas/daomix/mixer/src/transportOnion.ts:225:9)
-    at processTicksAndRejections (node:internal/process/task_queues:103:5)
