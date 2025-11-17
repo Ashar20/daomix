@@ -47,17 +47,12 @@ Press Ctrl+C to stop
    → Transactions: 3-hop onion routing (private)
 
 [DaoChain] 🔗 Browser connected
-[DaoChain] 📖 chain_getBlockHash → direct WS
-[DaoChain] ⏳ Queueing chain_getBlockHash until parachain ready
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] ⏳ Queueing state_getRuntimeVersion until parachain ready
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] ⏳ Queueing system_chain until parachain ready
-[DaoChain] 📖 system_properties → direct WS
-[DaoChain] ⏳ Queueing system_properties until parachain ready
-[DaoChain] 📖 rpc_methods → direct WS
-[DaoChain] ⏳ Queueing rpc_methods until parachain ready
 [DaoChain] ✅ Connected to parachain WebSocket
+[DaoChain] 📖 chain_getBlockHash → direct WS
+[DaoChain] 📖 state_getRuntimeVersion → direct WS
+[DaoChain] 📖 system_chain → direct WS
+[DaoChain] 📖 system_properties → direct WS
+[DaoChain] 📖 rpc_methods → direct WS
 [DaoChain] 📖 state_call → direct WS
 [DaoChain] 📖 state_call → direct WS
 [DaoChain] 📖 state_subscribeRuntimeVersion → direct WS
@@ -94,7 +89,7 @@ Press Ctrl+C to stop
 [DaoChain] 📨 Got raw response from transport mix: {
   jsonrpc: '2.0',
   id: 22,
-  result: '0xd103b7389c970b889a39566cc4475a9523ce61173b75d1226a79812d0d62ec04'
+  result: '0x90ed305959c329c834eb3136b09dc723cf72d54a712a7bac46e3c7c22aecafb5'
 }
 [DaoChain] ✅ author_submitExtrinsic → sent via 3-hop mix
 [DaoChain] 📖 chain_getBlock → direct WS
@@ -102,860 +97,7 @@ Press Ctrl+C to stop
 [DaoChain] 📖 state_getRuntimeVersion → direct WS
 [DaoChain] 📖 chain_getBlock → direct WS
 [DaoChain] 📖 system_health → direct WS
-[DaoChain] 📖 state_queryStorageAt → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 chain_getFinalizedHead → direct WS
-[DaoChain] 🔐 author_submitExtrinsic → via transport mix
-[DaoChain] 🚀 Calling sendRpcOverTransportMix with:
-[DaoChain]    entryNodeUrl: http://127.0.0.1:9100
-[DaoChain]    targetRpcUrl: http://127.0.0.1:9944
-[DaoChain]    method: author_submitExtrinsic
-[DaoChain]    transportNodes: 3 hops
-[DaoChain] 📨 Got raw response from transport mix: {
-  jsonrpc: '2.0',
-  id: 33,
-  result: '0x71252589a913674d403125f7d88311d5c9dc163574132c64ac6b592970cde425'
-}
-[DaoChain] ✅ author_submitExtrinsic → sent via 3-hop mix
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 chain_getBlock → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 chain_getFinalizedHead → direct WS
-[DaoChain] 📖 state_subscribeStorage → direct WS
-[DaoChain] 🔐 author_submitExtrinsic → via transport mix
-[DaoChain] 🚀 Calling sendRpcOverTransportMix with:
-[DaoChain]    entryNodeUrl: http://127.0.0.1:9100
-[DaoChain]    targetRpcUrl: http://127.0.0.1:9944
-[DaoChain]    method: author_submitExtrinsic
-[DaoChain]    transportNodes: 3 hops
-[DaoChain] 📨 Got raw response from transport mix: {
-  jsonrpc: '2.0',
-  id: 43,
-  result: '0x2422255c87056ed1f0269d33a97f996a571a3fa4321f059a35a6694e29b008ea'
-}
-[DaoChain] ✅ author_submitExtrinsic → sent via 3-hop mix
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 chain_getBlock → direct WS
 [DaoChain] 📖 state_unsubscribeStorage → direct WS
-[DaoChain] 📖 state_unsubscribeStorage → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 chain_getFinalizedHead → direct WS
-[VotingChain] 📖 state_subscribeStorage → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 🔐 author_submitExtrinsic → via transport mix
-[VotingChain] 🚀 Calling sendRpcOverTransportMix with:
-[VotingChain]    entryNodeUrl: http://127.0.0.1:9100
-[VotingChain]    targetRpcUrl: http://127.0.0.1:9945
-[VotingChain]    method: author_submitExtrinsic
-[VotingChain]    transportNodes: 3 hops
-[VotingChain] 📨 Got raw response from transport mix: {
-  jsonrpc: '2.0',
-  id: 22,
-  result: '0x861366fae8236edbb4895f823d437125624b8d61cce7a424c74f4884d438f089'
-}
-[VotingChain] ✅ author_submitExtrinsic → sent via 3-hop mix
-[VotingChain] 📖 chain_getBlock → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 chain_getBlock → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[VotingChain] 📖 state_unsubscribeStorage → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 🔌 Browser disconnected
-[VotingChain] 🔌 Browser disconnected
-[DaoChain] Parachain WS closed
-[VotingChain] Parachain WS closed
-[DaoChain] 🔗 Browser connected
-[DaoChain] 📖 chain_getBlockHash → direct WS
-[DaoChain] ⏳ Queueing chain_getBlockHash until parachain ready
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] ⏳ Queueing state_getRuntimeVersion until parachain ready
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] ⏳ Queueing system_chain until parachain ready
-[DaoChain] 📖 system_properties → direct WS
-[DaoChain] ⏳ Queueing system_properties until parachain ready
-[DaoChain] 📖 rpc_methods → direct WS
-[DaoChain] ⏳ Queueing rpc_methods until parachain ready
-[DaoChain] ✅ Connected to parachain WebSocket
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_subscribeRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] 📖 system_version → direct WS
-[DaoChain] 📖 chain_subscribeNewHead → direct WS
-[VotingChain] 🔗 Browser connected
-[VotingChain] ✅ Connected to parachain WebSocket
-[VotingChain] 📖 chain_getBlockHash → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_properties → direct WS
-[VotingChain] 📖 rpc_methods → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_subscribeRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_version → direct WS
-[VotingChain] 📖 chain_subscribeNewHead → direct WS
-[DaoChain] 📖 state_queryStorageAt → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 chain_getFinalizedHead → direct WS
-[DaoChain] 📖 state_subscribeStorage → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 🔐 author_submitExtrinsic → via transport mix
-[DaoChain] 🚀 Calling sendRpcOverTransportMix with:
-[DaoChain]    entryNodeUrl: http://127.0.0.1:9100
-[DaoChain]    targetRpcUrl: http://127.0.0.1:9944
-[DaoChain]    method: author_submitExtrinsic
-[DaoChain]    transportNodes: 3 hops
-[DaoChain] 📨 Got raw response from transport mix: {
-  jsonrpc: '2.0',
-  id: 22,
-  result: '0x2c307a9f828482c8fcdaf5be823973f1e8f0de7a5c90e95199e7116648a0ee71'
-}
-[DaoChain] ✅ author_submitExtrinsic → sent via 3-hop mix
-[DaoChain] 📖 chain_getBlock → direct WS
-[DaoChain] 📖 system_health → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 chain_getBlock → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 state_queryStorageAt → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 chain_getFinalizedHead → direct WS
-[DaoChain] 🔐 author_submitExtrinsic → via transport mix
-[DaoChain] 🚀 Calling sendRpcOverTransportMix with:
-[DaoChain]    entryNodeUrl: http://127.0.0.1:9100
-[DaoChain]    targetRpcUrl: http://127.0.0.1:9944
-[DaoChain]    method: author_submitExtrinsic
-[DaoChain]    transportNodes: 3 hops
-[DaoChain] 📨 Got raw response from transport mix: {
-  jsonrpc: '2.0',
-  id: 33,
-  result: '0x110f39f384371241a68aa41162ff204403ab66ea15e039eae840ebc85bf7ed19'
-}
-[DaoChain] ✅ author_submitExtrinsic → sent via 3-hop mix
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 chain_getBlock → direct WS
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 chain_getFinalizedHead → direct WS
-[DaoChain] 📖 state_subscribeStorage → direct WS
-[DaoChain] 🔐 author_submitExtrinsic → via transport mix
-[DaoChain] 🚀 Calling sendRpcOverTransportMix with:
-[DaoChain]    entryNodeUrl: http://127.0.0.1:9100
-[DaoChain]    targetRpcUrl: http://127.0.0.1:9944
-[DaoChain]    method: author_submitExtrinsic
-[DaoChain]    transportNodes: 3 hops
-[DaoChain] 📨 Got raw response from transport mix: {
-  jsonrpc: '2.0',
-  id: 43,
-  result: '0x77de7e60a704521ca75970ae0260ccd13686a90c8bdfe4f51290755ecfb8875e'
-}
-[DaoChain] ✅ author_submitExtrinsic → sent via 3-hop mix
-[DaoChain] 📖 chain_getHeader → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 chain_getBlock → direct WS
-[DaoChain] 📖 state_unsubscribeStorage → direct WS
-[DaoChain] 📖 state_unsubscribeStorage → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 chain_getFinalizedHead → direct WS
-[VotingChain] 📖 state_subscribeStorage → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 🔐 author_submitExtrinsic → via transport mix
-[VotingChain] 🚀 Calling sendRpcOverTransportMix with:
-[VotingChain]    entryNodeUrl: http://127.0.0.1:9100
-[VotingChain]    targetRpcUrl: http://127.0.0.1:9945
-[VotingChain]    method: author_submitExtrinsic
-[VotingChain]    transportNodes: 3 hops
-[VotingChain] 📨 Got raw response from transport mix: {
-  jsonrpc: '2.0',
-  id: 22,
-  result: '0x3f324e9b9f47c82e6c55fecb7d80c0fb245544625a62bf0ae5e9ccbfb98be491'
-}
-[VotingChain] ✅ author_submitExtrinsic → sent via 3-hop mix
-[VotingChain] 📖 chain_getBlock → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 chain_getHeader → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 chain_getBlock → direct WS
-[VotingChain] 📖 system_health → direct WS
-[VotingChain] 📖 state_unsubscribeStorage → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 🔌 Browser disconnected
-[VotingChain] 🔌 Browser disconnected
-[DaoChain] Parachain WS closed
-[VotingChain] Parachain WS closed
-[DaoChain] 🔗 Browser connected
-[DaoChain] 📖 chain_getBlockHash → direct WS
-[DaoChain] ⏳ Queueing chain_getBlockHash until parachain ready
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] ⏳ Queueing state_getRuntimeVersion until parachain ready
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] ⏳ Queueing system_chain until parachain ready
-[DaoChain] 📖 system_properties → direct WS
-[DaoChain] ⏳ Queueing system_properties until parachain ready
-[DaoChain] 📖 rpc_methods → direct WS
-[DaoChain] ⏳ Queueing rpc_methods until parachain ready
-[DaoChain] ✅ Connected to parachain WebSocket
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_subscribeRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] 📖 system_version → direct WS
-[DaoChain] 📖 chain_subscribeNewHead → direct WS
-[VotingChain] 🔗 Browser connected
-[VotingChain] ✅ Connected to parachain WebSocket
-[VotingChain] 📖 chain_getBlockHash → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_properties → direct WS
-[VotingChain] 📖 rpc_methods → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_subscribeRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_version → direct WS
-[VotingChain] 📖 chain_subscribeNewHead → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 🔌 Browser disconnected
-[VotingChain] 🔌 Browser disconnected
-[DaoChain] Parachain WS closed
-[VotingChain] Parachain WS closed
-[DaoChain] 🔗 Browser connected
-[DaoChain] 📖 chain_getBlockHash → direct WS
-[DaoChain] ⏳ Queueing chain_getBlockHash until parachain ready
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] ⏳ Queueing state_getRuntimeVersion until parachain ready
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] ⏳ Queueing system_chain until parachain ready
-[DaoChain] 📖 system_properties → direct WS
-[DaoChain] ⏳ Queueing system_properties until parachain ready
-[DaoChain] 📖 rpc_methods → direct WS
-[DaoChain] ⏳ Queueing rpc_methods until parachain ready
-[DaoChain] ✅ Connected to parachain WebSocket
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_subscribeRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] 📖 system_version → direct WS
-[DaoChain] 📖 chain_subscribeNewHead → direct WS
-[VotingChain] 🔗 Browser connected
-[VotingChain] ✅ Connected to parachain WebSocket
-[VotingChain] 📖 chain_getBlockHash → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_properties → direct WS
-[VotingChain] 📖 rpc_methods → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_subscribeRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_version → direct WS
-[VotingChain] 📖 chain_subscribeNewHead → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 📖 system_health → direct WS
-[VotingChain] 📖 system_health → direct WS
-[DaoChain] 🔌 Browser disconnected
-[VotingChain] 🔌 Browser disconnected
-[VotingChain] Parachain WS closed
-[DaoChain] Parachain WS closed
-[DaoChain] 🔗 Browser connected
-[DaoChain] ✅ Connected to parachain WebSocket
-[DaoChain] 📖 chain_getBlockHash → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] 📖 system_properties → direct WS
-[DaoChain] 📖 rpc_methods → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_subscribeRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] 📖 system_version → direct WS
-[DaoChain] 📖 chain_subscribeNewHead → direct WS
-[VotingChain] 🔗 Browser connected
-[VotingChain] 📖 chain_getBlockHash → direct WS
-[VotingChain] ⏳ Queueing chain_getBlockHash until parachain ready
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] ⏳ Queueing state_getRuntimeVersion until parachain ready
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] ⏳ Queueing system_chain until parachain ready
-[VotingChain] 📖 system_properties → direct WS
-[VotingChain] ⏳ Queueing system_properties until parachain ready
-[VotingChain] 📖 rpc_methods → direct WS
-[VotingChain] ⏳ Queueing rpc_methods until parachain ready
-[VotingChain] ✅ Connected to parachain WebSocket
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_subscribeRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_version → direct WS
-[VotingChain] 📖 chain_subscribeNewHead → direct WS
-[DaoChain] 📖 system_health → direct WS
 [VotingChain] 📖 system_health → direct WS
 [DaoChain] 🔗 Browser connected
 [DaoChain] ✅ Connected to parachain WebSocket
@@ -1060,56 +202,111 @@ Press Ctrl+C to stop
 [DaoChain] 📖 system_health → direct WS
 [DaoChain] 📖 system_health → direct WS
 [VotingChain] 📖 system_health → direct WS
-[DaoChain] 🔌 Browser disconnected
-[VotingChain] 🔌 Browser disconnected
-[DaoChain] 🔌 Browser disconnected
-[DaoChain] Parachain WS closed
-[VotingChain] Parachain WS closed
-[DaoChain] Parachain WS closed
-[DaoChain] 🔗 Browser connected
-[DaoChain] 📖 chain_getBlockHash → direct WS
-[DaoChain] ⏳ Queueing chain_getBlockHash until parachain ready
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] ⏳ Queueing state_getRuntimeVersion until parachain ready
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] ⏳ Queueing system_chain until parachain ready
-[DaoChain] 📖 system_properties → direct WS
-[DaoChain] ⏳ Queueing system_properties until parachain ready
-[DaoChain] 📖 rpc_methods → direct WS
-[DaoChain] ⏳ Queueing rpc_methods until parachain ready
-[DaoChain] ✅ Connected to parachain WebSocket
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_subscribeRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] 📖 system_version → direct WS
-[DaoChain] 📖 chain_subscribeNewHead → direct WS
-[VotingChain] 🔗 Browser connected
-[VotingChain] ✅ Connected to parachain WebSocket
-[VotingChain] 📖 chain_getBlockHash → direct WS
-[VotingChain] 📖 state_getRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_properties → direct WS
-[VotingChain] 📖 rpc_methods → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_call → direct WS
-[VotingChain] 📖 state_subscribeRuntimeVersion → direct WS
-[VotingChain] 📖 system_chain → direct WS
-[VotingChain] 📖 system_version → direct WS
-[VotingChain] 📖 chain_subscribeNewHead → direct WS
+[DaoChain] 📖 system_health → direct WS
 [DaoChain] 📖 system_health → direct WS
 [VotingChain] 📖 system_health → direct WS
-[DaoChain] 🔗 Browser connected
-[DaoChain] ✅ Connected to parachain WebSocket
-[DaoChain] 📖 chain_getBlockHash → direct WS
-[DaoChain] 📖 state_getRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
-[DaoChain] 📖 system_properties → direct WS
-[DaoChain] 📖 rpc_methods → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_call → direct WS
-[DaoChain] 📖 state_subscribeRuntimeVersion → direct WS
-[DaoChain] 📖 system_chain → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
+[VotingChain] 📖 system_health → direct WS
+[DaoChain] 📖 system_health → direct WS
 [DaoChain] 📖 system_health → direct WS
 [VotingChain] 📖 system_health → direct WS
 [DaoChain] 📖 system_health → direct WS

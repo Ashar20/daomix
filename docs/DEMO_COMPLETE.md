@@ -18,18 +18,13 @@ You will run:
 
 ```bash
 # Run this ONCE to fix dependencies and build everything
-npm run demo:setup
+`npm run demo:setup`
 ```
 
 **What it does:**
 1. ✅ Fixes schnorrkel dependency conflicts in MixJob pallet
 2. ✅ Builds parachain runtime with MixJob + DaomixVoting pallets
-3. ✅ Generates chain specs for TWO parachains (Para 1000 + Para 2001)
-4. ✅ Compiles mix-node network
-5. ✅ Generates onion encryption keys
-6. ✅ Verifies all components
-
-### Start Demo (Every Time)
+3. ✅ Generates chain specs for TWO parachain   
 
 ```bash
 # Starts BOTH parachains + 3 mix nodes + demo UI

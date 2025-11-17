@@ -14,23 +14,12 @@
     "run:daochain-pipeline-transport": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
     "demo:orchestrator": "TS_NODE_FILES=true ts-node src/orchestratorDemo.ts",
     "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts",
-    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts"
-  },
-  "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "vitest run",
-    "test:daochain-e2e": "vitest run test/daochain.e2e.test.ts",
-    "dev:mix-node": "TS_NODE_FILES=true ts-node src/mixNodeServer.ts",
-    "dev:transport-node": "TS_NODE_FILES=true ts-node src/transportNodeServer.ts",
-    "run:transport-rpc": "TS_NODE_FILES=true ts-node src/runTransportRpc.ts",
-    "run:daochain-pipeline-transport": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
-    "demo:orchestrator": "TS_NODE_FILES=true ts-node src/orchestratorDemo.ts",
-    "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts",
     "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
     "debug:system-remark": "ts-node --transpile-only src/debugSystemRemark.ts",
     "inspect:runtime": "ts-node --transpile-only src/inspectRuntime.ts",
     "demo:ws-proxies": "TS_NODE_FILES=true ts-node src/wsProxyLauncher.ts",
-    "dev:mix-orchestrator": "TS_NODE_FILES=true ts-node src/mixJobOrchestratorRunner.ts"
+    "dev:mix-orchestrator": "TS_NODE_FILES=true ts-node src/mixJobOrchestratorRunner.ts",
+    "generate-keys": "TS_NODE_FILES=true ts-node src/generateKeys.ts"
   },
   "dependencies": {
     "@polkadot/api": "^10.12.1",
