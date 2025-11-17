@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";  
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { textStyles, cx } from "../utils/textStyles";
 
 type TabType = "setup" | "demo" | "messaging" | "logs";
 
@@ -1177,14 +1178,14 @@ export default function Sandbox() {
                     <div className="mb-8">
                       <div className="flex items-center gap-2 mb-4">
                         <div className="w-2 h-2 bg-[#ff6b35] rounded-full animate-pulse"></div>
-                        <span className="text-[11px] uppercase tracking-widest text-[#9a9a9a] font-mono">
+                        <span className={textStyles.label}>
                           STEP {String(currentStep + 1).padStart(2, '0')} / {String(TABS.length).padStart(2, '0')}
                         </span>
                       </div>
                       <h1 className="text-6xl font-bold font-mono leading-tight mb-6">
                         {currentTab.title}
                       </h1>
-                      <p className="text-[#9a9a9a] text-base font-mono leading-relaxed mb-6">
+                      <p className={cx(textStyles.body, "mb-6")}>
                         {currentTab.description}
                       </p>
                     </div>
@@ -1266,7 +1267,7 @@ export default function Sandbox() {
 
                             <button
                               onClick={connectDaoChain}
-                              className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold transition-colors"
+                              className={textStyles.buttonPrimary}
                             >
                               Test Connection (via Transport Mix)
                             </button>
@@ -1314,7 +1315,7 @@ export default function Sandbox() {
 
                             <button
                               onClick={connectVotingChain}
-                              className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold transition-colors"
+                              className={textStyles.buttonPrimary}
                             >
                               Test Connection (via Transport Mix)
                             </button>
@@ -1444,7 +1445,7 @@ export default function Sandbox() {
                             </div>
                             <button
                               onClick={createElection}
-                              className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90"
+                              className={textStyles.buttonPrimary}
                             >
                               Create Election
                             </button>
@@ -1494,7 +1495,7 @@ export default function Sandbox() {
                             </div>
                             <button
                               onClick={castVote}
-                              className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90"
+                              className={textStyles.buttonPrimary}
                             >
                               Cast Vote
                             </button>
@@ -1537,7 +1538,7 @@ export default function Sandbox() {
                             </div>
                             <button
                               onClick={submitXCMJob}
-                              className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90"
+                              className={textStyles.buttonPrimary}
                             >
                               Submit XCM Job (Para 2001 → Para 1000)
                             </button>
@@ -1660,7 +1661,7 @@ export default function Sandbox() {
                           </div>
                           <button
                             onClick={connectPublishingChain}
-                            className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90 mb-6"
+                            className={cx(textStyles.buttonPrimary, "mb-6")}
                           >
                             Connect
                           </button>
@@ -1687,7 +1688,7 @@ export default function Sandbox() {
                             </div>
                             <button
                               onClick={connectIpfs}
-                              className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90"
+                              className={textStyles.buttonPrimary}
                             >
                               Test IPFS Connection
                             </button>
@@ -1741,7 +1742,7 @@ export default function Sandbox() {
 
                           <button
                             onClick={publishArticle}
-                            className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90"
+                            className={textStyles.buttonPrimary}
                           >
                             Publish (Encrypted via Transport Mix)
                           </button>
@@ -1881,11 +1882,11 @@ export default function Sandbox() {
                     <button
                       onClick={handlePrevStep}
                       disabled={currentStep === 0}
-                      className={`flex items-center gap-2 px-4 py-2 border text-xs font-mono uppercase tracking-widest transition-colors ${
-                        currentStep === 0
-                          ? 'border-[#2a2a2a] text-[#6a6a6a] cursor-not-allowed'
-                          : 'border-[#2a2a2a] text-white hover:border-[#ff6b35] hover:text-[#ff6b35] btn-animated-texture'
-                      }`}
+                      className={cx(
+                        "flex items-center gap-2",
+                        textStyles.buttonSecondary,
+                        currentStep === 0 && "border-[#2a2a2a] text-[#6a6a6a] cursor-not-allowed hover:border-[#2a2a2a] hover:text-[#6a6a6a]"
+                      )}
                     >
                       ← PREVIOUS
                     </button>
@@ -1895,11 +1896,11 @@ export default function Sandbox() {
                     <button
                       onClick={handleNextStep}
                       disabled={currentStep === TABS.length - 1}
-                      className={`flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-widest transition-colors btn-animated-texture btn-orange-border border ${
-                        currentStep === TABS.length - 1
-                          ? 'bg-[#ff6b35] text-white cursor-default border-[#ff6b35]'
-                          : 'bg-[#ff6b35] hover:bg-[#e55a2b] text-black border-[#ff6b35]'
-                      }`}
+                      className={cx(
+                        "flex items-center gap-2",
+                        textStyles.buttonPrimary,
+                        currentStep === TABS.length - 1 && "text-white cursor-default"
+                      )}
                     >
                       {currentStep === TABS.length - 1 ? 'COMPLETE' : 'NEXT →'}
                     </button>
