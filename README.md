@@ -25,6 +25,8 @@ DaoMix provides a **decentralized mixnet** that enables:
 
 By default we use classical X25519 + XChaCha20-Poly1305, but the mixer has a hybrid post-quantum mode that combines X25519 with ML-KEM (Kyber) for onion layers and transport hops. See mixer/hybrid/README.md: “Optional post-quantum hybrid mode (X25519 + ML-KEM)” and the environment flags DAOMIX_PQ_ENABLED, PQ public keys, etc. When that flag is on, every onion layer carries both the classical curve share and an ML-KEM encapsulation, so even if X25519 were broken in the future, attackers would still have to break Kyber to recover ballots. TL;DR: out of the box it’s classical, but the repo already includes a real optional PQ hybrid path; switch it on and you get quantum-safe forward secrecy today.
 
+**Note** : Run npm run demo:start in the repo root; it launches both Substrate parachains (DaoChain & VotingChain), the full mix network, and the UI so you can see MixJob and DaomixVoting behaving exactly like they do in our sandbox. (https://daomix.vercel.app/sandbox) 
+
 ## Architecture
 
 ```
