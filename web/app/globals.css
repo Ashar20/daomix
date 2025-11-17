@@ -65,6 +65,16 @@ body {
   scrollbar-color: #6a6a6a #1a1a1a;
 }
 
+/* Hide Scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
 /* Animated Diagonal Texture for Buttons */
 @keyframes slide-diagonal {
   0% {

@@ -28,7 +28,7 @@ const TABS = [
     id: "logs",
     label: "LOGS",
     title: "Live Blockchain Logs",
-    description: "Real-time block production and events from both chains.",
+    description: "Block production and events from both chains.",
   },
 ];
 
@@ -1054,7 +1054,7 @@ export default function Sandbox() {
 
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="h-screen bg-black text-white overflow-hidden">
       {/* Back Button */}
       <Link
         href="/"
@@ -1090,7 +1090,7 @@ export default function Sandbox() {
 
             <div
               ref={startupLogsRef}
-              className="bg-[#0a0a0a] border border-[#2a2a2a] rounded p-4 max-h-96 overflow-y-auto font-mono text-sm"
+              className="bg-[#0a0a0a] border border-[#2a2a2a] rounded p-4 max-h-96 overflow-y-auto scrollbar-hide font-mono text-sm"
             >
               {startupLogs.map((log, index) => (
                 <div
@@ -1152,13 +1152,13 @@ export default function Sandbox() {
       </div>
 
           {/* Main Content */}
-          <div className="ml-20">
-            <div className="flex min-h-screen">
+          <div className="ml-20 h-screen overflow-hidden">
+            <div className="flex h-screen">
               {/* Left Content Section */}
-              <div className="w-1/2 border-r border-[#2a2a2a] relative">
+              <div className="w-1/2 border-r border-[#2a2a2a] relative h-screen overflow-y-auto scrollbar-hide">
                 {/* Diagonal Texture Background */}
                 <div
-                  className="absolute inset-0 opacity-5"
+                  className="absolute inset-0 opacity-5 pointer-events-none"
                   style={{
                     backgroundImage: `repeating-linear-gradient(
                       -45deg,
@@ -1171,7 +1171,7 @@ export default function Sandbox() {
                 />
 
                 {/* Content */}
-                <div className="relative z-10 p-12 flex flex-col h-screen justify-between">
+                <div className="relative z-10 p-12">
                   <div>
                     {/* Step Header */}
                     <div className="mb-8">
@@ -1347,9 +1347,9 @@ export default function Sandbox() {
                           <div className="p-6">
                           <h2 className="text-2xl font-bold font-mono text-white mb-4">What This Demonstrates</h2>
                           <ul className="space-y-2 text-[#9a9a9a]">
-                            <li><strong className="text-white">Two Real Parachains:</strong> DaoChain (Para 1000) and VotingChain (Para 2001) are both running as actual Substrate nodes</li>
-                            <li><strong className="text-white">Real XCM Communication:</strong> Para 2001 can send cross-chain messages to Para 1000</li>
-                            <li><strong className="text-white">Real Transport Mix:</strong> All browser RPC traffic routes through a 3-hop onion network (Entry → Middle → Exit). Your IP is hidden from the parachains.</li>
+                            <li><strong className="text-white">Two Parachains:</strong> DaoChain (Para 1000) and VotingChain (Para 2001) are both running as Substrate nodes</li>
+                            <li><strong className="text-white">XCM Communication:</strong> Para 2001 can send cross-chain messages to Para 1000</li>
+                            <li><strong className="text-white">Transport Mix:</strong> All browser RPC traffic routes through a 3-hop onion network (Entry → Middle → Exit). Your IP is hidden from the parachains.</li>
                             <li><strong className="text-white">Manual RPC Connection:</strong> You learn what RPC URLs are and how to connect to blockchains</li>
                           </ul>
                           <div className="bg-[#1a1a1a] p-4 rounded mt-4 border-l-4 border-[#ff6b35]">
@@ -1562,7 +1562,7 @@ export default function Sandbox() {
                               </div>
                               <div
                                 ref={terminalLogsRef}
-                                className="bg-[#050b18] border border-[#2a2a2a] p-3 rounded max-h-48 overflow-y-auto font-mono text-xs text-[#9a9a9a]"
+                                className="bg-[#050b18] border border-[#2a2a2a] p-3 rounded max-h-48 overflow-y-auto scrollbar-hide font-mono text-xs text-[#9a9a9a]"
                               >
                                 {xcmTerminalLogs.length === 0 ? (
                                   <div className="text-[#6a6a6a]"># Click "Submit XCM Job" to stream the latest transport mix logs here…</div>
@@ -1633,62 +1633,8 @@ export default function Sandbox() {
 
                     {currentStep === 2 && (
                       <div className="space-y-8">
-                        {/* Publishing Section */}
-                        <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded overflow-hidden">
-                          <div className="flex items-center gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-black">
-                            <div className="w-2 h-2 rounded-full bg-[#ff6b35]"></div>
-                            <span className="text-[11px] font-mono text-[#9a9a9a]">03 - TERMINAL / IDE</span>
-                          </div>
-                          <div className="p-4 bg-black">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[#ff6b35] text-sm font-mono">{'>'}</span>
-                              <span className="text-white text-sm font-mono">article.publish()</span>
-                            </div>
-                          </div>
-                          <div className="p-6">
-                          <h2 className="text-2xl font-bold font-mono text-white mb-4">Publish Encrypted Content</h2>
-                          <p className="text-[#9a9a9a] mb-4">
-                            Your identity will be hidden through 3-hop onion routing. Content is encrypted and stored on IPFS.
-                          </p>
-
-                          <div className="mb-4">
-                            <label className="block text-white font-medium mb-2">Article Title:</label>
-                            <input
-                              type="text"
-                              value={articleTitle}
-                              onChange={(e) => setArticleTitle(e.target.value)}
-                              className="w-full p-3 border-2 border-[#2a2a2a] rounded font-mono text-sm bg-black text-white"
-                              placeholder="Enter article title"
-                            />
-                          </div>
-
-                          <div className="mb-4">
-                            <label className="block text-white font-medium mb-2">Article Content:</label>
-                            <textarea
-                              value={articleContent}
-                              onChange={(e) => setArticleContent(e.target.value)}
-                              className="w-full p-3 border-2 border-[#2a2a2a] rounded font-mono text-sm bg-black text-white"
-                              rows={6}
-                              placeholder="Write your article here..."
-                            />
-                          </div>
-
-                          <button
-                            onClick={publishArticle}
-                            className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90"
-                          >
-                            Publish (Encrypted via Transport Mix)
-                          </button>
-                          {publishStatus && (
-                            <div className={`mt-4 p-3 rounded ${publishStatus.includes('Success') || publishStatus.includes('published') || publishStatus.includes('Publish') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : publishStatus.includes('Sending') || publishStatus.includes('Encrypted') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
-                              {publishStatus}
-                            </div>
-                          )}
-                        </div>
-                        </div>
-
-                        {/* Setup Section */}
-                        <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded overflow-hidden">
+                         {/* Setup Section */}
+                         <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded overflow-hidden">
                           <div className="flex items-center gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-black">
                             <div className="w-2 h-2 rounded-full bg-[#ff6b35]"></div>
                             <span className="text-[11px] font-mono text-[#9a9a9a]">03 - TERMINAL / IDE</span>
@@ -1753,6 +1699,61 @@ export default function Sandbox() {
                           </div>
                           </div>
                         </div>
+                        {/* Publishing Section */}
+                        <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded overflow-hidden">
+                          <div className="flex items-center gap-2 px-4 py-2 border-b border-[#2a2a2a] bg-black">
+                            <div className="w-2 h-2 rounded-full bg-[#ff6b35]"></div>
+                            <span className="text-[11px] font-mono text-[#9a9a9a]">03 - TERMINAL / IDE</span>
+                          </div>
+                          <div className="p-4 bg-black">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#ff6b35] text-sm font-mono">{'>'}</span>
+                              <span className="text-white text-sm font-mono">article.publish()</span>
+                            </div>
+                          </div>
+                          <div className="p-6">
+                          <h2 className="text-2xl font-bold font-mono text-white mb-4">Publish Encrypted Content</h2>
+                          <p className="text-[#9a9a9a] mb-4">
+                            Your identity will be hidden through 3-hop onion routing. Content is encrypted and stored on IPFS.
+                          </p>
+
+                          <div className="mb-4">
+                            <label className="block text-white font-medium mb-2">Article Title:</label>
+                            <input
+                              type="text"
+                              value={articleTitle}
+                              onChange={(e) => setArticleTitle(e.target.value)}
+                              className="w-full p-3 border-2 border-[#2a2a2a] rounded font-mono text-sm bg-black text-white"
+                              placeholder="Enter article title"
+                            />
+                          </div>
+
+                          <div className="mb-4">
+                            <label className="block text-white font-medium mb-2">Article Content:</label>
+                            <textarea
+                              value={articleContent}
+                              onChange={(e) => setArticleContent(e.target.value)}
+                              className="w-full p-3 border-2 border-[#2a2a2a] rounded font-mono text-sm bg-black text-white"
+                              rows={6}
+                              placeholder="Write your article here..."
+                            />
+                          </div>
+
+                          <button
+                            onClick={publishArticle}
+                            className="bg-[#ff6b35] hover:bg-[#e55a2b] text-black px-6 py-3 rounded font-semibold hover:opacity-90"
+                          >
+                            Publish (Encrypted via Transport Mix)
+                          </button>
+                          {publishStatus && (
+                            <div className={`mt-4 p-3 rounded ${publishStatus.includes('Success') || publishStatus.includes('published') || publishStatus.includes('Publish') ? 'bg-[#1a1a1a] text-[#4ade80] border border-[#4ade80]' : publishStatus.includes('Sending') || publishStatus.includes('Encrypted') ? 'bg-[#1a1a1a] text-[#fbbf24] border border-[#fbbf24]' : 'bg-[#1a1a1a] text-red-400 border border-red-400'}`}>
+                              {publishStatus}
+                            </div>
+                          )}
+                        </div>
+                        </div>
+
+                       
                       </div>
                     )}
 
@@ -1772,7 +1773,7 @@ export default function Sandbox() {
                           <div className="p-6">
                           <h2 className="text-2xl font-bold font-mono text-white mb-4">Live Blockchain Logs</h2>
                           <div className="bg-[#1a1a1a] border-l-4 border-[#ff6b35] p-4 mb-6">
-                            <p className="text-white font-semibold">Real-time block production and events from both parachains. Connect to chains first in the SETUP tab!</p>
+                            <p className="text-white font-semibold">Block production and events from both parachains. Connect to chains first in the SETUP tab!</p>
                           </div>
 
                           <div className="grid grid-cols-1 gap-6">
@@ -1780,7 +1781,7 @@ export default function Sandbox() {
                               <h3 className="text-[#10b981] font-mono text-sm mb-3">DaoChain (Para 1000) Logs</h3>
                               <div
                                 ref={daochainLogsRef}
-                                className="max-h-80 overflow-y-auto font-mono text-xs space-y-1"
+                                className="max-h-80 overflow-y-auto scrollbar-hide font-mono text-xs space-y-1"
                               >
                                 {daochainLogs.slice(-100).reverse().map((log, index) => (
                                   <div
@@ -1802,7 +1803,7 @@ export default function Sandbox() {
                               <h3 className="text-[#10b981] font-mono text-sm mb-3">VotingChain (Para 2001) Logs</h3>
                               <div
                                 ref={votingchainLogsRef}
-                                className="max-h-80 overflow-y-auto font-mono text-xs space-y-1"
+                                className="max-h-80 overflow-y-auto scrollbar-hide font-mono text-xs space-y-1"
                               >
                                 {votingchainLogs.slice(-100).reverse().map((log, index) => (
                                   <div
@@ -1870,13 +1871,13 @@ export default function Sandbox() {
                         {currentStep === 0 && "Transport mix hides your IP from both parachains while maintaining full functionality."}
                         {currentStep === 1 && "XCM enables cross-chain communication between different parachains in the Polkadot ecosystem."}
                         {currentStep === 2 && "IPFS provides decentralized storage with content addressing - no central servers required."}
-                        {currentStep === 3 && "Real-time blockchain monitoring shows the actual state changes happening on-chain."}
+                        {currentStep === 3 && "Blockchain monitoring shows the state changes happening on-chain."}
                       </p>
                     </div>
                   </div>
 
                   {/* Navigation Buttons */}
-                  <div className="flex items-center justify-between border-t border-[#2a2a2a] pt-6">
+                  <div className="flex items-center justify-between border-t border-[#2a2a2a] pt-6 mt-8">
                     <button
                       onClick={handlePrevStep}
                       disabled={currentStep === 0}
@@ -1938,7 +1939,7 @@ export default function Sandbox() {
 
                     {/* Terminal Output */}
                     <div className="flex h-96">
-                      <div className="flex-1 bg-black p-4 font-mono text-[11px] overflow-auto">
+                      <div className="flex-1 bg-black p-4 font-mono text-[11px] overflow-auto scrollbar-hide">
                         <div className="mb-3 text-[#6a6a6a] uppercase tracking-widest">
                           {currentTab.id === 'setup' && 'CONNECTION STATUS'}
                           {currentTab.id === 'demo' && 'TRANSACTION LOGS'}
