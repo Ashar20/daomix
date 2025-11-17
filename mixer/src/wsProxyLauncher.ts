@@ -67,8 +67,8 @@ async function main() {
     wsPort: 9950,
     chainName: 'DaoChain',
     entryNodeUrl: 'http://127.0.0.1:9100',
-    targetRpcUrl: 'http://127.0.0.1:9933',
-    targetWsUrl: 'ws://127.0.0.1:9944',
+    targetRpcUrl: 'http://127.0.0.1:9944',  // HTTP RPC for transport mix (same port as WS)
+    targetWsUrl: 'ws://127.0.0.1:9944',      // WebSocket RPC for direct subscriptions
     transportNodes,
   });
 
@@ -78,8 +78,8 @@ async function main() {
     wsPort: 9951,
     chainName: 'VotingChain',
     entryNodeUrl: 'http://127.0.0.1:9100',
-    targetRpcUrl: 'http://127.0.0.1:9934',
-    targetWsUrl: 'ws://127.0.0.1:9945',
+    targetRpcUrl: 'http://127.0.0.1:9945',  // HTTP RPC for transport mix (same port as WS)
+    targetWsUrl: 'ws://127.0.0.1:9945',      // WebSocket RPC for direct subscriptions
     transportNodes,
   });
 

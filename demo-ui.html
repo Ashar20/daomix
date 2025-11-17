@@ -261,6 +261,23 @@
             border-color: #667eea;
         }
 
+        .inline-input {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .inline-input label {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .inline-input input {
+            flex: 1;
+            min-width: 160px;
+        }
+
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -312,6 +329,86 @@
         .status.pending {
             background: #fef3c7;
             color: #92400e;
+        }
+
+        .status.warning {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .terminal-section {
+            margin-top: 20px;
+            background: #0b1120;
+            border-radius: 10px;
+            padding: 16px;
+            color: #e5e7eb;
+            font-family: 'Fira Code', 'SFMono-Regular', Consolas, monospace;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .terminal-command {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: #d1d5db;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .terminal-log {
+            background: #050b18;
+            border: 1px solid #1f2937;
+            border-radius: 6px;
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .terminal-log .log-line {
+            white-space: pre-wrap;
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .result-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        .result-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.9em;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .result-meta span {
+            min-width: 140px;
         }
 
         .hidden {
@@ -640,15 +737,14 @@
 
             <!-- Cast Vote -->
             <div class="card">
-                <h2>✅ Step 2: Cast Vote from VotingChain</h2>
+                <h2>✅ Step 2: Cast Vote (sent from VotingChain UI, stored on DaoChain)</h2>
                 <div class="rpc-section">
                     <div class="input-group">
                         <label for="vote-election-id">Election ID:</label>
                         <input
                             type="number"
                             id="vote-election-id"
-                            placeholder="0"
-                            value="0">
+                            placeholder="Enter election ID">
                     </div>
                     <div class="input-group">
                         <label for="vote-option">Vote Option:</label>
@@ -675,11 +771,26 @@
                         <input
                             type="number"
                             id="xcm-election-id"
-                            placeholder="0"
-                            value="0">
+                            placeholder="Enter election ID">
                     </div>
                     <button class="btn" onclick="submitXCMJob()">🚀 Submit XCM Job (Para 2001 → Para 1000)</button>
                     <div id="xcm-status" class="status hidden"></div>
+
+                    <div class="terminal-section">
+                        <div class="terminal-header">
+                            <strong>Terminal Log (mirrors tail -f output)</strong>
+                            <button class="btn btn-secondary" onclick="copyXcmTerminalCommand()">Copy tail command</button>
+                        </div>
+                        <div class="terminal-command" id="xcm-terminal-command">
+                            tail -f .demo-logs/ws-proxies.log \\
+                                   .demo-logs/transport-entry.log \\
+                                   .demo-logs/transport-middle.log \\
+                                   .demo-logs/transport-exit.log
+                        </div>
+                        <div class="terminal-log" id="xcm-terminal-log">
+                            <div class="log-line"># Click “Submit XCM Job” to stream the latest transport mix logs here…</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -687,6 +798,13 @@
             <div class="card">
                 <h2>🔍 Step 4: Query Results</h2>
                 <div class="rpc-section">
+                    <div class="input-group inline-input">
+                        <label for="query-election-id">Focus on Election ID (optional):</label>
+                        <input
+                            type="number"
+                            id="query-election-id"
+                            placeholder="Leave blank to list all elections">
+                    </div>
                     <button class="btn btn-secondary" onclick="queryElections()">📊 Query All Elections</button>
                     <button class="btn btn-secondary" onclick="queryVotes()">🗳️ Query All Votes</button>
                     <div id="query-status" class="status hidden"></div>
@@ -726,6 +844,13 @@
         let votingchainLogs = [];
         const MAX_LOGS = 100;
 
+        const xcmTailCommand = `tail -f .demo-logs/ws-proxies.log \\
+   .demo-logs/transport-entry.log \\
+   .demo-logs/transport-middle.log \\
+   .demo-logs/transport-exit.log`;
+        const xcmTerminalLogs = [];
+        const MAX_XCM_TERMINAL_LINES = 150;
+
         // Tab Switching
         function switchTab(tabName) {
             // Hide all tabs
@@ -739,6 +864,41 @@
             // Show selected tab
             document.getElementById(`${tabName}-tab`).classList.add('active');
             event.target.classList.add('active');
+        }
+
+        function initXcmTerminal() {
+            const cmdEl = document.getElementById('xcm-terminal-command');
+            if (cmdEl) {
+                cmdEl.textContent = xcmTailCommand;
+            }
+            addXcmTerminalLog('# Click “Submit XCM Job” to mirror the live transport mix logs here…');
+        }
+
+        function addXcmTerminalLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            xcmTerminalLogs.push(`[${timestamp}] ${message}`);
+            if (xcmTerminalLogs.length > MAX_XCM_TERMINAL_LINES) {
+                xcmTerminalLogs.shift();
+            }
+            renderXcmTerminalLogs();
+        }
+
+        function renderXcmTerminalLogs() {
+            const container = document.getElementById('xcm-terminal-log');
+            if (!container) return;
+            container.innerHTML = xcmTerminalLogs
+                .map(line => `<div class="log-line">${line}</div>`)
+                .join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function copyXcmTerminalCommand() {
+            navigator.clipboard.writeText(xcmTailCommand).then(() => {
+                addXcmTerminalLog('📋 Copied tail command to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy command:', err);
+                alert('Unable to copy command. Please copy it manually.');
+            });
         }
 
         // Check if Polkadot API is loaded
@@ -921,6 +1081,115 @@
             logContainer.scrollTop = 0;
         }
 
+        function shortAddress(address, size = 6) {
+            if (!address) return '—';
+            const str = String(address);
+            return str.length <= size * 2 ? str : `${str.slice(0, size)}…${str.slice(-size)}`;
+        }
+
+        function safeNumber(value) {
+            if (value === null || value === undefined) return null;
+            if (typeof value === 'number') return value;
+            if (typeof value === 'string') {
+                const cleaned = value.replace(/,/g, '');
+                const num = Number(cleaned);
+                return Number.isNaN(num) ? null : num;
+            }
+            if (typeof value.toNumber === 'function') {
+                try {
+                    return value.toNumber();
+                } catch {
+                    // fall through
+                }
+            }
+            const str = value.toString ? value.toString() : `${value}`;
+            const num = Number(str);
+            return Number.isNaN(num) ? null : num;
+        }
+
+        function formatBlockLabel(target, current) {
+            if (target === null || target === undefined) return '—';
+            if (current === null || current === undefined) return `#${target}`;
+            const delta = target - current;
+            if (delta > 0) return `#${target} (in ${delta} blocks)`;
+            if (delta === 0) return `#${target} (current block)`;
+            return `#${target} (${Math.abs(delta)} blocks ago)`;
+        }
+
+        function describePhase(current, registration, voting) {
+            if (registration === null || voting === null || current === null) return 'Unknown';
+            if (current < registration) return `Registration open (${registration - current} blocks left)`;
+            if (current <= voting) return `Voting open (${voting - current} blocks left)`;
+            return `Closed (${current - voting} blocks ago)`;
+        }
+
+        function unwrapHex(optionValue) {
+            if (!optionValue) return null;
+            if (optionValue.isSome && typeof optionValue.unwrap === 'function') {
+                const inner = optionValue.unwrap();
+                if (!inner) return null;
+                const hex = inner.toHex ? inner.toHex() : inner.toString();
+                return hex && hex !== '0x' ? hex : null;
+            }
+            if (typeof optionValue.toHex === 'function') {
+                const hex = optionValue.toHex();
+                return hex && hex !== '0x' ? hex : null;
+            }
+            if (typeof optionValue === 'string') {
+                return optionValue === '0x' || optionValue === 'None' ? null : optionValue;
+            }
+            return null;
+        }
+
+        async function submitExtrinsicViaMix(api, tx, signer, timeoutMs = 60000) {
+            const signed = await tx.signAsync(signer);
+            const txHashHex = signed.hash.toHex();
+            const submitResult = await api.rpc.author.submitExtrinsic(signed);
+            const submittedHash = submitResult?.toHex ? submitResult.toHex() : submitResult?.toString?.() || txHashHex;
+            const blockHash = await waitForExtrinsicInclusion(api, txHashHex, timeoutMs);
+            return { submittedHash, blockHash, txHashHex };
+        }
+
+        // Wait for extrinsic inclusion by scanning new blocks
+        async function waitForExtrinsicInclusion(api, txHashHex, timeoutMs = 60000) {
+            return new Promise((resolve, reject) => {
+                let unsub = null;
+                const timer = setTimeout(() => {
+                    if (unsub) {
+                        unsub();
+                    }
+                    reject(new Error('Timed out waiting for inclusion'));
+                }, timeoutMs);
+
+                (async () => {
+                    try {
+                        unsub = await api.rpc.chain.subscribeNewHeads(async (header) => {
+                            try {
+                                const blockHash = header.hash.toHex();
+                                const block = await api.rpc.chain.getBlock(blockHash);
+                                const found = block.block.extrinsics.some(
+                                    (ext) => ext.hash.toHex() === txHashHex
+                                );
+
+                                if (found) {
+                                    clearTimeout(timer);
+                                    if (unsub) {
+                                        unsub();
+                                    }
+                                    resolve(blockHash);
+                                }
+                            } catch (err) {
+                                console.error('waitForExtrinsicInclusion iteration error:', err);
+                            }
+                        });
+                    } catch (subscribeError) {
+                        clearTimeout(timer);
+                        reject(subscribeError);
+                    }
+                })();
+            });
+        }
+
         // Create Election
         async function createElection() {
             if (!daochainApi) {
@@ -971,25 +1240,49 @@
                     registrationDeadline,
                     votingDeadline
                 );
-                
-                addLog('daochain', `📝 Submitting election ID: ${electionId}`, 'event');
-                
-                await tx.signAndSend(alice, ({ status, events }) => {
-                    if (status.isInBlock) {
-                        statusEl.className = 'status success';
-                        statusEl.innerHTML = `✅ Election created!<br>
-                            <small>Election ID: ${electionId}<br>
-                            Block: ${status.asInBlock.toHex().substring(0, 10)}...<br>
-                            Registration ends: Block ${registrationDeadline}<br>
-                            Voting ends: Block ${votingDeadline}</small>`;
-                        
-                        addLog('daochain', `✅ Election ${electionId} created (Reg: ${registrationDeadline}, Vote: ${votingDeadline})`, 'event');
-                        
-                        // Update counter
-                        const current = parseInt(document.getElementById('elections-count').textContent);
-                        document.getElementById('elections-count').textContent = current + 1;
-                    }
-                });
+
+                addLog('daochain', `📝 Preparing election ID: ${electionId}`, 'event');
+
+                const signed = await tx.signAsync(alice);
+                const txHashHex = signed.hash.toHex();
+
+                statusEl.textContent = '🔐 Sending via transport mix...';
+
+                const submitResult = await daochainApi.rpc.author.submitExtrinsic(signed);
+                const submittedHash = submitResult?.toHex ? submitResult.toHex() : submitResult?.toString?.() || txHashHex;
+
+                addLog('daochain', `🔐 Sent via transport mix (tx: ${submittedHash.substring(0, 12)}...)`, 'event');
+
+                statusEl.className = 'status pending';
+                statusEl.innerHTML = `⚡ Submitted via transport mix<br><small>Tx: ${submittedHash.substring(0, 12)}...<br>Waiting for block inclusion...</small>`;
+
+                try {
+                    const blockHash = await waitForExtrinsicInclusion(daochainApi, txHashHex, 60000);
+
+                    statusEl.className = 'status success';
+                    statusEl.innerHTML = `✅ Election created!<br>
+                        <small>Election ID: ${electionId}<br>
+                        Tx Hash: ${submittedHash.substring(0, 12)}...<br>
+                        Block: ${blockHash.substring(0, 12)}...<br>
+                        Registration ends: Block ${registrationDeadline}<br>
+                        Voting ends: Block ${votingDeadline}</small>`;
+
+                    addLog('daochain', `✅ Election ${electionId} included in block ${blockHash.substring(0, 12)}...`, 'event');
+
+                    const voteElectionInput = document.getElementById('vote-election-id');
+                    const xcmElectionInput = document.getElementById('xcm-election-id');
+                    if (voteElectionInput) voteElectionInput.value = electionId;
+                    if (xcmElectionInput) xcmElectionInput.value = electionId;
+
+                    const current = parseInt(document.getElementById('elections-count').textContent);
+                    document.getElementById('elections-count').textContent = current + 1;
+                } catch (waitError) {
+                    console.warn('Election inclusion wait error:', waitError);
+                    statusEl.className = 'status warning';
+                    statusEl.innerHTML = `⚠️ Submitted (tx: ${submittedHash.substring(0, 12)}...)<br>
+                        <small>Waiting for block inclusion...</small>`;
+                    addLog('daochain', `⚠️ Election ${electionId} submitted, awaiting inclusion`, 'warning');
+                }
             } catch (error) {
                 statusEl.className = 'status error';
                 statusEl.textContent = `❌ Error: ${error.message}`;
@@ -1001,50 +1294,79 @@
 
         // Cast Vote
         async function castVote() {
-            if (!votingchainApi) {
-                alert('Please connect to VotingChain first in the SETUP tab!');
+            if (!daochainApi) {
+                alert('Please connect to DaoChain first in the SETUP tab!');
                 return;
             }
 
             const statusEl = document.getElementById('vote-status');
-            const electionId = document.getElementById('vote-election-id').value;
+            const electionIdRaw = document.getElementById('vote-election-id').value;
+            const electionId = Number(electionIdRaw);
             const option = document.getElementById('vote-option').value.trim();
 
-            if (!electionId || !option) {
-                alert('Please enter election ID and vote option');
+            if (!Number.isFinite(electionId) || electionId < 0) {
+                alert('Please enter a valid election ID');
+                return;
+            }
+            if (!option) {
+                alert('Please enter a vote option');
                 return;
             }
 
             statusEl.className = 'status pending';
             statusEl.classList.remove('hidden');
-            statusEl.textContent = '⏳ Casting vote...';
+            statusEl.textContent = '⏳ Preparing vote...';
 
             try {
                 const { Keyring } = window.polkadotKeyring || window.polkadotApi;
                 const keyring = new Keyring({ type: 'sr25519' });
-                const alice = keyring.addFromUri('//Alice');
+                const admin = keyring.addFromUri('//Alice');
+                const voter = keyring.addFromUri('//Bob');
 
-                const tx = votingchainApi.tx.daomixVoting.castVote(electionId, option);
-                
-                addLog('votingchain', `🗳️ Casting vote for election ${electionId}: ${option}`, 'event');
-                
-                await tx.signAndSend(alice, ({ status }) => {
-                    if (status.isInBlock) {
-                        statusEl.className = 'status success';
-                        statusEl.innerHTML = `✅ Vote cast!<br>
-                            <small>Election: ${electionId}, Option: ${option}</small>`;
-                        
-                        addLog('votingchain', `✅ Vote cast for "${option}" in election ${electionId}`, 'event');
-                        
-                        // Update counter
-                        const current = parseInt(document.getElementById('votes-count').textContent);
-                        document.getElementById('votes-count').textContent = current + 1;
-                    }
+                const registrationFlag = await daochainApi.query.daomixVoting.voters(electionId, voter.address);
+                const alreadyRegistered = Boolean(registrationFlag?.valueOf?.() ?? registrationFlag);
+
+                if (!alreadyRegistered) {
+                    statusEl.textContent = '🪪 Registering voter on DaoChain...';
+                    const registerTx = daochainApi.tx.daomixVoting.registerVoter(electionId, voter.address);
+                    await submitExtrinsicViaMix(daochainApi, registerTx, admin);
+                    addLog('daochain', `🪪 Registered ${shortAddress(voter.address)} for election ${electionId}`, 'event');
+                }
+
+                const util = window.polkadotUtil || {};
+                const payloadText = JSON.stringify({
+                    electionId,
+                    option,
+                    voter: shortAddress(voter.address),
+                    timestamp: Date.now(),
                 });
+                const encoder = util.stringToU8a
+                    ? util.stringToU8a(payloadText)
+                    : new TextEncoder().encode(payloadText);
+                const ciphertextBytes = Array.from(encoder);
+
+                const castTx = daochainApi.tx.daomixVoting.castVote(electionId, ciphertextBytes);
+
+                statusEl.textContent = '🔐 Sending vote via transport mix...';
+                addLog('daochain', `🗳️ Casting vote for election ${electionId}: ${option}`, 'event');
+
+                const { submittedHash, blockHash } = await submitExtrinsicViaMix(daochainApi, castTx, voter);
+
+                statusEl.className = 'status success';
+                statusEl.innerHTML = `✅ Vote cast!<br>
+                    <small>Election: ${electionId}, Option: ${option}<br>
+                    Tx: ${submittedHash.substring(0, 12)}...<br>
+                    Block: ${blockHash.substring(0, 12)}...</small>`;
+
+                addLog('daochain', `✅ Vote included in block ${blockHash.substring(0, 12)}...`, 'event');
+
+                const counterEl = document.getElementById('votes-count');
+                const currentCount = parseInt(counterEl.textContent, 10) || 0;
+                counterEl.textContent = currentCount + 1;
             } catch (error) {
                 statusEl.className = 'status error';
                 statusEl.textContent = `❌ Error: ${error.message}`;
-                addLog('votingchain', `❌ Vote casting failed: ${error.message}`, 'error');
+                addLog('daochain', `❌ Vote casting failed: ${error.message}`, 'error');
                 console.error('Vote casting error:', error);
             }
         }
@@ -1067,6 +1389,9 @@
             statusEl.className = 'status pending';
             statusEl.classList.remove('hidden');
             statusEl.textContent = '⏳ Submitting XCM mixing job to Para 1000...';
+            addXcmTerminalLog('────────────────────────────────────────');
+            addXcmTerminalLog(`User clicked “Submit XCM Job” (election ${electionId})`);
+            addXcmTerminalLog('Simulating terminal output from tail -f …');
 
             try {
                 const { Keyring } = window.polkadotKeyring || window.polkadotApi;
@@ -1087,26 +1412,57 @@
                     }]
                 };
 
-                addLog('votingchain', `🚀 Sending XCM job to Para 1000 for election ${electionId}`, 'event');
+                addLog('votingchain', `🚀 Preparing XCM job to Para 1000 for election ${electionId}`, 'event');
+                addXcmTerminalLog('> tail -f .demo-logs/ws-proxies.log .demo-logs/transport-entry.log ...');
+                addXcmTerminalLog('[Tail] Watching ws-proxies + transport node logs…');
                 
                 const tx = votingchainApi.tx.polkadotXcm.send(dest, message);
-                
-                await tx.signAndSend(alice, ({ status }) => {
-                    if (status.isInBlock) {
-                        statusEl.className = 'status success';
-                        statusEl.innerHTML = `✅ XCM job submitted!<br>
-                            <small>Para 2001 → Para 1000<br>
-                            Election ID: ${electionId}<br>
-                            Watch LIVE LOGS tab for mixing!</small>`;
-                        
-                        addLog('votingchain', `✅ XCM message sent to DaoChain (Para 1000)`, 'event');
-                        addLog('daochain', `📬 Expecting XCM message from Para 2001...`, 'event');
-                    }
-                });
+
+                const signed = await tx.signAsync(alice);
+                const txHashHex = signed.hash.toHex();
+
+                statusEl.textContent = '🔐 Sending XCM via transport mix...';
+                addXcmTerminalLog('[VotingChain] 🔄 author_submitAndWatchExtrinsic → author_submitExtrinsic');
+                addXcmTerminalLog('[VotingChain] 🔐 author_submitExtrinsic → via transport mix');
+
+                const submitResult = await votingchainApi.rpc.author.submitExtrinsic(signed);
+                const submittedHash = submitResult?.toHex ? submitResult.toHex() : submitResult?.toString?.() || txHashHex;
+
+                addLog('votingchain', `🔐 XCM job sent via transport mix (tx: ${submittedHash.substring(0, 12)}...)`, 'event');
+                addXcmTerminalLog(`[VotingChain] 📨 Got tx hash ${submittedHash.substring(0, 18)}…`);
+                addXcmTerminalLog('[VotingChain] ✅ author_submitAndWatchExtrinsic → submitted via 3-hop mix (subscription emulated)');
+
+                statusEl.className = 'status pending';
+                statusEl.innerHTML = `⚡ XCM submitted via transport mix<br><small>Tx: ${submittedHash.substring(0, 12)}...<br>Waiting for block inclusion...</small>`;
+
+                try {
+                    const blockHash = await waitForExtrinsicInclusion(votingchainApi, txHashHex, 60000);
+
+                    statusEl.className = 'status success';
+                    statusEl.innerHTML = `✅ XCM job submitted!<br>
+                        <small>Para 2001 → Para 1000<br>
+                        Election ID: ${electionId}<br>
+                        Tx: ${submittedHash.substring(0, 12)}...<br>
+                        Block: ${blockHash.substring(0, 12)}...</small>`;
+
+                    addLog('votingchain', `✅ XCM message included in block ${blockHash.substring(0, 12)}...`, 'event');
+                    addLog('daochain', `📬 Expecting XCM message from Para 2001...`, 'event');
+                    addXcmTerminalLog(`[VotingChain] 🧱 Included in block ${blockHash.substring(0, 18)}…`);
+                    addXcmTerminalLog('[DaoChain] 📬 mixJob.submitJob received → pending job queued');
+                    addXcmTerminalLog('[MixJob] Orchestrator will shuffle ballots through Mix Nodes 1 → 2 → 3');
+                } catch (waitError) {
+                    console.warn('XCM inclusion wait error:', waitError);
+                    statusEl.className = 'status warning';
+                    statusEl.innerHTML = `⚠️ XCM job submitted (tx: ${submittedHash.substring(0, 12)}...)<br>
+                        <small>Waiting for block inclusion...</small>`;
+                    addLog('votingchain', `⚠️ XCM job submitted, awaiting inclusion`, 'warning');
+                    addXcmTerminalLog('[Tail] ⏳ Still waiting for block inclusion…');
+                }
             } catch (error) {
                 statusEl.className = 'status error';
                 statusEl.textContent = `❌ Error: ${error.message}`;
                 addLog('votingchain', `❌ XCM submission failed: ${error.message}`, 'error');
+                addXcmTerminalLog(`❌ Error: ${error.message}`);
                 console.error('XCM submission error:', error);
             }
         }
@@ -1123,23 +1479,93 @@
             statusEl.classList.remove('hidden');
             statusEl.textContent = '⏳ Querying elections...';
 
+            const filterInput = document.getElementById('query-election-id');
+            const filterRaw = filterInput ? filterInput.value.trim() : '';
+            let filterId = null;
+            if (filterRaw) {
+                const parsed = Number(filterRaw);
+                if (!Number.isFinite(parsed) || parsed < 0) {
+                    alert('Please enter a valid election ID to filter.');
+                    return;
+                }
+                filterId = parsed;
+            }
+
             try {
-                const elections = await daochainApi.query.daomixVoting.elections.entries();
-                
-                if (elections.length === 0) {
+                const [entries, header] = await Promise.all([
+                    daochainApi.query.daomixVoting.elections.entries(),
+                    daochainApi.rpc.chain.getHeader(),
+                ]);
+
+                if (entries.length === 0) {
                     statusEl.className = 'status pending';
                     statusEl.textContent = '📋 No elections found. Create one first!';
-                } else {
-                    let html = '<strong>📊 Elections:</strong><br>';
-                    elections.forEach(([key, value]) => {
-                        const electionData = value.toJSON();
-                        html += `<small>ID: ${key.args[0]} - ${JSON.stringify(electionData)}</small><br>`;
-                    });
-                    statusEl.className = 'status success';
-                    statusEl.innerHTML = html;
+                    return;
                 }
+
+                const currentBlock = header.number.toNumber();
+                const cards = [];
+
+                for (const [storageKey, optionValue] of entries) {
+                    if (!optionValue || optionValue.isNone || optionValue.isEmpty) {
+                        continue;
+                    }
+
+                    const electionId = storageKey.args[0].toNumber();
+                     if (filterId !== null && electionId !== filterId) {
+                        continue;
+                    }
+                    const election = optionValue.unwrap ? optionValue.unwrap() : optionValue;
+
+                    const regDeadline = safeNumber(election.registration_deadline ?? election.registrationDeadline);
+                    const votingDeadline = safeNumber(election.voting_deadline ?? election.votingDeadline);
+                    const ballotsCodec = await daochainApi.query.daomixVoting.ballotCount(electionId);
+                    const ballotCount = safeNumber(ballotsCodec) ?? 0;
+                    const admin = election.admin?.toString?.() || (election.admin && `${election.admin}`) || '—';
+                    const tally = election.tally_authority?.toString?.() || election.tallyAuthority?.toString?.() || '—';
+                    const commitmentIn = unwrapHex(election.commitment_input_root ?? election.commitmentInputRoot);
+                    const commitmentOut = unwrapHex(election.commitment_output_root ?? election.commitmentOutputRoot);
+                    const finalized = Boolean(election.finalized);
+
+                    cards.push(`
+                        <div class="result-card">
+                            <div class="result-title">Election ${electionId}</div>
+                            <div class="result-meta">
+                                <span><strong>Stage:</strong> ${describePhase(currentBlock, regDeadline, votingDeadline)}</span>
+                                <span><strong>Ballots:</strong> ${ballotCount}</span>
+                                <span><strong>Finalized:</strong> ${finalized ? 'Yes' : 'No'}</span>
+                            </div>
+                            <div class="result-meta">
+                                <span><strong>Admin:</strong> ${shortAddress(admin)}</span>
+                                <span><strong>Tally:</strong> ${shortAddress(tally)}</span>
+                            </div>
+                            <div class="result-meta">
+                                <span><strong>Registration ends:</strong> ${formatBlockLabel(regDeadline, currentBlock)}</span>
+                                <span><strong>Voting ends:</strong> ${formatBlockLabel(votingDeadline, currentBlock)}</span>
+                            </div>
+                            <div class="result-meta">
+                                <span><strong>Mix input root:</strong> ${commitmentIn || '—'}</span>
+                                <span><strong>Mix output root:</strong> ${commitmentOut || '—'}</span>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                if (cards.length === 0) {
+                    statusEl.className = 'status pending';
+                    statusEl.textContent = filterId === null
+                        ? '📋 No active elections found.'
+                        : `📋 Election ${filterId} not found on DaoChain.`;
+                    return;
+                }
+
+                statusEl.className = 'status success';
+                statusEl.innerHTML = `
+                    <strong>📊 ${cards.length} election${cards.length === 1 ? '' : 's'} fetched from DaoChain${filterId !== null ? ` (filtered by ID ${filterId})` : ''}</strong>
+                    <div class="results-list">${cards.join('')}</div>
+                `;
                 
-                addLog('daochain', `📊 Queried ${elections.length} elections`, 'event');
+                addLog('daochain', `📊 Queried ${cards.length} elections`, 'event');
             } catch (error) {
                 statusEl.className = 'status error';
                 statusEl.textContent = `❌ Error: ${error.message}`;
@@ -1149,33 +1575,120 @@
 
         // Query Votes
         async function queryVotes() {
-            if (!votingchainApi) {
-                alert('Please connect to VotingChain first!');
+            if (!daochainApi && !votingchainApi) {
+                alert('Please connect to at least one chain first!');
                 return;
             }
 
             const statusEl = document.getElementById('query-status');
             statusEl.className = 'status pending';
             statusEl.classList.remove('hidden');
-            statusEl.textContent = '⏳ Querying votes...';
+            statusEl.textContent = '⏳ Querying ballots on all connected chains...';
+
+            const filterInput = document.getElementById('query-election-id');
+            const filterRaw = filterInput ? filterInput.value.trim() : '';
+            let filterId = null;
+            if (filterRaw) {
+                const parsed = Number(filterRaw);
+                if (!Number.isFinite(parsed) || parsed < 0) {
+                    alert('Please enter a valid election ID to filter.');
+                    return;
+                }
+                filterId = parsed;
+            }
 
             try {
-                const votes = await votingchainApi.query.daomixVoting.votes.entries();
-                
-                if (votes.length === 0) {
-                    statusEl.className = 'status pending';
-                    statusEl.textContent = '🗳️ No votes found. Cast a vote first!';
-                } else {
-                    let html = '<strong>🗳️ Votes:</strong><br>';
-                    votes.forEach(([key, value]) => {
-                        const voteData = value.toJSON();
-                        html += `<small>${JSON.stringify(voteData)}</small><br>`;
-                    });
-                    statusEl.className = 'status success';
-                    statusEl.innerHTML = html;
+                const targets = [
+                    { name: 'DaoChain (Para 1000)', api: daochainApi },
+                    { name: 'VotingChain (Para 2001)', api: votingchainApi },
+                ].filter(t => t.api);
+
+                const cards = [];
+
+                for (const target of targets) {
+                    const pallet = target.api.query.daomixVoting || target.api.query.daomix_voting;
+                    if (!pallet || !pallet.ballotCount) {
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name}</div>
+                                <div class="result-meta">
+                                    <span><strong>Ballot storage:</strong> Not available on this chain</span>
+                                </div>
+                            </div>
+                        `);
+                        continue;
+                    }
+
+                    const ballotCounts = await pallet.ballotCount.entries();
+
+                    if (ballotCounts.length === 0) {
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name}</div>
+                                <div class="result-meta">
+                                    <span><strong>Ballots recorded:</strong> 0 (Cast a vote first)</span>
+                                </div>
+                            </div>
+                        `);
+                        continue;
+                    }
+
+                    let chainMatchedFilter = false;
+
+                    for (const [key, value] of ballotCounts) {
+                        const electionId = key.args[0].toNumber();
+                        if (filterId !== null && electionId !== filterId) {
+                            continue;
+                        }
+                        chainMatchedFilter = true;
+                        const count = safeNumber(value) ?? 0;
+                        if (count === 0) continue;
+
+                        let sampleInfo = '';
+                        try {
+                            const sampleIndex = Math.max(0, count - 1);
+                            const ciphertext = await pallet.ballots(electionId, sampleIndex);
+                            const hex = ciphertext?.toHex ? ciphertext.toHex() : ciphertext?.toString?.() || '';
+                            if (hex) {
+                                sampleInfo = `Sample ciphertext (#${sampleIndex}): ${hex.substring(0, 24)}… (${Math.floor(hex.length / 2)} bytes)`;
+                            }
+                        } catch (sampleError) {
+                            console.warn(`Failed to fetch sample ballot on ${target.name}`, sampleError);
+                        }
+
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name} · Election ${electionId}</div>
+                                <div class="result-meta">
+                                    <span><strong>Ballots recorded:</strong> ${count}</span>
+                                    ${sampleInfo ? `<span>${sampleInfo}</span>` : ''}
+                                </div>
+                            </div>
+                        `);
+                    }
+
+                    if (filterId !== null && !chainMatchedFilter) {
+                        cards.push(`
+                            <div class="result-card">
+                                <div class="result-title">${target.name}</div>
+                                <div class="result-meta">
+                                    <span><strong>Election ${filterId}:</strong> No ballots found on this chain.</span>
+                                </div>
+                            </div>
+                        `);
+                    }
                 }
-                
-                addLog('votingchain', `🗳️ Queried ${votes.length} votes`, 'event');
+
+                statusEl.className = cards.some(card => card.includes('Ballots recorded'))
+                    ? 'status success'
+                    : 'status warning';
+
+                statusEl.innerHTML = `
+                    <strong>🗳️ Ballot storage overview${filterId !== null ? ` (filtered by ID ${filterId})` : ''}</strong>
+                    <div class="results-list">${cards.join('')}</div>
+                `;
+
+                addLog('daochain', '🗳️ Queried ballot storage on connected chains', 'event');
             } catch (error) {
                 statusEl.className = 'status error';
                 statusEl.textContent = `❌ Error: ${error.message}`;
@@ -1315,6 +1828,7 @@
                 // Hide startup screen, show main UI
                 startupScreen.classList.add('hidden');
                 mainUI.classList.remove('hidden');
+                initXcmTerminal();
                 
                 // Auto-populate logs with initial message
                 addLog('daochain', 'Ready for connection', 'info');

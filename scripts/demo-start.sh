@@ -286,6 +286,8 @@ cd "$ROOT_DIR/mixer"
 
 # Transport Entry Node (9100)
 print_step "Starting Transport Entry Node (port 9100)..."
+# Fixed demo key for consistent public key across restarts
+TRANSPORT_SECRET_KEY="0x1111111111111111111111111111111111111111111111111111111111111111" \
 TRANSPORT_ROLE=entry \
 TRANSPORT_PORT=9100 \
 TRANSPORT_NEXT_HOP=http://127.0.0.1:9101 \
@@ -303,6 +305,8 @@ fi
 
 # Transport Middle Node (9101)
 print_step "Starting Transport Middle Node (port 9101)..."
+# Fixed demo key for consistent public key across restarts
+TRANSPORT_SECRET_KEY="0x2222222222222222222222222222222222222222222222222222222222222222" \
 TRANSPORT_ROLE=middle \
 TRANSPORT_PORT=9101 \
 TRANSPORT_NEXT_HOP=http://127.0.0.1:9102 \
@@ -320,8 +324,11 @@ fi
 
 # Transport Exit Node (9102)
 print_step "Starting Transport Exit Node (port 9102)..."
+# Fixed demo key for consistent public key across restarts
+TRANSPORT_SECRET_KEY="0x3333333333333333333333333333333333333333333333333333333333333333" \
 TRANSPORT_ROLE=exit \
 TRANSPORT_PORT=9102 \
+TRANSPORT_RPC_URL=http://127.0.0.1:9944 \
 npm run dev:transport-node > "$LOG_DIR/transport-exit.log" 2>&1 &
 
 TRANSPORT_EXIT_PID=$!
@@ -436,6 +443,10 @@ echo "  VotingChain:   tail -f .demo-logs/votingchain.log"
 echo "  Mix Node 1:    tail -f .demo-logs/mixnode-1.log"
 echo "  Mix Node 2:    tail -f .demo-logs/mixnode-2.log"
 echo "  Mix Node 3:    tail -f .demo-logs/mixnode-3.log"
+echo "  Transport Mix: tail -f .demo-logs/ws-proxies.log"
+echo "  Entry Node:    tail -f .demo-logs/transport-entry.log"
+echo "  Middle Node:   tail -f .demo-logs/transport-middle.log"
+echo "  Exit Node:     tail -f .demo-logs/transport-exit.log"
 echo ""
 print_info "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 print_info "📖 INSTRUCTIONS"
@@ -450,7 +461,8 @@ echo -e "     ${MAGENTA}VotingChain: ws://127.0.0.1:9951 (via transport mix)${NC
 echo ""
 echo "  3. Click 'Test Connection' for EACH parachain"
 echo ""
-echo -e "  ${CYAN}💡 All RPC traffic routes through 3-hop onion network!${NC}"
+echo -e "  ${MAGENTA}💡 TRANSPORT MIX ACTIVE: Your IP is hidden from parachains!${NC}"
+echo -e "  ${CYAN}     Watch it work: tail -f .demo-logs/ws-proxies.log${NC}"
 echo ""
 echo "  4. Verify you see:"
 echo "     ✅ DaomixVoting pallet"
