@@ -14,7 +14,8 @@
     "run:daochain-pipeline-transport": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
     "demo:orchestrator": "TS_NODE_FILES=true ts-node src/orchestratorDemo.ts",
     "demo:cast-ballots": "TS_NODE_FILES=true ts-node src/castOnionBallotsDemo.ts",
-    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts"
+    "run:daochain-pipeline": "TS_NODE_FILES=true ts-node src/runDaoMixDaoChain.ts",
+    "generate-keys": "TS_NODE_FILES=true ts-node scripts/generateOnionKeys.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
